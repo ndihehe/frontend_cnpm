@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kết quả học tập - Hệ thống quản lý học vụ</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      line-height: 1.6;
+      font-size: 11.5px;
+    }
+    .meta-overview-card {
+      background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+      border: 1px solid #BAE6FD;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.05);
+    }
+    .meta-stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .meta-stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0369A1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .meta-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #002D4F;
+    }
+    .badge-rank {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: #0284C7;
+      color: #FFFFFF;
+    }
+    .semester-header-row th {
+      background: #E2F2FC !important;
+      color: #00365D !important;
+      font-weight: 700;
+      font-size: 12.5px;
+      text-align: left;
+      padding: 9px 14px;
+      border-bottom: 1px solid #BAE6FD;
+    }
+    .status-badge-studying {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #E0F2FE;
+      color: #0284C7;
+      border: 1px solid #BAE6FD;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- SIDEBAR GLASSMORPHISM -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+
+        <!-- Profile Widget sinh viên Glassmorphism -->
+        <div class="sidebar-profile">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_01.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Nguyen+An&background=0284C7&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Nguyen Van An">Nguyen Van An</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">SV: SV001</div>
+            <div class="sidebar-user-status" id="sidebar-user-status">● Đang học</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">HỌC VỤ SINH VIÊN</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <span class="material-symbols-outlined">campaign</span>
+              <span>Bảng tin thông báo</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link">
+              <span class="material-symbols-outlined">person</span>
+              <span>Thông tin cá nhân</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="student-schedule.html" class="nav-link">
+              <span class="material-symbols-outlined">calendar_month</span>
+              <span>Thời khóa biểu</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="my-classes.html" class="nav-link">
+              <span class="material-symbols-outlined">school</span>
+              <span>Lớp học phần của tôi</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="course-registration.html" class="nav-link">
+              <span class="material-symbols-outlined">app_registration</span>
+              <span>Đăng ký học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="transcript.html" class="nav-link active">
+              <span class="material-symbols-outlined">fact_check</span>
+              <span>Xem điểm học phần</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <!-- TOPBAR HỆ THỐNG QUẢN LÝ HỌC VỤ -->
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0284C7;">school</span>
+          HỆ THỐNG QUẢN LÝ HỌC VỤ
+        </div>
+        <div class="topbar-actions">
+          <div style="display: flex; align-items: center; gap: 7px; cursor: pointer;">
+            <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_01.jpg" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">Nguyen Van An</span>
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="page-banner">
+          <span class="material-symbols-outlined" style="font-size: 15px;">fact_check</span>
+          KẾT QUẢ HỌC TẬP &amp; BẢNG ĐIỂM
+        </div>
+
+        <!-- Filter bar compact -->
+        <div class="filter-bar">
+          <div>
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 2px;">LỌC HỌC KỲ</label>
+            <select class="filter-select" id="hk-select">
+              <option value="all">Tất cả các học kỳ</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 2px;">THANG ĐIỂM</label>
+            <select class="filter-select">
+              <option>Thang điểm 10 &amp; 4</option>
+            </select>
+          </div>
+          <div style="margin-left: auto; display: flex; align-items: flex-end;">
+            <button class="btn btn-outline-primary btn-sm" id="btn-reload" style="display: flex; align-items: center; gap: 4px;">
+              <span class="material-symbols-outlined" style="font-size: 14px;">refresh</span>
+              Làm mới
+            </button>
+          </div>
+        </div>
+
+        <!-- Overview Meta Card: Tổng kết tích lũy -->
+        <div class="meta-overview-card" id="meta-overview" style="display: none;">
+          <div class="meta-stat-item">
+            <span class="meta-stat-label">Tín chỉ tích lũy</span>
+            <span class="meta-stat-value" id="meta-credits">0 TC</span>
+          </div>
+          <div class="meta-stat-item">
+            <span class="meta-stat-label">Điểm TB tích lũy (Hệ 4)</span>
+            <span class="meta-stat-value" id="meta-gpa">0.00</span>
+          </div>
+          <div class="meta-stat-item">
+            <span class="meta-stat-label">Xếp loại học lực tích lũy</span>
+            <div><span class="badge-rank" id="meta-rank">Chưa xếp loại</span></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; color: #0369A1; font-size: 12px; font-weight: 500;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">verified</span>
+            Dữ liệu trích xuất từ hệ thống đào tạo
+          </div>
+        </div>
+
+        <!-- Khung chứa bảng điểm chi tiết các học kỳ -->
+        <div id="grades-container">
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <div class="loading-spinner" style="display:inline-block; width:28px; height:28px; border:3px solid #E2E8F0; border-top-color:#0284C7; border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+            <div style="margin-top: 10px; font-size: 13px;">Đang tải bảng điểm từ máy chủ...</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- SCRIPTS HỆ THỐNG -->
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script src="../../js/user-menu.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hkSelect = document.getElementById('hk-select');
+      const btnReload = document.getElementById('btn-reload');
+      const container = document.getElementById('grades-container');
+      const metaCard = document.getElementById('meta-overview');
+
+      function calculateGrade4(score10) {
+        if (score10 >= 8.5) return { grade4: 4.0, letter: 'A' };
+        if (score10 >= 8.0) return { grade4: 3.5, letter: 'B+' };
+        if (score10 >= 7.0) return { grade4: 3.0, letter: 'B' };
+        if (score10 >= 6.5) return { grade4: 2.5, letter: 'C+' };
+        if (score10 >= 5.5) return { grade4: 2.0, letter: 'C' };
+        if (score10 >= 5.0) return { grade4: 1.5, letter: 'D+' };
+        if (score10 >= 4.0) return { grade4: 1.0, letter: 'D' };
+        return { grade4: 0.0, letter: 'F' };
+      }
+
+      function formatSemesterTitle(maHK, tenHK) {
+        if (!maHK) return tenHK || 'Học kỳ';
+        const parts = maHK.split('_');
+        if (parts.length >= 3) {
+          const hkName = parts[2] === 'HK1' ? 'Học kỳ 1' : parts[2] === 'HK2' ? 'Học kỳ 2' : (parts[2] === 'HKHE' ? 'Học kỳ hè' : parts[2]);
+          return `${hkName} (${parts[0]} - ${parts[1]})`;
+        }
+        if (typeof cleanMojibake === 'function') {
+          return cleanMojibake(tenHK || maHK);
+        }
+        return tenHK || maHK;
+      }
+
+      async function initSemesters() {
+        if (!window.CommonApi || !CommonApi.getAllSemesters || !hkSelect) return;
+        try {
+          const res = await CommonApi.getAllSemesters();
+          if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+            let html = '<option value="all">Tất cả các học kỳ</option>';
+            res.data.forEach(s => {
+              const label = formatSemesterTitle(s.maHocKy, s.tenHocKy);
+              const isCurrent = s.isCurrent || s.hienHanh;
+              html += `<option value="${s.maHocKy}">${label}${isCurrent ? ' [Hiện hành]' : ''}</option>`;
+            });
+            hkSelect.innerHTML = html;
+          }
+        } catch (e) {
+          console.warn('Could not load dynamic semesters:', e);
+        }
+      }
+
+      function formatRankTitle(rank) {
+        if (!rank || rank.includes('ChÆ') || rank.includes('Chưa') || rank.includes('Ch')) {
+          return 'Chưa xếp loại';
+        }
+        if (typeof cleanMojibake === 'function') {
+          return cleanMojibake(rank);
+        }
+        return rank;
+      }
+
+      async function loadTranscript() {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <div class="loading-spinner" style="display:inline-block; width:28px; height:28px; border:3px solid #E2E8F0; border-top-color:#0284C7; border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+            <div style="margin-top: 10px; font-size: 13px;">Đang tải bảng điểm từ máy chủ...</div>
+          </div>
+        `;
+
+        try {
+          const selectedHK = hkSelect.value;
+          const res = await (window.StudentApi ? StudentApi.getGrades(selectedHK === 'all' ? '' : selectedHK) : Promise.resolve(null));
+
+          if (!res || !res.success || !res.data) {
+            container.innerHTML = '<div style="padding: 20px; text-align: center; color: #EF4444;">Không thể tải dữ liệu bảng điểm. Vui lòng thử lại sau.</div>';
+            return;
+          }
+
+          // 1. Cập nhật khối Meta học vụ tích lũy
+          if (res.meta) {
+            metaCard.style.display = 'flex';
+            document.getElementById('meta-credits').textContent = (res.meta.soTinChiTichLuy || 0) + ' TC';
+            document.getElementById('meta-gpa').textContent = (res.meta.diemTBTichLuy != null ? Number(res.meta.diemTBTichLuy).toFixed(2) : '0.00');
+            document.getElementById('meta-rank').textContent = formatRankTitle(res.meta.xepLoaiHocLucTichLuy);
+          }
+
+          const semesters = res.data;
+          if (semesters.length === 0) {
+            container.innerHTML = '<div style="padding: 30px; text-align: center; color: var(--text-muted);">Chưa có dữ liệu điểm cho học kỳ này.</div>';
+            return;
+          }
+
+          // 2. Render từng học kỳ
+          let html = '';
+          semesters.forEach(sem => {
+            const semTitle = formatSemesterTitle(sem.maHocKy, sem.tenHocKy);
+            const semRank = formatRankTitle(sem.xepLoaiHK);
+
+            html += `
+              <div class="hocvu-card" style="margin-bottom: 20px;">
+                <div class="hocvu-card-body" style="padding: 0;">
+                  <div class="hocvu-table-responsive" style="border: none;">
+                    <table class="hocvu-table">
+                      <thead>
+                        <tr class="semester-header-row">
+                          <th colspan="10">
+                            <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle; margin-right: 4px; color: #0284C7;">folder_open</span>
+                            ${semTitle} (${sem.maHocKy})
+                          </th>
+                        </tr>
+                        <tr>
+                          <th style="width: 40px; text-align: center;">STT</th>
+                          <th style="width: 90px;">Mã môn</th>
+                          <th style="text-align: left;">Tên môn học</th>
+                          <th style="width: 45px; text-align: center;">TC</th>
+                          <th style="width: 65px; text-align: center;">QT</th>
+                          <th style="width: 65px; text-align: center;">CK</th>
+                          <th style="width: 65px; text-align: center;">TK (10)</th>
+                          <th style="width: 65px; text-align: center;">Hệ 4</th>
+                          <th style="width: 60px; text-align: center;">Chữ</th>
+                          <th style="width: 85px; text-align: center;">Kết quả</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+            `;
+
+            if (sem.danhSachMonHoc && sem.danhSachMonHoc.length > 0) {
+              sem.danhSachMonHoc.forEach((m, idx) => {
+                const hasScore = (m.diemTongKet != null);
+                const tk = hasScore ? Number(m.diemTongKet) : null;
+                const calc = hasScore ? calculateGrade4(tk) : { grade4: 0.0, letter: '-' };
+
+                let resultBadge = '';
+                if (!hasScore) {
+                  resultBadge = '<span class="status-badge-studying">Đang học</span>';
+                } else if (tk >= 4.0 || m.ketQua === 'Đạt') {
+                  resultBadge = '<span class="status-pass">Đạt</span>';
+                } else {
+                  resultBadge = '<span class="status-fail">Không đạt</span>';
+                }
+
+                html += `
+                  <tr>
+                    <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
+                    <td><strong>${m.maHP || ''}</strong></td>
+                    <td style="text-align: left;">${m.tenHP || ''}</td>
+                    <td style="text-align: center;">${m.soTinChi || 0}</td>
+                    <td style="text-align: center;">${m.diemQuaTrinh != null ? Number(m.diemQuaTrinh).toFixed(1) : '-'}</td>
+                    <td style="text-align: center;">${m.diemCuoiKy != null ? Number(m.diemCuoiKy).toFixed(1) : '-'}</td>
+                    <td style="text-align: center; font-weight: 700; color: #00365D;">${hasScore ? tk.toFixed(1) : '-'}</td>
+                    <td style="text-align: center;">${hasScore ? calc.grade4.toFixed(1) : '-'}</td>
+                    <td style="text-align: center; font-weight: 600;">${hasScore ? calc.letter : '-'}</td>
+                    <td style="text-align: center;">${resultBadge}</td>
+                  </tr>
+                `;
+              });
+            } else {
+              html += '<tr><td colspan="10" style="text-align: center; padding: 15px; color: var(--text-muted);">Chưa có môn học nào có điểm.</td></tr>';
+            }
+
+            // Tóm tắt từng học kỳ
+            const totalGpa = res.meta && res.meta.diemTBTichLuy != null ? Number(res.meta.diemTBTichLuy).toFixed(2) : '0.00';
+            const totalCredits = res.meta && res.meta.soTinChiTichLuy != null ? res.meta.soTinChiTichLuy : 0;
+            const totalRank = res.meta ? formatRankTitle(res.meta.xepLoaiHocLucTichLuy) : 'Chưa xếp loại';
+
+            html += `
+                      <tr class="table-summary-row">
+                        <td colspan="10">
+                          <div class="summary-grid">
+                            <div>
+                              • <strong>Số tín chỉ đạt học kỳ:</strong> ${sem.soTinChiDatHK || 0} TC<br>
+                              • <strong>Điểm TB học kỳ (Hệ 4):</strong> ${sem.diemTBHK != null ? Number(sem.diemTBHK).toFixed(2) : '0.00'}<br>
+                              • <strong>Xếp loại học kỳ:</strong> ${semRank}
+                            </div>
+                            <div>
+                              • <strong>Điểm tích lũy toàn khóa:</strong> ${totalGpa}<br>
+                              • <strong>Tổng tín chỉ tích lũy:</strong> ${totalCredits} TC<br>
+                              • <strong>Học lực tích lũy:</strong> ${totalRank}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            `;
+          });
+
+          container.innerHTML = html;
+        } catch (err) {
+          console.error('[Transcript Error]:', err);
+          container.innerHTML = '<div style="padding: 20px; text-align: center; color: #EF4444;">Đã xảy ra lỗi khi tải dữ liệu bảng điểm.</div>';
+        }
+      }
+
+      hkSelect.addEventListener('change', loadTranscript);
+      initSemesters().then(() => loadTranscript());
+    });
+  </script>
+</body>
+</html>

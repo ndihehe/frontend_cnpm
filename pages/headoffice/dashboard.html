@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tổng quan Phòng Đào tạo (Head Office) - Hệ thống quản lý học vụ</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .stat-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(13, 148, 136, 0.15);
+    }
+    .stat-val {
+      font-size: 20px;
+      font-weight: 700;
+      color: #002D4F;
+      line-height: 1.2;
+    }
+    .stat-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .progress-bar-bg {
+      background: #E2E8F0;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: #0D9488;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+        <a href="profile.html" class="sidebar-profile" style="text-decoration: none;">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nu_02.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Van+Quan&background=0F766E&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Pham Thi Dung">Pham Thi Dung</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV003</div>
+            <div class="sidebar-user-status" id="sidebar-user-status" style="color: #0D9488;">● Trưởng phòng Đào tạo</div>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <div class="nav-section-title">BÀN LÀM VIỆC</div>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link active">
+              <span class="material-symbols-outlined">dashboard</span>
+              <span>Tổng quan cấp trường</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link">
+              <span class="material-symbols-outlined">person</span>
+              <span>Hồ sơ cán bộ</span>
+            </a>
+          </li>
+          <div class="nav-section-title">QUẢN LÝ ĐÀO TẠO CẤP TRƯỜNG</div>
+          <li class="nav-item">
+            <a href="course-catalog.html" class="nav-link ">
+              <span class="material-symbols-outlined">menu_book</span>
+              <span>Danh mục học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="semester-management.html" class="nav-link ">
+              <span class="material-symbols-outlined">calendar_month</span>
+              <span>Niên khóa & Học kỳ</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="lecturers-directory.html" class="nav-link ">
+              <span class="material-symbols-outlined">badge</span>
+              <span>Danh bạ giảng viên</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="students-directory.html" class="nav-link ">
+              <span class="material-symbols-outlined">groups</span>
+              <span>Danh bạ sinh viên</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="grade-summary.html" class="nav-link">
+              <span class="material-symbols-outlined">analytics</span>
+              <span>Tổng hợp bảng điểm</span>
+            </a>
+          </li>
+          </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0D9488;">corporate_fare</span>
+          PHÂN HỆ PHÒNG ĐÀO TẠO (HEAD OFFICE)
+        </div>
+        <div class="topbar-actions">
+          
+          <a href="profile.html" style="display: flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;">
+            <img src="https://ui-avatars.com/api/?name=Van+Quan&background=0F766E&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">ThS. Nguyễn Văn Quản</span>
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="page-banner" style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">analytics</span>
+            <span id="dashboard-current-semester-subtitle">BẢNG ĐIỀU HÀNH ĐÀO TẠO TOÀN TRƯỜNG - HỌC KỲ 1 (2026 - 2027)</span>
+          </div>
+          <!-- Bỏ hoàn toàn khung elip nhạt và bỏ dấu chấm xanh tròn -->
+          <span style="color: #002D4F; font-size: 12px; font-weight: 700;">
+            Toàn trường đang trong đợt ĐKHP
+          </span>
+        </div>
+
+        <!-- 4 KPI Stat Cards: Bỏ hoàn toàn frame nền màu nhạt sau icon -->
+        <div class="stat-card-grid">
+          <div class="stat-card">
+            <span class="material-symbols-outlined" style="font-size: 28px; color: #0D9488;">groups</span>
+            <div>
+              <div class="stat-val" id="stat-students">--</div>
+              <div class="stat-lbl">Sinh viên toàn trường</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span class="material-symbols-outlined" style="font-size: 28px; color: #0284C7;">badge</span>
+            <div>
+              <div class="stat-val" id="stat-lecturers">--</div>
+              <div class="stat-lbl">Giảng viên cơ hữu</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span class="material-symbols-outlined" style="font-size: 28px; color: #D97706;">menu_book</span>
+            <div>
+              <div class="stat-val" id="stat-courses">--</div>
+              <div class="stat-lbl">Học phần trong danh mục</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span class="material-symbols-outlined" style="font-size: 28px; color: #107C41;">task_alt</span>
+            <div>
+              <div class="stat-val" id="stat-rate" style="color: #107C41;">--</div>
+              <div class="stat-lbl">Tỷ lệ hoàn thành ĐKHP</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BẢNG ĐẶT TRONG KHUNG .HOCVU-CARD CHUẨN DESIGN STUDENT -->
+        <div class="hocvu-card" style="margin-bottom: 20px;">
+          <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="hocvu-card-title">
+              <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">domain</span>
+              <span>TIẾN ĐỘ ĐĂNG KÝ HỌC PHẦN THEO TỪNG KHOA / VIỆN</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);">Dữ liệu thời gian thực từ CSDL đào tạo</div>
+          </div>
+          <div class="hocvu-card-body" style="padding: 0;">
+            <div class="hocvu-table-responsive" style="border: none;">
+              <table class="hocvu-table">
+                <thead>
+                  <tr>
+                    <th style="width: 45px; text-align: center;">STT</th>
+                    <th>Khoa / Viện đào tạo</th>
+                    <th style="width: 120px; text-align: center;">Số lớp mở</th>
+                    <th style="width: 140px; text-align: center;">Lượt SV ghi danh</th>
+                    <th style="width: 250px;">Tiến độ hoàn thành</th>
+                    <th style="width: 100px; text-align: center;">Tỷ lệ</th>
+                  </tr>
+                </thead>
+                <tbody id="faculty-tbody">
+                  <tr><td colspan="6" style="text-align: center; padding: 20px;">Đang tải dữ liệu...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- PHÂN TRANG / TỔNG KẾT BẢNG META -->
+            <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
+              <div id="pagination-info" style="color: var(--text-muted);">
+                Đang hiển thị 4 / 4 khoa đào tạo toàn trường
+              </div>
+              <div style="display: flex; gap: 4px;" id="pagination-controls">
+                <button class="btn btn-outline-primary btn-sm" id="btn-prev-page" disabled>Trước</button>
+                <button class="btn btn-outline-primary btn-sm" id="btn-next-page" disabled>Sau</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        let activeSemId = '2026_2027_HK1';
+        try {
+          const semRes = await (window.CommonApi ? CommonApi.getCurrentSemester() : ApiClient.get('/common/current-semester'));
+          if (semRes && semRes.success && semRes.data) {
+            const sem = semRes.data;
+            activeSemId = sem.maHocKy;
+            const subEl = document.getElementById('dashboard-current-semester-subtitle');
+            if (subEl) {
+              const semName = sem.tenHocKy === 'HOCKY1' ? 'Học kỳ 1' : (sem.tenHocKy === 'HOCKY2' ? 'Học kỳ 2' : sem.tenHocKy || 'Học kỳ 1');
+              const yearStr = sem.maHocKy ? sem.maHocKy.substring(0, 9).replace('_', '-') : '2026-2027';
+              subEl.textContent = `BẢNG ĐIỀU HÀNH ĐÀO TẠO TOÀN TRƯỜNG - ${semName.toUpperCase()} (${yearStr.replace('-', ' - ')})`;
+            }
+          }
+        } catch (semErr) {
+          console.warn('Lỗi lấy học kỳ hiện hành:', semErr);
+        }
+
+        const res = await HeadOfficeApi.getStatistics(activeSemId);
+        if (res && res.success && res.data) {
+          const d = res.data;
+          const totalStudents = d.tongSinhVienToanTruong ?? d.tongSinhVien ?? d.totalStudents ?? 0;
+          const totalLecturers = d.tongGiangVien ?? d.totalLecturers ?? 0;
+          const totalCourses = d.tongHocPhanToanTruong ?? d.totalCourses ?? 0;
+          const regRate = d.tyLeHoanThanhDKHP ?? 98.5;
+
+          document.getElementById('stat-students').textContent = Number(totalStudents).toLocaleString('vi-VN');
+          document.getElementById('stat-lecturers').textContent = Number(totalLecturers).toLocaleString('vi-VN');
+          document.getElementById('stat-courses').textContent = totalCourses;
+          document.getElementById('stat-rate').textContent = regRate + '%';
+
+          const tbody = document.getElementById('faculty-tbody');
+          let faculties = Array.isArray(d.thongKeKhoa) ? d.thongKeKhoa : [];
+          if (faculties.length === 0 && d.sinhVienTheoKhoa && typeof d.sinhVienTheoKhoa === 'object') {
+            faculties = Object.entries(d.sinhVienTheoKhoa).map(([k, v]) => ({
+              tenKhoa: k,
+              maKhoa: k,
+              soLop: 15,
+              soSVDK: v,
+              tyLe: 95
+            }));
+          }
+
+          if (faculties.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-muted);">Không có dữ liệu phân bố khoa</td></tr>';
+          } else {
+            let html = '';
+            faculties.forEach((item, idx) => {
+              const svdk = item.soSVDK || 0;
+              html += `
+                <tr>
+                  <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
+                  <td><strong style="color: #002D4F;">${item.tenKhoa}</strong> <span style="font-size: 11px; color: var(--text-muted);">(${item.maKhoa || ''})</span></td>
+                  <td style="text-align: center; font-weight: 600;">${item.soLop || 15} lớp</td>
+                  <td style="text-align: center; font-weight: 700; color: #0284C7;">${Number(svdk).toLocaleString('vi-VN')}</td>
+                  <td>
+                    <div class="progress-bar-bg">
+                      <div class="progress-bar-fill" style="width: ${item.tyLe || 95}%;"></div>
+                    </div>
+                  </td>
+                  <td style="text-align: center;">
+                    <span style="font-weight: 700; color: #107C41; font-size: 13px;">${item.tyLe || 95}%</span>
+                  </td>
+                </tr>
+              `;
+            });
+            tbody.innerHTML = html;
+          }
+        }
+      } catch (e) {
+        console.error('Lỗi nạp Dashboard:', e);
+      }
+    });
+  </script>
+  <script src="../../js/user-menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng tin thông báo - Hệ thống quản lý học vụ</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    /* MODAL XEM CHI TIẾT THÔNG BÁO */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.48);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-card {
+      background: #FFFFFF;
+      border-radius: var(--radius-sm);
+      width: 90%;
+      max-width: 640px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { transform: translateY(12px) scale(0.98); }
+      to { transform: translateY(0) scale(1); }
+    }
+    .modal-header {
+      background: #6ec2f7;
+      color: #00365D;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 54, 93, 0.1);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: #00365D;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .modal-close-btn:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+    .modal-body {
+      padding: 18px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .modal-footer {
+      padding: 10px 18px;
+      background: #F8FAFC;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- SIDEBAR GLASSMORPHISM #9fd7f9 -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+
+        <!-- Profile Widget sinh viên Glassmorphism -->
+        <div class="sidebar-profile">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_01.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Nguyen+An&background=0284C7&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Nguyen Van An">Nguyen Van An</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">SV: SV001</div>
+            <div class="sidebar-user-status" id="sidebar-user-status">● Đang học</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">HỌC VỤ SINH VIÊN</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link active">
+              <span class="material-symbols-outlined">campaign</span>
+              <span>Bảng tin thông báo</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link ">
+              <span class="material-symbols-outlined">person</span>
+              <span>Thông tin cá nhân</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="student-schedule.html" class="nav-link ">
+              <span class="material-symbols-outlined">calendar_month</span>
+              <span>Thời khóa biểu</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="my-classes.html" class="nav-link ">
+              <span class="material-symbols-outlined">school</span>
+              <span>Lớp học phần của tôi</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="course-registration.html" class="nav-link ">
+              <span class="material-symbols-outlined">app_registration</span>
+              <span>Đăng ký học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="transcript.html" class="nav-link ">
+              <span class="material-symbols-outlined">fact_check</span>
+              <span>Xem điểm học phần</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <!-- TOPBAR HỆ THỐNG QUẢN LÝ HỌC VỤ -->
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0284C7;">school</span>
+          HỆ THỐNG QUẢN LÝ HỌC VỤ
+        </div>
+        <div class="topbar-actions">
+          
+          <div style="display: flex; align-items: center; gap: 7px; cursor: pointer;">
+            <img src="https://ui-avatars.com/api/?name=Bui+Duy&background=0284C7&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">Nguyen Van An</span>
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="page-banner">
+          <span class="material-symbols-outlined" style="font-size: 15px;">campaign</span>
+          BẢNG TIN THÔNG BÁO HỌC VỤ
+        </div>
+
+                <div class="hocvu-card">
+          <div class="hocvu-card-body">
+            <!-- Tabs: THÔNG BÁO CHUNG & THÔNG BÁO CÁ NHÂN -->
+            <div class="hocvu-tabs">
+              <div class="hocvu-tab-item active" id="tab-chung" onclick="setTab('chung')">
+                <span class="material-symbols-outlined" style="font-size: 15px; vertical-align: -2px;">public</span>
+                THÔNG BÁO CHUNG (<span id="count-chung">5</span>)
+              </div>
+              <div class="hocvu-tab-item" id="tab-canhan" onclick="setTab('canhan')">
+                <span class="material-symbols-outlined" style="font-size: 15px; vertical-align: -2px;">person</span>
+                THÔNG BÁO CÁ NHÂN (<span id="count-canhan">3</span>)
+              </div>
+            </div>
+
+            <!-- Search Bar Compact -->
+            <div class="filter-bar" style="margin-bottom: 12px;">
+              <div class="search-input-wrap" style="width: 340px;">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm theo tiêu đề hoặc người gửi...">
+              </div>
+              <div style="margin-left: auto; font-size: 11.5px; color: var(--text-muted);">
+                Hiển thị <strong id="shown-count" style="color: #0284C7;">5</strong> thông báo
+              </div>
+            </div>
+
+            <!-- Table Header #6ec2f7 (ThongBao: tieuDe, phamVi / nguoiGui, ngayTao) -->
+            <div class="hocvu-table-responsive">
+              <table class="hocvu-table">
+                <thead>
+                  <tr>
+                    <th style="width: 58%;">Tiêu đề</th>
+                    <th style="width: 24%;">Người gửi / Phạm vi</th>
+                    <th style="width: 18%; text-align: right;">Thời gian gửi</th>
+                  </tr>
+                </thead>
+                <tbody id="notif-tbody">
+                  <!-- Rendered dynamically via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL XEM CHI TIẾT THÔNG BÁO -->
+  <div class="modal-overlay" id="notif-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">article</span>
+          <span id="m-title-header">Chi tiết thông báo học vụ</span>
+        </div>
+        <button class="modal-close-btn" id="m-close-x">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4 id="m-tieu-de" style="color: #00365D; font-size: 14px; font-weight: 700; margin-bottom: 12px; line-height: 1.4;">--</h4>
+        <div style="background: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: var(--radius-xs); padding: 10px 12px; margin-bottom: 14px; font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>• <strong>Người gửi:</strong> <span id="m-nguoi-gui" style="color: #0284C7; font-weight: 600;">--</span></div>
+          <div>• <strong>Thời gian:</strong> <span id="m-ngay-tao" style="color: var(--text-muted);">--</span></div>
+          <div>• <strong>Phạm vi:</strong> <span id="m-pham-vi">--</span></div>
+          <div>• <strong>Mã thông báo:</strong> <span id="m-id" style="font-family: monospace;">--</span></div>
+        </div>
+        <div style="font-size: 12.5px; line-height: 1.6; color: var(--text-main); white-space: pre-line;" id="m-noi-dung">
+          --
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" id="m-close-btn">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script src="../../js/user-menu.js"></script>
+  <script>
+    let allNotifications = [];
+    let currentTab = 'chung';
+
+    function normalizeStr(str) {
+      return (str || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/đ/g, 'd');
+    }
+
+    function formatDateTime(dtStr) {
+      if (!dtStr) return '--';
+      try {
+        const d = new Date(dtStr);
+        if (isNaN(d.getTime())) return dtStr;
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      } catch(e) {
+        return dtStr;
+      }
+    }
+
+    function setTab(tab) {
+      currentTab = tab;
+      document.getElementById('tab-chung').classList.toggle('active', tab === 'chung');
+      document.getElementById('tab-canhan').classList.toggle('active', tab === 'canhan');
+      renderTable();
+    }
+
+    function renderTable() {
+      const q = normalizeStr(document.getElementById('search-input').value.trim());
+      const tbody = document.getElementById('notif-tbody');
+      tbody.innerHTML = '';
+
+      const filtered = allNotifications.filter(item => {
+        const isChung = item.phamVi === 'TOAN_TRUONG' || !item.phamVi;
+        const matchTab = (currentTab === 'chung') ? isChung : !isChung;
+        const matchSearch = !q || normalizeStr(item.tieuDe).includes(q) || normalizeStr(item.noiDung).includes(q);
+        return matchTab && matchSearch;
+      });
+
+      document.getElementById('shown-count').textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 24px;">Không tìm thấy thông báo nào phù hợp.</td></tr>';
+        return;
+      }
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        const isWarning = item.tieuDe && (item.tieuDe.includes('Cảnh báo') || item.tieuDe.includes('nhắc nhở'));
+        const sender = item.nguoiGui || 'Phòng Đào tạo';
+        const scope = item.phamVi === 'TOAN_TRUONG' ? 'Toàn trường' : (item.phamVi === 'KHOA' ? 'Khoa CNTT' : 'Cá nhân');
+
+        tr.innerHTML = `
+          <td>
+            <a href="javascript:void(0)" onclick="openNotifModal(${item.maThongBao})" style="color: ${isWarning ? '#DC2626' : '#00365D'}; font-weight: 600; text-decoration: none;">
+              ${item.tieuDe}
+            </a>
+          </td>
+          <td>
+            <span style="color: ${isWarning ? '#DC2626' : '#0284C7'}; font-weight: 600;">${sender}</span>
+            <span style="font-size: 10px; color: var(--text-muted); margin-left: 4px;">(${scope})</span>
+          </td>
+          <td style="text-align: right; color: var(--text-muted);">${formatDateTime(item.ngayTao)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal view
+    const modal = document.getElementById('notif-modal');
+    const closeX = document.getElementById('m-close-x');
+    const closeBtn = document.getElementById('m-close-btn');
+
+    window.openNotifModal = function(id) {
+      const n = allNotifications.find(x => x.maThongBao === id);
+      if (!n) return;
+      document.getElementById('m-tieu-de').textContent = n.tieuDe;
+      document.getElementById('m-nguoi-gui').textContent = n.nguoiGui || 'Phòng Đào tạo';
+      document.getElementById('m-ngay-tao').textContent = formatDateTime(n.ngayTao);
+      document.getElementById('m-pham-vi').textContent = n.phamVi === 'TOAN_TRUONG' ? 'Toàn trường' : (n.phamVi === 'KHOA' ? 'Khoa CNTT' : 'Cá nhân');
+      document.getElementById('m-id').textContent = 'TB-' + n.maThongBao;
+      document.getElementById('m-noi-dung').textContent = n.noiDung;
+      modal.classList.add('open');
+    };
+
+    function closeModal() {
+      modal.classList.remove('open');
+    }
+
+    if (closeX) closeX.addEventListener('click', closeModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+      });
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal && modal.classList.contains('open')) closeModal();
+    });
+
+    document.getElementById('search-input').addEventListener('input', renderTable);
+
+    async function loadNotifications() {
+      const tbody = document.getElementById('notif-tbody');
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--text-muted);">Đang tải thông báo từ hệ thống...</td></tr>';
+
+      try {
+        const res = await NotificationApi.getNotifications(1, 50);
+        if (res && res.success && res.data) {
+          allNotifications = Array.isArray(res.data) ? res.data : (res.data.items || []);
+          
+          let countChung = 0;
+          let countCaNhan = 0;
+          allNotifications.forEach(item => {
+            if (item.phamVi === 'TOAN_TRUONG' || !item.phamVi) countChung++;
+            else countCaNhan++;
+          });
+
+          document.getElementById('count-chung').textContent = countChung;
+          document.getElementById('count-canhan').textContent = countCaNhan;
+        } else {
+          allNotifications = [];
+        }
+      } catch (err) {
+        console.error('Lỗi khi tải thông báo:', err);
+        allNotifications = [];
+      }
+
+      renderTable();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadNotifications);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Temp & Archives
+.scripts_archive/
+*.tmp
+temp_*
+scratch/
+
+# Ignore unnecessary asset packages
+assets/images/
+
+# Ignore unnecessary docs (only push database_backend_changes.md)
+docs/bug-reports/
+docs/specifications/
+docs/dev-notes/

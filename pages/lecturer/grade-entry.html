@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhập điểm học phần - Cổng Giảng viên</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .class-info-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .class-info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .class-info-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .class-info-val {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #002D4F;
+    }
+    .grade-input {
+      width: 72px;
+      height: 30px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 13px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      outline: none;
+      background: #FFFFFF;
+      box-sizing: border-box;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .grade-input:focus {
+      border-color: #0D9488;
+      box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="schedule.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+        <a href="profile.html" class="sidebar-profile" style="text-decoration: none;">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nu_01.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Tran+Binh&background=854D0E&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Tran Thi Binh">Tran Thi Binh</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV001</div>
+            <div class="sidebar-user-status" id="sidebar-user-status" style="color: #B45309;">● Giảng viên khoa CNTT</div>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <div class="nav-section-title">BÀN LÀM VIỆC</div>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link">
+              <span class="material-symbols-outlined">person</span>
+              <span>Hồ sơ cán bộ</span>
+            </a>
+          </li>
+
+          <div class="nav-section-title">QUẢN LÝ GIẢNG DẠY</div>
+          <li class="nav-item">
+            <a href="schedule.html" class="nav-link">
+              <span class="material-symbols-outlined">calendar_month</span>
+              <span>Lịch giảng dạy</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="grade-entry.html" class="nav-link active">
+              <span class="material-symbols-outlined">grading</span>
+              <span>Nhập điểm học phần</span>
+            </a>
+          </li>
+
+          </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #B45309;">grading</span>
+          QUẢN LÝ GIẢNG DẠY & NHẬP ĐIỂM HỌC PHẦN (UC02)
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm" onclick="window.print()" style="display: flex; align-items: center; gap: 5px;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">print</span>
+            <span>In bảng điểm</span>
+          </button>
+          <a href="profile.html" style="display: flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;">
+            <img src="https://ui-avatars.com/api/?name=Tran+Binh&background=854D0E&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">TS. Trần Thị Bình</span>
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="print-only-header">
+          <div style="text-align: center; margin-bottom: 12px;">
+            <div style="font-size: 12pt; font-weight: 700; text-transform: uppercase;">HỆ THỐNG QUẢN LÝ HỌC VỤ</div>
+            <div style="font-size: 11pt; font-weight: 700;">KHOA CÔNG NGHỆ THÔNG TIN - BỘ MÔN KỸ NGHỆ PHẦN MỀM</div>
+            <div style="font-size: 13pt; font-weight: 700; margin-top: 6px; color: #002D4F;" id="print-class-title">BẢNG ĐIỂM TỔNG KẾT LỚP HỌC PHẦN</div>
+          </div>
+        </div>
+
+        <div class="page-banner">
+          <span class="material-symbols-outlined" style="font-size: 18px;">grading</span>
+          <span>SỔ ĐIỂM ĐIỆN TỬ & TÍNH ĐIỂM TỔNG KẾT HỌC PHẦN TỰ ĐỘNG (UC02)</span>
+        </div>
+
+        <!-- THANH CHỌN LỚP HỌC PHẦN GIẢNG DẠY -->
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label style="font-size: 12px; font-weight: 700; color: #002D4F;">Chọn lớp học phần:</label>
+            <select id="select-class" class="form-control" style="width: 320px; font-size: 12.5px; height: 34px; font-weight: 600;">
+              <option value="">Đang tải danh sách lớp...</option>
+            </select>
+
+            <!-- Search box chuẩn không out icon -->
+            <div class="search-input-wrap" style="width: 240px;">
+              <span class="material-symbols-outlined">search</span>
+              <input type="text" id="input-search" class="search-input" placeholder="Tìm MSSV, tên sinh viên..." />
+            </div>
+          </div>
+
+          </div>
+        <!-- THẺ TỔNG QUAN THÔNG TIN LỚP HỌC PHẦN -->
+        <div class="class-info-card">
+          <div class="class-info-item">
+            <span class="class-info-lbl">Mã & Tên học phần</span>
+            <span class="class-info-val" id="info-tenHP">...</span>
+          </div>
+          <div class="class-info-item">
+            <span class="class-info-lbl">Mã LHP & Lớp SV</span>
+            <span class="class-info-val" id="info-maLHP">...</span>
+          </div>
+          <div class="class-info-item">
+            <span class="class-info-lbl">Số tín chỉ</span>
+            <span class="class-info-val" id="info-soTC">...</span>
+          </div>
+          <div class="class-info-item">
+            <span class="class-info-lbl">Lịch giảng dạy</span>
+            <span class="class-info-val" id="info-lichDay">...</span>
+          </div>
+          <div class="class-info-item">
+            <span class="class-info-lbl">Sĩ số lớp</span>
+            <span class="class-info-val" id="info-siSo" style="color: #0D9488;">...</span>
+          </div>
+          <div class="class-info-item">
+            <span class="class-info-lbl">Trọng số tính điểm</span>
+            <span class="class-info-val" style="color: #B45309;">Quá trình 40% - Cuối kỳ 60%</span>
+          </div>
+        </div>
+
+        <!-- BẢNG NHẬP ĐIỂM TRONG KHUNG .HOCVU-CARD CHUẨN DESIGN STUDENT -->
+        <form id="form-grades">
+          <div class="hocvu-card" style="margin-bottom: 20px;">
+            <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="hocvu-card-title">
+                <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">fact_check</span>
+                <span>DANH SÁCH SINH VĂN & SỔ ĐIỂM CHI TIẾT</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted);" id="table-info">Đang tải danh sách...</div>
+            </div>
+
+            <div class="hocvu-card-body" style="padding: 0;">
+              <div class="hocvu-table-responsive" style="border: none;">
+                <table class="hocvu-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 45px; text-align: center;">STT</th>
+                      <th style="width: 100px;">MSSV</th>
+                      <th>Họ và tên sinh viên</th>
+                      <th style="width: 105px;">Lớp SV</th>
+                      <th style="width: 85px; text-align: center;" title="Số buổi vắng trong CSDL">Vắng<br><span style="font-weight: 400; font-size: 10.5px;">(buổi)</span></th>
+                      <th style="width: 105px; text-align: center;">Quá trình<br><span style="font-weight: 400; font-size: 10.5px;">(Hệ số 0.4)</span></th>
+                      <th style="width: 105px; text-align: center;">Cuối kỳ<br><span style="font-weight: 400; font-size: 10.5px;">(Hệ số 0.6)</span></th>
+                      <th style="width: 95px; text-align: center;">Tổng kết<br><span style="font-weight: 400; font-size: 10.5px;">(Tự động tính)</span></th>
+                      <th style="width: 80px; text-align: center;">Điểm chữ</th>
+                      <th style="width: 95px; text-align: center;">Kết quả</th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody id="grades-tbody">
+                    <tr><td colspan="10" style="text-align: center; padding: 25px;">Đang tải sổ điểm...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
+                <div id="footer-status" style="color: var(--text-muted);">
+                  Quy chế học vụ: Tổng kết = (QT × 0.4) + (CK × 0.6). Sinh viên vắng trên 3 buổi (> 3) sẽ tự động bị Cấm thi (Điểm F).
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" id="btn-export-excel" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 6px; color: #107C41; border-color: #107C41; font-weight: 600; cursor: pointer; padding: 6px 14px;">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
+                    <span>Xuất file điểm</span>
+                  </button>
+                  <button type="submit" id="btn-save-grades" class="btn btn-primary btn-sm" style="background: #0D9488; border-color: #0D9488; display: flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; padding: 6px 16px;">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                    <span>Lưu bảng điểm lớp</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script>
+    let currentStudents = [];
+    let currentLHP = '';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const selectClass = document.getElementById('select-class');
+      const tbody = document.getElementById('grades-tbody');
+      const searchInput = document.getElementById('input-search');
+      const tableInfo = document.getElementById('table-info');
+
+      // Tải danh sách lớp giảng dạy của giảng viên
+      try {
+        const resClasses = await LecturerApi.getTeachingClasses();
+        if (resClasses && resClasses.data && resClasses.data.length > 0) {
+          selectClass.innerHTML = resClasses.data.map(c => `
+            <option value="${c.maLHP}">
+              ${c.maLHP} - ${c.tenHP} (${c.tenLHP || c.maLHP}) [${c.khoaDiem ? 'Đã khóa điểm' : 'Đang mở'}]
+            </option>
+          `).join('');
+
+          currentLHP = resClasses.data[0].maLHP;
+          await loadGradeSheet(currentLHP);
+        } else {
+          selectClass.innerHTML = '<option value="">Không có lớp giảng dạy</option>';
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:20px;">Không có lớp học phần nào</td></tr>';
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      selectClass.addEventListener('change', async () => {
+        currentLHP = selectClass.value;
+        if (currentLHP) await loadGradeSheet(currentLHP);
+      });
+
+      async function loadGradeSheet(maLHP) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:25px;">Đang tải sổ điểm...</td></tr>';
+        const res = await LecturerApi.getClassGradeSheet(maLHP);
+        if (!res || !res.success || !res.data) {
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:red; padding:20px;">Lỗi tải sổ điểm</td></tr>';
+          return;
+        }
+
+        const selectedOption = selectClass.options[selectClass.selectedIndex];
+        const classLabel = selectedOption ? selectedOption.text : maLHP;
+
+        document.getElementById('info-tenHP').textContent = classLabel;
+        document.getElementById('info-maLHP').textContent = maLHP;
+        document.getElementById('info-soTC').textContent = '3 tín chỉ';
+        document.getElementById('info-siSo').textContent = (res.meta?.siSoHienTai || (Array.isArray(res.data) ? res.data.length : 0)) + ' sinh viên';
+        document.getElementById('print-class-title').textContent = `BẢNG ĐIỂM TỔNG KẾT - ${maLHP}`;
+
+        currentStudents = Array.isArray(res.data) ? res.data : (res.data.students || []);
+        tableInfo.textContent = `Tổng cộng: ${currentStudents.length} sinh viên`;
+        renderTable();
+      }
+
+      function calculateGrade(qt, ck, vang) {
+        const v = Math.max(0, parseInt(vang) || 0);
+
+        // NẾU VẮNG TRÊN 3 BUỔI (> 3) -> CẤM THI
+        if (v > 3) {
+          return {
+            tk: '0.00',
+            chu: 'F',
+            kq: 'Cấm thi',
+            isCamThi: true,
+            isDat: false,
+            defaultNote: `Cấm thi (Vắng ${v} buổi > 3)`
+          };
+        }
+
+        // QUAN TRỌNG: NẾU ĐIỂM CHƯA NHẬP (NULL HOẶC RỖNG) -> KHÔNG ĐƯỢC BÁO F KHÔNG ĐẠT
+        if (qt === null || qt === undefined || qt === '' || ck === null || ck === undefined || ck === '') {
+          return {
+            tk: '--',
+            chu: '--',
+            kq: 'Chưa nhập đủ',
+            isCamThi: false,
+            isDat: false
+          };
+        }
+
+        const qtn = Number(qt);
+        const ckn = Number(ck);
+        const tk = Math.round((qtn * 0.4 + ckn * 0.6) * 100) / 100;
+
+        let chu = 'F';
+        let kq = 'Không đạt';
+        if (tk >= 9.0) { chu = 'A+'; kq = 'Đạt'; }
+        else if (tk >= 8.5) { chu = 'A'; kq = 'Đạt'; }
+        else if (tk >= 8.0) { chu = 'B+'; kq = 'Đạt'; }
+        else if (tk >= 7.0) { chu = 'B'; kq = 'Đạt'; }
+        else if (tk >= 6.5) { chu = 'C+'; kq = 'Đạt'; }
+        else if (tk >= 5.5) { chu = 'C'; kq = 'Đạt'; }
+        else if (tk >= 5.0) { chu = 'D+'; kq = 'Đạt'; }
+        else if (tk >= 4.0) { chu = 'D'; kq = 'Đạt'; }
+        return { tk: tk.toFixed(2), chu, kq, isCamThi: false, isDat: kq === 'Đạt' };
+      }
+
+      function renderTable() {
+        const kw = (searchInput.value || '').trim().toLowerCase();
+        let list = currentStudents;
+        if (kw) {
+          list = list.filter(s => s.maSV.toLowerCase().includes(kw) || s.hoTen.toLowerCase().includes(kw));
+        }
+
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:25px; color:var(--text-muted);">Không tìm thấy sinh viên phù hợp</td></tr>';
+          return;
+        }
+
+        let html = '';
+        list.forEach((s, idx) => {
+          const vangVal = s.soBuoiVang !== undefined ? s.soBuoiVang : 0;
+          const res = calculateGrade(s.diemQuaTrinh, s.diemCuoiKy, vangVal);
+          const isCamThi = res.isCamThi;
+          const isDat = res.isDat;
+
+          html += `
+            <tr data-masv="${s.maSV}">
+              <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
+              <td><strong style="color: #0284C7;">${s.maSV}</strong></td>
+              <td><div style="font-weight: 600; color: #002D4F;">${s.hoTen}</div></td>
+              <td><span style="font-size: 12px;">${s.lopSV || s.lopDanhNghia || 'CNTT-K26'}</span></td>
+              <td style="text-align: center;">
+                <input type="number" min="0" max="30" class="grade-input input-vang" 
+                       style="width: 55px; ${vangVal > 3 ? 'border-color:#DC2626; color:#DC2626; font-weight:700; background:#FEF2F2;' : ''}" 
+                       value="${vangVal}" data-field="soBuoiVang" title="Số buổi vắng. Vắng > 3 buổi sẽ tự động cấm thi" />
+              </td>
+              <td style="text-align: center;">
+                <input type="number" step="0.1" min="0" max="10" required class="grade-input input-qt" style="width: 75px;" value="${s.diemQuaTrinh != null ? s.diemQuaTrinh : ''}" data-field="diemQuaTrinh" title="Điểm quá trình (Hệ số 0.4)" />
+              </td>
+              <td style="text-align: center;">
+                <input type="number" step="0.1" min="0" max="10" required class="grade-input input-ck" style="width: 75px;" value="${s.diemCuoiKy != null ? s.diemCuoiKy : ''}" data-field="diemCuoiKy" title="Điểm cuối kỳ (Hệ số 0.6)" />
+              </td>
+              <td style="text-align: center;">
+                <strong class="grade-tk" style="font-size: 13.5px; color: ${isDat ? '#002D4F' : '#DC2626'};">${res.tk}</strong>
+              </td>
+              <td style="text-align: center;">
+                <span class="grade-chu" style="font-weight: 700; color: ${isDat ? '#0D9488' : '#DC2626'}; font-size: 12.5px;">${res.chu}</span>
+              </td>
+              <td style="text-align: center;">
+                <span class="grade-kq" style="font-weight: 700; font-size: 12px; color: ${isCamThi ? '#DC2626' : (isDat ? '#107C41' : '#B45309')}; background: ${isCamThi ? '#FEE2E2' : 'transparent'}; padding: ${isCamThi ? '3px 8px' : '0'}; border-radius: 4px; display: inline-block;">${res.kq}</span>
+              </td>
+            </tr>
+          `;
+        });
+
+        tbody.innerHTML = html;
+
+        // Bắt sự kiện thay đổi điểm hoặc số buổi vắng để tự động tính kết quả real-time
+        tbody.querySelectorAll('input.grade-input').forEach(inp => {
+          inp.addEventListener('input', (e) => {
+            const tr = e.target.closest('tr');
+            const maSV = tr.getAttribute('data-masv');
+            const vangInp = tr.querySelector('.input-vang');
+            const vang = Math.max(0, parseInt(vangInp.value) || 0);
+            const qt = tr.querySelector('.input-qt').value;
+            const ck = tr.querySelector('.input-ck').value;
+            const noteInp = tr.querySelector('.input-note');
+
+            const res = calculateGrade(qt, ck, vang);
+            tr.querySelector('.grade-tk').textContent = res.tk;
+            tr.querySelector('.grade-chu').textContent = res.chu;
+            
+            const kqEl = tr.querySelector('.grade-kq');
+            kqEl.textContent = res.kq;
+
+            // Highlight ô vắng nếu > 3
+            if (vang > 3) {
+              vangInp.style.borderColor = '#DC2626';
+              vangInp.style.color = '#DC2626';
+              vangInp.style.fontWeight = '700';
+              vangInp.style.background = '#FEF2F2';
+              
+              kqEl.style.color = '#DC2626';
+              kqEl.style.background = '#FEE2E2';
+              kqEl.style.padding = '3px 8px';
+              kqEl.style.borderRadius = '4px';
+            } else {
+              vangInp.style.borderColor = 'var(--border-subtle)';
+              vangInp.style.color = 'inherit';
+              vangInp.style.fontWeight = '600';
+              vangInp.style.background = '#FFFFFF';
+
+              kqEl.style.background = 'transparent';
+              kqEl.style.padding = '0';
+              kqEl.style.color = res.isDat ? '#107C41' : '#B45309';
+            }
+
+            const isDat = res.isDat;
+            tr.querySelector('.grade-tk').style.color = isDat ? '#002D4F' : '#DC2626';
+            tr.querySelector('.grade-chu').style.color = isDat ? '#0D9488' : '#DC2626';
+
+            // Cập nhật lại vào mảng currentStudents
+            const stItem = currentStudents.find(s => s.maSV === maSV);
+            if (stItem) {
+              stItem.soBuoiVang = vang;
+              stItem.diemQuaTrinh = Number(qt) || 0;
+              stItem.diemCuoiKy = Number(ck) || 0;
+              stItem.tongKet = Number(res.tk);
+              stItem.diemChu = res.chu;
+              stItem.ketQua = res.kq;
+            }
+          });
+        });
+      }
+
+      searchInput.addEventListener('input', renderTable);
+
+      // Xử lý nút Xuất file điểm ở cuối trang
+      const exportBtn = document.getElementById('btn-export-excel');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+          if (!currentStudents || currentStudents.length === 0) {
+            alert('Không có dữ liệu sinh viên để xuất file!');
+            return;
+          }
+
+          let csvContent = '\uFEFFHỆ THỐNG QUẢN LÝ HỌC VỤ\nBẢNG ĐIỂM LỚP HỌC PHẦN: ' + (currentLHP || '') + '\nSTT,Mã sinh viên,Họ và tên,Lớp SV,Số buổi vắng,Điểm quá trình,Điểm cuối kỳ,Điểm tổng kết,Điểm chữ,Kết quả\n';
+          currentStudents.forEach((s, idx) => {
+            const vangVal = s.soBuoiVang !== undefined ? s.soBuoiVang : 0;
+            const res = calculateGrade(s.diemQuaTrinh, s.diemCuoiKy, vangVal);
+            csvContent += `"${idx + 1}","${s.maSV}","${s.hoTen}","${s.lopSV}","${vangVal}","${s.diemQuaTrinh}","${s.diemCuoiKy}","${res.tk}","${res.chu}","${res.kq}"\n`;
+          });
+
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `BangDiem_${currentLHP || 'LopHocPhan'}_${new Date().toISOString().slice(0, 10)}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          if (window.ApiClient && ApiClient.showToast) {
+            ApiClient.showToast('success', 'Xuất file thành công', `Đã xuất và tải về bảng điểm lớp ${currentLHP}.`);
+          } else {
+            alert(`Đã xuất và tải về bảng điểm lớp ${currentLHP} thành công!`);
+          }
+        });
+      }
+
+      // Lưu bảng điểm lớp
+      document.getElementById('form-grades').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+
+
+        const payload = currentStudents.map(s => ({ maSV: s.maSV, diemQuaTrinh: s.diemQuaTrinh != null ? Number(s.diemQuaTrinh) : null, diemCuoiKy: s.diemCuoiKy != null ? Number(s.diemCuoiKy) : null }));
+        const res = await LecturerApi.saveClassGrades(currentLHP, payload);
+        if (res && res.success) {
+          ApiClient.showToast('success', 'Lưu thành công', `Đã lưu và cập nhật điểm lớp ${currentLHP} vào hệ thống.`);
+          await loadGradeSheet(currentLHP);
+        }
+      });
+    });
+  </script>
+  <script src="../../js/user-menu.js"></script>
+</body>
+</html>

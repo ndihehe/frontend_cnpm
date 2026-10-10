@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#018486" />
+      <stop offset="100%" stop-color="#005658" />
+    </linearGradient>
+  </defs>
+  <!-- Shield Background -->
+  <path d="M 50 5 L 88 18 C 88 58 50 92 50 92 C 50 92 12 58 12 18 Z" fill="url(#primaryGrad)" />
+  <!-- Inner Shield Border -->
+  <path d="M 50 11 L 82 22 C 82 55 50 84 50 84 C 50 84 18 55 18 22 Z" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.4" />
+  <!-- Mortarboard Cap -->
+  <polygon points="50,26 74,38 50,48 26,38" fill="#ffffff" />
+  <path d="M 33 43 L 33 54 C 33 60 67 60 67 54 L 67 43" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+  <!-- Tassel -->
+  <path d="M 70 37 L 76 46 L 76 56" fill="none" stroke="#f36f21" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Open Book -->
+  <path d="M 50 63 C 44 60 36 60 30 62 L 30 74 C 36 72 44 72 50 75 C 56 72 64 72 70 74 L 70 62 C 64 60 56 60 50 63 Z" fill="#ffffff" />
+  <line x1="50" y1="63" x2="50" y2="75" stroke="#018486" stroke-width="2" />
+</svg>

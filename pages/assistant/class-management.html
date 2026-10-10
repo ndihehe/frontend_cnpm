@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Lớp học phần - Giáo vụ khoa</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .filter-bar {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 14px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .filter-group { display: flex; align-items: center; gap: 10px; }
+    .btn-action-icon {
+      background: none; border: 1px solid var(--border-subtle); border-radius: 6px;
+      width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-action-icon:hover { background: #F0F9FF; border-color: #0284C7; color: #0284C7; }
+    .btn-action-icon.danger:hover { background: #FEF2F2; border-color: #DC2626; color: #DC2626; }
+
+    /* Chữ trạng thái - KHÔNG FRAME KHÔNG BACKGROUND */
+    .status-text-active { color: #107C41; font-weight: 600; }
+    .status-text-full { color: #DC2626; font-weight: 600; }
+    .status-text-closed { color: #6B7280; font-weight: 600; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .modal-dialog {
+      background: #FFFFFF; border-radius: 10px; width: 95%; max-width: 580px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); overflow: hidden;
+    }
+    .modal-header {
+      background: #F0F9FF; padding: 14px 20px; border-bottom: 1px solid #BAE6FD;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: 14px; font-weight: 700; color: #002D4F; display: flex; align-items: center; gap: 8px; }
+    .modal-body { padding: 18px 20px; max-height: 75vh; overflow-y: auto; }
+    .modal-footer { padding: 12px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: flex-end; gap: 10px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+        <a href="profile.html" class="sidebar-profile" style="text-decoration: none;">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Le Van Cuong">Le Van Cuong</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV002</div>
+            <div class="sidebar-user-status" id="sidebar-user-status" style="color: #0284C7;">● Giáo vụ khoa CNTT</div>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <div class="nav-section-title">BÀN LÀM VIỆC</div>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <span class="material-symbols-outlined">dashboard</span>
+              <span>Tổng quan giáo vụ</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link">
+              <span class="material-symbols-outlined">person</span>
+              <span>Hồ sơ cán bộ</span>
+            </a>
+          </li>
+          <div class="nav-section-title">QUẢN LÝ ĐÀO TẠO</div>
+          <li class="nav-item">
+            <a href="class-management.html" class="nav-link active">
+              <span class="material-symbols-outlined">menu_book</span>
+              <span>Quản lý lớp học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="open-registration.html" class="nav-link">
+              <span class="material-symbols-outlined">how_to_reg</span>
+              <span>Cài đặt đợt đăng ký</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-students.html" class="nav-link">
+              <span class="material-symbols-outlined">groups</span>
+              <span>Sinh viên ghi danh lớp</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-requests.html" class="nav-link">
+              <span class="material-symbols-outlined">approval_delegation</span>
+              <span>Duyệt kiến nghị mở lớp</span>
+            </a>
+          </li>
+          </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0284C7;">menu_book</span>
+          QUẢN LÝ DANH SÁCH LỚP HỌC PHẦN & PHÂN CÔNG GIẢNG VIÊN
+        </div>
+        <div class="topbar-actions">
+          
+          <a href="profile.html" style="display: flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;">
+            <img src="https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">ThS. Trần Thị Mai Phương</span>
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="page-banner">
+          <span class="material-symbols-outlined" style="font-size: 18px;">tune</span>
+          <span id="page-banner-title">QUẢN TRỊ LỚP HỌC PHẦN (CRUD)</span>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Học kỳ:</label>
+            <select id="select-semester" class="form-control" style="width: 220px; font-weight: 600;">
+              <option value="">Đang tải danh sách học kỳ...</option>
+            </select>
+
+            <div style="position: relative; width: 280px;">
+              <input type="text" id="input-search" class="form-control" placeholder="Tìm theo tên môn, mã LHP, GV..." style="padding-left: 32px;" />
+              <span class="material-symbols-outlined" style="position: absolute; left: 8px; top: 7px; font-size: 18px; color: var(--text-muted);">search</span>
+            </div>
+          </div>
+
+          <button id="btn-open-create-modal" class="btn btn-primary btn-sm" style="display: flex; align-items: center; gap: 6px;">
+            <span class="material-symbols-outlined" style="font-size: 17px;">add_circle</span>
+            <span>Tạo lớp học phần mới</span>
+          </button>
+        </div>
+
+        <!-- BẢNG ĐẶT VÀO KHUNG CARD CHUẨN STUDENT -->
+        <div class="hocvu-card" style="margin-bottom: 20px;">
+          <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="hocvu-card-title">
+              <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">list_alt</span>
+              <span>DANH SÁCH LỚP HỌC PHẦN TRONG KỲ</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="table-info">Đang tải...</div>
+          </div>
+
+          <div class="hocvu-card-body" style="padding: 0;">
+            <div class="hocvu-table-responsive" style="border: none;">
+              <table class="hocvu-table">
+                <thead>
+                  <tr>
+                    <th style="width: 45px; text-align: center;">STT</th>
+                    <th style="width: 110px;">Mã LHP</th>
+                    <th>Môn học / Lớp</th>
+                    <th style="width: 50px; text-align: center;">TC</th>
+                    <th style="width: 110px;">Thứ - Tiết</th>
+                    <th style="width: 80px; text-align: center;">Phòng</th>
+                    <th>Giảng viên phụ trách</th>
+                    <th style="width: 100px; text-align: center;">Sĩ số</th>
+                    <th style="width: 95px; text-align: center;">Trạng thái</th>
+                    <th style="width: 130px; text-align: center;">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="class-tbody">
+                  <tr><td colspan="10" style="text-align: center; padding: 25px;">Đang tải dữ liệu...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- PHÂN TRANG BÓC TÁCH TỪ GÓI META -->
+            <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
+              <div id="pagination-info" style="color: var(--text-muted);">
+                Đang hiển thị trang 1 / 1 (Tổng 0 lớp)
+              </div>
+              <div style="display: flex; gap: 4px;" id="pagination-controls">
+                <button class="btn btn-outline-primary btn-sm" id="btn-prev-page" disabled>Trước</button>
+                <button class="btn btn-outline-primary btn-sm" id="btn-next-page" disabled>Sau</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: TẠO MỚI LỚP HỌC PHẦN -->
+  <div id="modal-create" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="material-symbols-outlined" style="color: #0284C7;">add_circle</span>
+          <span>TẠO MỚI LỚP HỌC PHẦN</span>
+        </div>
+        <button class="btn-action-icon" onclick="closeModal('modal-create')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Mã lớp học phần (Mã LHP) *</label>
+            <input type="text" id="create-maLHP" class="form-control" placeholder="VD: INT1405_03" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mã học phần *</label>
+            <input type="text" id="create-maHP" class="form-control" placeholder="VD: INT1405" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tên môn học *</label>
+          <input type="text" id="create-tenHP" class="form-control" placeholder="VD: Kỹ nghệ phần mềm" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Số tín chỉ *</label>
+            <input type="number" id="create-soTinChi" class="form-control" value="3" min="1" max="10" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sĩ số tối đa *</label>
+            <input type="number" id="create-siSoToiDa" class="form-control" value="60" min="10" max="120" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Thứ học (2 - 7) *</label>
+            <select id="create-thu" class="form-control">
+              <option value="2">Thứ 2</option>
+              <option value="3">Thứ 3</option>
+              <option value="4">Thứ 4</option>
+              <option value="5">Thứ 5</option>
+              <option value="6">Thứ 6</option>
+              <option value="7">Thứ 7</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tiết bắt đầu *</label>
+            <select id="create-tietBD" class="form-control">
+              <option value="1">Tiết 1 (07:00)</option>
+              <option value="2">Tiết 2 (07:50)</option>
+              <option value="4">Tiết 4 (09:40)</option>
+              <option value="6">Tiết 6 (12:30)</option>
+              <option value="7">Tiết 7 (13:20)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Số tiết *</label>
+            <input type="number" id="create-soTiet" class="form-control" value="3" min="1" max="5" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phòng học *</label>
+            <input type="text" id="create-phongHoc" class="form-control" placeholder="VD: A2-303, Lab-02"  required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Giảng viên giảng dạy</label>
+          <input type="text" id="create-tenGV" class="form-control" placeholder="VD: TS. Trần Thị Bình"  />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-create')">Hủy</button>
+        <button id="btn-submit-create" class="btn btn-primary">Xác nhận tạo lớp</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- MODAL: CHỈNH SỬA LỚP HỌC PHẦN (UC-04) -->
+  <div id="modal-edit" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="material-symbols-outlined" style="color: #0284C7;">edit_note</span>
+          <span>CHỈNH SỬA THÔNG TIN LỚP HỌC PHẦN (UC-04)</span>
+        </div>
+        <button class="btn-action-icon" onclick="closeModal('modal-edit')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Mã lớp học phần</label>
+            <input type="text" id="edit-maLHP" class="form-control" disabled style="background:#F1F5F9; font-weight:700; color:#0284C7;" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mã học phần</label>
+            <input type="text" id="edit-maHP" class="form-control" disabled style="background:#F1F5F9;" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tên môn học</label>
+          <input type="text" id="edit-tenHP" class="form-control" disabled style="background:#F1F5F9; font-weight:600;" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Số tín chỉ *</label>
+            <input type="number" id="edit-soTinChi" class="form-control" min="1" max="10" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sĩ số tối đa *</label>
+            <input type="number" id="edit-siSoToiDa" class="form-control" min="10" max="150" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Thứ học (2 - 7) *</label>
+            <select id="edit-thu" class="form-control">
+              <option value="2">Thứ 2</option>
+              <option value="3">Thứ 3</option>
+              <option value="4">Thứ 4</option>
+              <option value="5">Thứ 5</option>
+              <option value="6">Thứ 6</option>
+              <option value="7">Thứ 7</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tiết bắt đầu *</label>
+            <select id="edit-tietBD" class="form-control">
+              <option value="1">Tiết 1 (07:00)</option>
+              <option value="2">Tiết 2 (07:50)</option>
+              <option value="4">Tiết 4 (09:40)</option>
+              <option value="6">Tiết 6 (12:30)</option>
+              <option value="7">Tiết 7 (13:20)</option>
+              <option value="9">Tiết 9 (15:10)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Số tiết *</label>
+            <input type="number" id="edit-soTiet" class="form-control" min="1" max="5" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phòng học *</label>
+            <input type="text" id="edit-phongHoc" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Giảng viên giảng dạy</label>
+            <input type="text" id="edit-tenGV" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Trạng thái lớp *</label>
+            <select id="edit-trangThai" class="form-control">
+              <option value="CHO_MO">Chờ mở</option>
+              <option value="DANG_MO">Đang mở</option>
+              <option value="DA_KHOA">Đã khóa</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-edit')">Hủy</button>
+        <button id="btn-submit-edit" class="btn btn-primary">Lưu thay đổi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PHÂN CÔNG GIẢNG VIÊN -->
+  <div id="modal-assign" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="material-symbols-outlined" style="color: #0284C7;">person_add</span>
+          <span>PHÂN CÔNG GIẢNG VIÊN GIẢNG DẠY</span>
+        </div>
+        <button class="btn-action-icon" onclick="closeModal('modal-assign')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 12px; margin-bottom: 14px;">
+          <div style="font-size: 13px; font-weight: 700; color: #002D4F;" id="assign-class-name">...</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);" id="assign-class-code">Mã LHP: ...</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Chọn giảng viên phụ trách *</label>
+          <select id="assign-select-gv" class="form-control">
+            <option >TS. Trần Thị Bình (Khoa CNTT)</option>
+            <option value="ThS. Hoàng Minh Tuấn">ThS. Hoàng Minh Tuấn (Khoa CNTT)</option>
+            <option value="ThS. Đặng Thị Mai">ThS. Đặng Thị Mai (Khoa CNTT)</option>
+            <option value="PGS.TS. Nguyễn Văn Hùng">PGS.TS. Nguyễn Văn Hùng (Khoa CNTT)</option>
+            <option value="TS. Vũ Hải Đăng">TS. Vũ Hải Đăng (Khoa CNTT)</option>
+            <option value="TS. Lê Quang Huy">TS. Lê Quang Huy (Khoa CNTT)</option>
+            <option value="ThS. Nguyễn Thị Lan">ThS. Nguyễn Thị Lan (Khoa CNTT)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-assign')">Hủy</button>
+        <button id="btn-submit-assign" class="btn btn-primary">Lưu phân công</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let currentPage = 1;
+      const pageSize = 5;
+      let totalPages = 1;
+
+      const tbody = document.getElementById('class-tbody');
+      const searchInput = document.getElementById('input-search');
+      const semesterSelect = document.getElementById('select-semester');
+      const tableInfo = document.getElementById('table-info');
+      const paginationInfo = document.getElementById('pagination-info');
+      const btnPrevPage = document.getElementById('btn-prev-page');
+      const btnNextPage = document.getElementById('btn-next-page');
+
+      let currentAssignLHP = null;
+    let currentEditLHP = null;
+    let currentLoadedClasses = [];
+
+      async function initSemesters() {
+        function formatSemesterOption(s) {
+          const parts = (s.maHocKy || '').split('_');
+          let label = s.tenHocKy || s.maHocKy;
+          if (parts.length >= 3) {
+            const hkName = parts[2] === 'HK1' ? 'Học kỳ 1' : parts[2] === 'HK2' ? 'Học kỳ 2' : (s.tenHocKy || 'Học kỳ hè');
+            label = `${hkName} (${parts[0]} - ${parts[1]})`;
+          }
+          const isCurrent = s.isCurrent || s.hienHanh;
+          return `<option value="${s.maHocKy}">${label}${isCurrent ? ' [Hiện hành]' : ''}</option>`;
+        }
+        if (window.CommonApi && CommonApi.getAllSemesters && semesterSelect) {
+          try {
+            const res = await CommonApi.getAllSemesters();
+            if (res && res.success && res.data && res.data.length > 0) {
+              const currentVal = semesterSelect.value;
+              semesterSelect.innerHTML = res.data.map(formatSemesterOption).join('');
+              if (currentVal && res.data.some(s => s.maHocKy === currentVal)) {
+                semesterSelect.value = currentVal;
+              } else {
+                const cur = res.data.find(s => s.isCurrent || s.hienHanh);
+                if (cur) semesterSelect.value = cur.maHocKy;
+              }
+            }
+          } catch (e) {
+            console.warn('Could not load dynamic semesters:', e);
+          }
+        }
+      }
+
+      async function loadClasses() {
+        try {
+          const sem = semesterSelect.value;
+          const bannerTitle = document.getElementById('page-banner-title');
+          if (bannerTitle && semesterSelect.selectedOptions && semesterSelect.selectedOptions[0]) {
+            bannerTitle.textContent = 'QUẢN TRỊ LỚP HỌC PHẦN (CRUD) - ' + semesterSelect.selectedOptions[0].text.replace(' [Hiện hành]', '');
+          }
+          const kw = searchInput.value;
+          const res = await AssistantApi.getClasses(sem, kw, currentPage, pageSize);
+
+          if (!res || !res.success || !res.data) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:red; padding: 20px;">Lỗi tải dữ liệu</td></tr>`;
+            return;
+          }
+
+          const classes = res.data;
+          currentLoadedClasses = classes;
+
+          // Cập nhật phân trang từ gói META
+          if (res.meta) {
+            currentPage = res.meta.page;
+            totalPages = res.meta.totalPages || 1;
+            tableInfo.textContent = `Tổng số: ${res.meta.totalItems} lớp học phần`;
+            paginationInfo.textContent = `Đang hiển thị trang ${res.meta.page} / ${totalPages} (Tổng số ${res.meta.totalItems} lớp học phần)`;
+            btnPrevPage.disabled = (currentPage <= 1);
+            btnNextPage.disabled = (currentPage >= totalPages);
+          }
+
+          if (classes.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:#6B7280; padding: 30px;">Không tìm thấy lớp học phần phù hợp</td></tr>`;
+            return;
+          }
+
+          let html = '';
+          classes.forEach((c, idx) => {
+            const stt = (currentPage - 1) * pageSize + idx + 1;
+            const isFull = c.siSoHienTai >= c.siSoToiDa;
+
+            // Xác định học kỳ kết thúc / quá khứ
+            const selectSemEl = document.getElementById('select-semester');
+            const currentSelectedSem = selectSemEl ? selectSemEl.value : '2026_2027_HK1';
+            const isPastSemester = (currentSelectedSem !== '2026_2027_HK1' && !currentSelectedSem.startsWith('2026_2027')) || c.trangThai === 'KETTHUC' || c.isEditable === false;
+
+            let statusText = '';
+            if (isPastSemester) {
+              statusText = `<span class="status-text-closed" style="color: #64748B; background: #F1F5F9; border-color: #CBD5E1;">Đã kết thúc</span>`;
+            } else if (isFull) {
+              statusText = `<span class="status-text-full">Đã đầy</span>`;
+            } else if (c.trangThai === 'DANG_MO' || c.trangThai === 'MODANGKY') {
+              statusText = `<span class="status-text-active">Đang mở</span>`;
+            } else if (c.trangThai === 'DANGHOC') {
+              statusText = `<span class="status-text-active" style="color: #0369A1; background: #E0F2FE;">Đang học</span>`;
+            } else {
+              statusText = `<span class="status-text-closed">Chưa mở</span>`;
+            }
+
+            html += `
+              <tr>
+                <td style="text-align: center; color: var(--text-muted);">${stt}</td>
+                <td><strong style="color: #0284C7;">${c.maLHP}</strong></td>
+                <td>
+                  <div style="font-weight: 600; color: #002D4F;">${c.tenHP}</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">${c.tenLHP || ''}</div>
+                </td>
+                <td style="text-align: center; font-weight: 700;">${c.soTinChi}</td>
+                <td>Thứ ${c.thu} (${c.tietBatDau || c.tietBD}-${(c.tietBatDau || c.tietBD) + c.soTiet - 1})</td>
+                <td style="text-align: center;">${c.phongHoc}</td>
+                <td>${c.tenGiangVien}</td>
+                <td style="text-align: center;">
+                  <strong style="color: ${isFull ? '#DC2626' : '#107C41'};">${c.siSoHienTai}</strong> / ${c.siSoToiDa}
+                </td>
+                <td style="text-align: center;">${statusText}</td>
+                <td style="text-align: center;">
+                  <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                    ${isPastSemester ? `
+                    <button class="btn-action-icon" disabled style="opacity: 0.4; cursor: not-allowed;" title="Học kỳ đã kết thúc, không thể chỉnh sửa">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #94A3B8;">edit</span>
+                    </button>
+                    <button class="btn-action-icon" disabled style="opacity: 0.4; cursor: not-allowed;" title="Học kỳ đã kết thúc, không thể phân công GV">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #94A3B8;">person_add</span>
+                    </button>
+                    ` : `
+                    <button class="btn-action-icon btn-edit" data-lhp="${c.maLHP}" title="Chỉnh sửa lớp học phần (UC-04)">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #0284C7;">edit</span>
+                    </button>
+                    <button class="btn-action-icon btn-assign" data-lhp="${c.maLHP}" data-name="${c.tenHP}" data-gv="${c.tenGiangVien}" title="Phân công giảng viên">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #0284C7;">person_add</span>
+                    </button>
+                    `}
+                    <a href="class-students.html?maLHP=${c.maLHP}" class="btn-action-icon" title="Xem danh sách sinh viên">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #0D9488;">groups</span>
+                    </a>
+                    <button class="btn-action-icon danger btn-delete" data-lhp="${c.maLHP}" data-name="${c.tenHP}" title="Xóa lớp học phần">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #DC2626;">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          });
+          tbody.innerHTML = html;
+
+          // Sự kiện nút chỉnh sửa lớp (UC-04)
+          document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const lhp = btn.dataset.lhp;
+              const cls = currentLoadedClasses.find(c => c.maLHP === lhp);
+              if (!cls) return;
+              currentEditLHP = lhp;
+              document.getElementById('edit-maLHP').value = cls.maLHP;
+              document.getElementById('edit-maHP').value = cls.maHP;
+              document.getElementById('edit-tenHP').value = cls.tenHP;
+              document.getElementById('edit-soTinChi').value = cls.soTinChi;
+              document.getElementById('edit-siSoToiDa').value = cls.siSoToiDa;
+              document.getElementById('edit-thu').value = cls.thu;
+              document.getElementById('edit-tietBD').value = cls.tietBatDau || cls.tietBD || 1;
+              document.getElementById('edit-soTiet').value = cls.soTiet || 3;
+              document.getElementById('edit-phongHoc').value = cls.phongHoc || '';
+              document.getElementById('edit-tenGV').value = cls.tenGiangVien || '';
+              document.getElementById('edit-trangThai').value = cls.trangThai || 'DANG_MO';
+              openModal('modal-edit');
+            });
+          });
+
+          // Sự kiện nút phân công
+          document.querySelectorAll('.btn-assign').forEach(btn => {
+            btn.addEventListener('click', () => {
+              currentAssignLHP = btn.dataset.lhp;
+              document.getElementById('assign-class-name').textContent = btn.dataset.name;
+              document.getElementById('assign-class-code').textContent = 'Mã LHP: ' + currentAssignLHP;
+              document.getElementById('assign-select-gv').value = btn.dataset.gv || '';
+              openModal('modal-assign');
+            });
+          });
+
+          // Sự kiện nút xóa
+          document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const lhp = btn.dataset.lhp;
+              const name = btn.dataset.name;
+              if (confirm(`Bạn có chắc chắn muốn xóa lớp học phần [${lhp}] - ${name}?`)) {
+                const delRes = await AssistantApi.deleteClass(lhp);
+                if (delRes && delRes.success) {
+                  showToast(delRes.message || 'Đã xóa lớp thành công!', 'success');
+                  await initSemesters().then(() => loadClasses());
+                } else {
+                  showToast(delRes.message || 'Xóa lớp thất bại!', 'error');
+                }
+              }
+            });
+          });
+
+        } catch (e) {
+          console.error(e);
+          tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:red; padding: 20px;">Lỗi kết nối API</td></tr>`;
+        }
+      }
+
+      // Xử lý tạo mới lớp
+      document.getElementById('btn-open-create-modal').addEventListener('click', () => {
+        openModal('modal-create');
+      });
+
+      document.getElementById('btn-submit-create').addEventListener('click', async () => {
+        const payload = {
+          maLHP: document.getElementById('create-maLHP').value.trim(),
+          maHP: document.getElementById('create-maHP').value.trim(),
+          tenHP: document.getElementById('create-tenHP').value.trim(),
+          soTinChi: Number(document.getElementById('create-soTinChi').value),
+          siSoToiDa: Number(document.getElementById('create-siSoToiDa').value),
+          thu: Number(document.getElementById('create-thu').value),
+          tietBatDau: Number(document.getElementById('create-tietBD').value),
+          soTiet: Number(document.getElementById('create-soTiet').value),
+          phongHoc: document.getElementById('create-phongHoc').value.trim(),
+          tenGiangVien: document.getElementById('create-tenGV').value.trim()
+        };
+
+        if (!payload.maLHP || !payload.maHP || !payload.tenHP) {
+          alert('Vui lòng điền đầy đủ các trường bắt buộc (*)');
+          return;
+        }
+
+        const res = await AssistantApi.createClass(payload);
+        if (res && res.success) {
+          showToast(res.message || 'Tạo lớp thành công!', 'success');
+          closeModal('modal-create');
+          await initSemesters().then(() => loadClasses());
+        } else {
+          showToast(res.message || 'Tạo lớp thất bại!', 'error');
+        }
+      });
+
+      // Xử lý lưu phân công
+      // Xử lý lưu chỉnh sửa lớp (UC-04)
+      document.getElementById('btn-submit-edit').addEventListener('click', async () => {
+        if (!currentEditLHP) return;
+        const payload = {
+          soTinChi: Number(document.getElementById('edit-soTinChi').value),
+          siSoToiDa: Number(document.getElementById('edit-siSoToiDa').value),
+          thu: Number(document.getElementById('edit-thu').value),
+          tietBatDau: Number(document.getElementById('edit-tietBD').value),
+          soTiet: Number(document.getElementById('edit-soTiet').value),
+          phongHoc: document.getElementById('edit-phongHoc').value.trim(),
+          tenGiangVien: document.getElementById('edit-tenGV').value.trim(),
+          trangThai: document.getElementById('edit-trangThai').value
+        };
+
+        const res = await AssistantApi.updateClass(currentEditLHP, payload);
+        if (res && res.success) {
+          showToast(res.message || 'Cập nhật lớp học phần thành công!', 'success');
+          closeModal('modal-edit');
+          await initSemesters().then(() => loadClasses());
+        } else {
+          showToast((res && res.message) || 'Cập nhật thất bại!', 'error');
+        }
+      });
+
+      document.getElementById('btn-submit-assign').addEventListener('click', async () => {
+        if (!currentAssignLHP) return;
+        const selectedGv = document.getElementById('assign-select-gv').value;
+        const res = await AssistantApi.assignLecturer(currentAssignLHP, 'GV_NEW', selectedGv);
+        if (res && res.success) {
+          showToast(res.message || 'Phân công giảng viên thành công!', 'success');
+          closeModal('modal-assign');
+          await initSemesters().then(() => loadClasses());
+        } else {
+          showToast(res.message || 'Phân công thất bại!', 'error');
+        }
+      });
+
+      // Phân trang
+      btnPrevPage.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          loadClasses();
+        }
+      });
+      btnNextPage.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          loadClasses();
+        }
+      });
+
+      searchInput.addEventListener('input', debounce(() => {
+        currentPage = 1;
+        loadClasses();
+      }, 250));
+
+      semesterSelect.addEventListener('change', () => {
+        currentPage = 1;
+        loadClasses();
+      });
+
+      window.openModal = id => document.getElementById(id).style.display = 'flex';
+      window.closeModal = id => document.getElementById(id).style.display = 'none';
+
+      function debounce(fn, wait) {
+        let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+      }
+
+      function showToast(msg, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg ' + (type === 'error' ? 'toast-error' : 'toast-success');
+        toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">${type === 'error' ? 'error' : 'check_circle'}</span><span>${msg}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+      }
+
+      initSemesters().then(() => loadClasses());
+    });
+  </script>
+  <script src="../../js/user-menu.js"></script>
+</body>
+</html>

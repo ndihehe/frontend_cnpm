@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách Sinh viên ghi danh lớp - Giáo vụ khoa</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .info-summary-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    /* Chữ trạng thái - KHÔNG FRAME KHÔNG BACKGROUND */
+    .status-text-active { color: #107C41; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+        <a href="profile.html" class="sidebar-profile" style="text-decoration: none;">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Le Van Cuong">Le Van Cuong</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV002</div>
+            <div class="sidebar-user-status" id="sidebar-user-status" style="color: #0284C7;">● Giáo vụ khoa CNTT</div>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <div class="nav-section-title">BÀN LÀM VIỆC</div>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <span class="material-symbols-outlined">dashboard</span>
+              <span>Tổng quan giáo vụ</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link">
+              <span class="material-symbols-outlined">person</span>
+              <span>Hồ sơ cán bộ</span>
+            </a>
+          </li>
+          <div class="nav-section-title">QUẢN LÝ ĐÀO TẠO</div>
+          <li class="nav-item">
+            <a href="class-management.html" class="nav-link">
+              <span class="material-symbols-outlined">menu_book</span>
+              <span>Quản lý lớp học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="open-registration.html" class="nav-link">
+              <span class="material-symbols-outlined">how_to_reg</span>
+              <span>Cài đặt đợt đăng ký</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-students.html" class="nav-link active">
+              <span class="material-symbols-outlined">groups</span>
+              <span>Sinh viên ghi danh lớp</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-requests.html" class="nav-link">
+              <span class="material-symbols-outlined">approval_delegation</span>
+              <span>Duyệt kiến nghị mở lớp</span>
+            </a>
+          </li>
+          </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0284C7;">groups</span>
+          TRA CỨU SINH VIÊN GHI DANH & XUẤT DANH SÁCH ĐIỂM DANH
+        </div>
+        <div class="topbar-actions" style="display: flex; gap: 8px;">
+          <button type="button" id="btn-export-students" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 6px; color: #107C41; border-color: #107C41; font-weight: 600;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+            <span>Xuất Excel DSSV</span>
+          </button>
+          <button class="btn btn-outline-primary btn-sm" onclick="window.print()" style="display: flex; align-items: center; gap: 6px;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">print</span>
+            <span>In danh sách điểm danh</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div style="background: #FFFFFF; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <label style="font-size: 12px; font-weight: 700; color: #002D4F;">CHỌN LỚP HỌC PHẦN:</label>
+            <select id="select-lhp" class="form-control" style="width: 320px; font-weight: 600;">
+              <option value="">-- Đang tải danh sách lớp học phần --</option>
+            </select>
+          </div>
+          <button id="btn-refresh" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 4px;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">refresh</span>
+            <span>Tải lại</span>
+          </button>
+        </div>
+
+        <div class="info-summary-card">
+          <div>
+            <div style="font-size: 15px; font-weight: 700; color: #002D4F;" id="summary-title">Đang tải thông tin lớp học phần...</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;" id="summary-sub">Mã LHP: --</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">SĨ SỐ HIỆN TẠI / TỐI ĐA:</div>
+            <div style="font-size: 20px; font-weight: 700; color: #002D4F;" id="summary-count">
+              <span style="color: #107C41;" id="summary-current">0</span> / <span id="summary-max">0</span> SV
+            </div>
+          </div>
+        </div>
+
+        <!-- BẢNG ĐẶT VÀO KHUNG CARD CHUẨN STUDENT -->
+        <div class="hocvu-card" style="margin-bottom: 20px;">
+          <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="hocvu-card-title">
+              <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">badge</span>
+              <span>DANH SÁCH SINH VIÊN ĐÃ GHI DANH VÀO LỚP</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="table-info">Đang tải...</div>
+          </div>
+
+          <div class="hocvu-card-body" style="padding: 0;">
+            <div class="hocvu-table-responsive" style="border: none;">
+              <table class="hocvu-table">
+                <thead>
+                  <tr>
+                    <th style="width: 45px; text-align: center;">STT</th>
+                    <th style="width: 110px;">Mã sinh viên</th>
+                    <th>Họ và tên</th>
+                    <th style="width: 120px;">Lớp danh nghĩa</th>
+                    <th>Email liên hệ</th>
+                    <th style="width: 140px; text-align: center;">Thời gian ghi danh</th>
+                    <th style="width: 100px; text-align: center;">Trạng thái</th>
+                    <th style="width: 80px; text-align: center;">Ký tên</th>
+                  </tr>
+                </thead>
+                <tbody id="student-tbody">
+                  <tr><td colspan="8" style="text-align: center; padding: 25px;">Đang tải danh sách sinh viên...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- PHÂN TRANG BÓC TÁCH TỪ GÓI META -->
+            <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
+              <div id="pagination-info" style="color: var(--text-muted);">
+                Đang hiển thị trang 1 / 1 (Tổng 0 sinh viên)
+              </div>
+              <div style="display: flex; gap: 4px;" id="pagination-controls">
+                <button class="btn btn-outline-primary btn-sm" id="btn-prev-page" disabled>Trước</button>
+                <button class="btn btn-outline-primary btn-sm" id="btn-next-page" disabled>Sau</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      let currentPage = 1;
+      const pageSize = 10;
+      let totalPages = 1;
+
+      const tbody = document.getElementById('student-tbody');
+      const selectLhp = document.getElementById('select-lhp');
+      const tableInfo = document.getElementById('table-info');
+      const paginationInfo = document.getElementById('pagination-info');
+      const btnPrevPage = document.getElementById('btn-prev-page');
+      const btnNextPage = document.getElementById('btn-next-page');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let targetLhp = urlParams.get('maLHP') || '';
+
+      // 1. Nạp danh sách Lớp học phần thật của học kỳ vào Dropdown
+      async function initClassDropdown() {
+        try {
+          const res = await AssistantApi.getClasses('2026_2027_HK1', '', 1, 100);
+          if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+            selectLhp.innerHTML = res.data.map(c => `
+              <option value="${c.maLHP}">${c.maLHP} - ${c.tenHP} (${c.tenLHP || ''})</option>
+            `).join('');
+
+            if (targetLhp && res.data.some(c => c.maLHP === targetLhp)) {
+              selectLhp.value = targetLhp;
+            } else {
+              selectLhp.selectedIndex = 0;
+            }
+          }
+        } catch (e) {
+          console.error("Lỗi nạp danh sách lớp:", e);
+        }
+      }
+
+      // 2. Nạp sinh viên theo lớp đã chọn
+      async function loadStudents() {
+        const lhp = selectLhp.value;
+        if (!lhp) return;
+
+        try {
+          const res = await AssistantApi.getClassStudents(lhp, currentPage, pageSize);
+
+          if (!res || !res.success || !res.data) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">Lỗi tải dữ liệu</td></tr>';
+            return;
+          }
+
+          const students = res.data;
+
+          // Cập nhật Meta Header
+          if (res.meta) {
+            currentPage = res.meta.page;
+            totalPages = res.meta.totalPages || 1;
+            const titleParts = [res.meta.tenHP, res.meta.tenLHP].filter(Boolean);
+            document.getElementById('summary-title').textContent = titleParts.length > 0 ? titleParts.join(' - ') : (selectLhp.options[selectLhp.selectedIndex]?.text || lhp);
+            document.getElementById('summary-sub').textContent = `Mã LHP: ${res.meta.maLHP} | Sĩ số: ${res.meta.siSoHienTai || students.length}/${res.meta.siSoToiDa || 40}`;
+            document.getElementById('summary-current').textContent = res.meta.siSoHienTai || students.length;
+            document.getElementById('summary-max').textContent = res.meta.siSoToiDa || 40;
+
+            tableInfo.textContent = `Hiển thị ${students.length} / ${res.meta.totalItems} sinh viên`;
+            paginationInfo.textContent = `Đang hiển thị trang ${res.meta.page} / ${totalPages} (Tổng số ${res.meta.totalItems} sinh viên)`;
+            btnPrevPage.disabled = (currentPage <= 1);
+            btnNextPage.disabled = (currentPage >= totalPages);
+          }
+
+          if (students.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 25px; color: var(--text-muted);">Chưa có sinh viên nào ghi danh vào lớp này</td></tr>';
+            return;
+          }
+
+          let html = '';
+          students.forEach((s, idx) => {
+            const stt = (currentPage - 1) * pageSize + idx + 1;
+            const statusText = '<span class="status-text-active">Đã ghi danh</span>';
+            const ngayDkStr = Array.isArray(s.ngayDangKy) ? `${s.ngayDangKy[2]}/${s.ngayDangKy[1]}/${s.ngayDangKy[0]}` : (s.ngayDangKy || '--');
+
+            html += `
+              <tr>
+                <td style="text-align: center; color: var(--text-muted);">${stt}</td>
+                <td><strong style="color: #0284C7;">${s.maSV}</strong></td>
+                <td><strong style="color: #002D4F;">${s.hoTen}</strong></td>
+                <td>${s.lopDanhNghia || 'CNTT-K22'}</td>
+                <td><a href="mailto:${s.email || (s.maSV.toLowerCase() + '@student.edu.vn')}" style="color: #0284C7; text-decoration: none;">${s.email || (s.maSV.toLowerCase() + '@student.edu.vn')}</a></td>
+                <td style="text-align: center; color: var(--text-muted); font-size: 11.5px;">${ngayDkStr}</td>
+                <td style="text-align: center;">${statusText}</td>
+                <td style="text-align: center; border-bottom: 1px dotted #CBD5E1;"></td>
+              </tr>
+            `;
+          });
+          tbody.innerHTML = html;
+
+        } catch (e) {
+          console.error(e);
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">Lỗi kết nối API</td></tr>';
+        }
+      }
+
+      selectLhp.addEventListener('change', () => {
+        currentPage = 1;
+        loadStudents();
+      });
+
+      document.getElementById('btn-refresh').addEventListener('click', loadStudents);
+
+      btnPrevPage.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          loadStudents();
+        }
+      });
+      btnNextPage.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          loadStudents();
+        }
+      });
+
+      await initClassDropdown();
+      loadStudents();
+    });
+  </script>
+  <script src="../../js/user-menu.js"></script>
+</body>
+</html>

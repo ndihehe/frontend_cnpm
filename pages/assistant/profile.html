@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hồ sơ Giáo vụ khoa - Hệ thống quản lý học vụ</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .profile-avatar-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .profile-avatar-img {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 3px solid #38A9F0;
+      object-fit: cover;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px rgba(0, 54, 93, 0.12);
+    }
+    .info-list-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 20px;
+      font-size: 12.5px;
+    }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-bottom: 1px dashed var(--border-subtle);
+      padding-bottom: 6px;
+    }
+    .info-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .info-value {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+        <a href="profile.html" class="sidebar-profile" style="text-decoration: none;">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Le Van Cuong">Le Van Cuong</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV002</div>
+            <div class="sidebar-user-status" id="sidebar-user-status" style="color: #0284C7;">● Giáo vụ khoa CNTT</div>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <div class="nav-section-title">BÀN LÀM VIỆC</div>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <span class="material-symbols-outlined">dashboard</span>
+              <span>Tổng quan giáo vụ</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link active">
+              <span class="material-symbols-outlined">person</span>
+              <span>Hồ sơ cán bộ</span>
+            </a>
+          </li>
+          <div class="nav-section-title">QUẢN LÝ ĐÀO TẠO</div>
+          <li class="nav-item">
+            <a href="class-management.html" class="nav-link">
+              <span class="material-symbols-outlined">menu_book</span>
+              <span>Quản lý lớp học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="open-registration.html" class="nav-link">
+              <span class="material-symbols-outlined">how_to_reg</span>
+              <span>Cài đặt đợt đăng ký</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-students.html" class="nav-link">
+              <span class="material-symbols-outlined">groups</span>
+              <span>Sinh viên ghi danh lớp</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-requests.html" class="nav-link">
+              <span class="material-symbols-outlined">approval_delegation</span>
+              <span>Duyệt kiến nghị mở lớp</span>
+            </a>
+          </li>
+          </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0284C7;">badge</span>
+          HỒ SƠ CÁN BỘ & THÔNG TIN CÁ NHÂN
+        </div>
+        <div class="topbar-actions">
+          <a href="profile.html" style="display: flex; align-items: center; gap: 7px; text-decoration: none;">
+            <img src="https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">ThS. Trần Thị Mai Phương</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="page-banner">
+          <span class="material-symbols-outlined" style="font-size: 18px;">account_circle</span>
+          <span>THÔNG TIN HỒ SƠ CÁN BỘ GIÁO VỤ KHOA CÔNG NGHỆ THÔNG TIN</span>
+        </div>
+
+        <div class="profile-grid">
+          <!-- CỘT TRÁI: AVATAR & TRẠNG THÁI -->
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="profile-avatar-card">
+              <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg" alt="Avatar" class="profile-avatar-img" id="profile-card-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Giao+Vu&background=0369A1&color=fff&size=160'" />
+              <div style="font-size: 15px; font-weight: 700; color: #002D4F;" id="profile-card-name">--</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Mã cán bộ: <strong id="profile-card-code">--</strong></div>
+              <div style="margin-top: 8px;">
+                <span style="color: #107C41; font-weight: 600; font-size: 12px;">Đang công tác</span>
+              </div>
+            </div>
+
+            <div class="hocvu-card">
+              <div class="hocvu-card-header">
+                <div class="hocvu-card-title">
+                  <span class="material-symbols-outlined" style="font-size: 17px; color: #0284C7;">lock_reset</span>
+                  <span>BẢO MẬT TÀI KHOẢN</span>
+                </div>
+              </div>
+              <div class="hocvu-card-body" style="font-size: 12px;">
+                <div style="margin-bottom: 8px;">Tài khoản: <strong id="profile-card-username">--</strong></div>
+                <div style="margin-bottom: 12px; color: var(--text-muted);">Đăng nhập gần nhất: Hôm nay 14:05</div>
+                </div>
+            </div>
+          </div>
+
+          <!-- CỘT PHẢI: CHI TIẾT LÝ LỊCH VÀ PHẠM VI QUẢN LÝ -->
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="hocvu-card">
+              <div class="hocvu-card-header">
+                <div class="hocvu-card-title">
+                  <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">person</span>
+                  <span>THÔNG TIN LÝ LỊCH CÁ NHÂN</span>
+                </div>
+              </div>
+              <div class="hocvu-card-body">
+                <div class="info-list-grid">
+                  <div class="info-item">
+                    <span class="info-label">Họ và tên</span>
+                    <span class="info-value" id="info-fullname">--</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Giới tính</span>
+                    <span class="info-value" id="info-gender">--</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Ngày sinh</span>
+                    <span class="info-value" id="info-dob">--</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Mã định danh cán bộ</span>
+                    <span class="info-value" id="info-idcard">--</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Email công vụ</span>
+                    <span class="info-value" id="info-email">--</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Số điện thoại</span>
+                    <span class="info-value" id="info-phone">--</span>
+                  </div>
+                  <div class="info-item" style="grid-column: 1 / -1;">
+                    <span class="info-label">Địa chỉ liên hệ</span>
+                    <span class="info-value" id="info-address">--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hocvu-card">
+              <div class="hocvu-card-header">
+                <div class="hocvu-card-title">
+                  <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">work</span>
+                  <span>VỊ TRÍ CÔNG TÁC & PHẠM VI HỌC VỤ</span>
+                </div>
+              </div>
+              <div class="hocvu-card-body">
+                <div class="info-list-grid">
+                  <div class="info-item">
+                    <span class="info-label">Đơn vị công tác</span>
+                    <span class="info-value">Khoa Công nghệ Thông tin</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Chức danh / Vị trí</span>
+                    <span class="info-value">Trợ lý Đào tạo (Giáo vụ khoa)</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Học vị cao nhất</span>
+                    <span class="info-value">Thạc sĩ Khoa học Máy tính</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Ngày bắt đầu công tác</span>
+                    <span class="info-value" id="info-startdate">--</span>
+                  </div>
+                </div>
+
+                <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                  <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Quyền hạn quản trị được phân công:</div>
+                  <ul style="font-size: 12px; color: #334155; padding-left: 18px; line-height: 1.6;">
+                    <li>Quản lý danh sách lớp học phần (CRUD) thuộc Khoa Công nghệ Thông tin.</li>
+                    <li>Phân công giảng viên phụ trách giảng dạy và kiểm tra xung đột thời khóa biểu.</li>
+                    <li>Cài đặt thời gian mở cổng đăng ký học phần cho từng lớp hoặc toàn khoa.</li>
+                    <li>Tiếp nhận, xử lý và xét duyệt các phiếu kiến nghị mở thêm lớp của sinh viên.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script src="../../js/user-menu.js"></script>
+
+  <script>
+    function formatDateVi(dateStr) {
+      if (!dateStr) return '--';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) return parts[2] + '/' + parts[1] + '/' + parts[0];
+      return dateStr;
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await ProfileApi.getProfile();
+        if (res && res.success && res.data) {
+          const u = res.data;
+          const tb = u.thongTinCanBo || {};
+
+          if (u.anhThe) document.getElementById('profile-card-avatar').src = u.anhThe;
+          document.getElementById('profile-card-name').textContent = u.hoTen || '--';
+          document.getElementById('profile-card-code').textContent = u.maDinhDanh || '--';
+          document.getElementById('profile-card-username').textContent = u.email ? u.email.split('@')[0] : '--';
+
+          document.getElementById('info-fullname').textContent = u.hoTen || '--';
+          document.getElementById('info-gender').textContent = u.gioiTinh === 'Nu' ? 'Nữ' : (u.gioiTinh === 'Nam' ? 'Nam' : u.gioiTinh || '--');
+          document.getElementById('info-dob').textContent = formatDateVi(u.ngaySinh);
+          document.getElementById('info-idcard').textContent = u.maDinhDanh || '--';
+          document.getElementById('info-email').textContent = u.email || '--';
+          document.getElementById('info-phone').textContent = u.soDienThoai || '--';
+          document.getElementById('info-address').textContent = u.diaChi || '--';
+
+          document.getElementById('info-startdate').textContent = formatDateVi(tb.ngayBatDau);
+        }
+      } catch (err) {
+        console.error('Lỗi tải hồ sơ giáo vụ:', err);
+      }
+    });
+  </script>
+</body>
+</html>

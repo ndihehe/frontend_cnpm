@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duyệt Kiến nghị mở lớp - Giáo vụ khoa</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .status-text-pending { color: #D97706; font-weight: 600; }
+    .status-text-approved { color: #107C41; font-weight: 600; }
+    .status-text-rejected { color: #DC2626; font-weight: 600; }
+    
+    .btn-create-class-clean {
+      height: 28px;
+      padding: 0 16px;
+      font-size: 11.5px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      white-space: nowrap;
+      border-radius: 4px;
+      background: #0284C7;
+      color: #FFFFFF;
+      border: 1px solid #0284C7;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+        .btn-action-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all 0.18s ease;
+      padding: 0;
+      outline: none;
+    }
+    .btn-action-icon span {
+      pointer-events: none;
+      user-select: none;
+    }
+    .btn-action-icon.btn-approve {
+      background: #107C41;
+      color: #FFFFFF;
+      border: 1px solid #107C41;
+    }
+    .btn-action-icon.btn-approve:hover {
+      background: #0B5C30;
+      border-color: #0B5C30;
+      box-shadow: 0 2px 4px rgba(16, 124, 65, 0.3);
+    }
+    .btn-action-icon.btn-reject {
+      background: #DC2626;
+      color: #FFFFFF;
+      border: 1px solid #DC2626;
+    }
+    .btn-action-icon.btn-reject:hover {
+      background: #B91C1C;
+      border-color: #B91C1C;
+      box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+    }
+    @keyframes slideInToast {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .btn-create-class-clean:hover {
+      background: #0369A1;
+      border-color: #0369A1;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+        <a href="profile.html" class="sidebar-profile" style="text-decoration: none;">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Le Van Cuong">Le Van Cuong</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV002</div>
+            <div class="sidebar-user-status" id="sidebar-user-status" style="color: #0284C7;">● Giáo vụ khoa CNTT</div>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <div class="nav-section-title">BÀN LÀM VIỆC</div>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <span class="material-symbols-outlined">dashboard</span>
+              <span>Tổng quan giáo vụ</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link">
+              <span class="material-symbols-outlined">person</span>
+              <span>Hồ sơ cán bộ</span>
+            </a>
+          </li>
+          <div class="nav-section-title">QUẢN LÝ ĐÀO TẠO</div>
+          <li class="nav-item">
+            <a href="class-management.html" class="nav-link">
+              <span class="material-symbols-outlined">menu_book</span>
+              <span>Quản lý lớp học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="open-registration.html" class="nav-link">
+              <span class="material-symbols-outlined">how_to_reg</span>
+              <span>Cài đặt đợt đăng ký</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-students.html" class="nav-link">
+              <span class="material-symbols-outlined">groups</span>
+              <span>Sinh viên ghi danh lớp</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-requests.html" class="nav-link active">
+              <span class="material-symbols-outlined">approval_delegation</span>
+              <span>Duyệt kiến nghị mở lớp</span>
+            </a>
+          </li>
+          </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0284C7;">approval_delegation</span>
+          TIẾP NHẬN & XÉT DUYỆT KIẾN NGHỊ MỞ LỚP TỪ SINH VIÊN
+        </div>
+        <div class="topbar-actions">
+          
+          <a href="profile.html" style="display: flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;">
+            <img src="https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">ThS. Trần Thị Mai Phương</span>
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="page-banner">
+          <span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
+          <span>QUẢN LÝ & XÉT DUYỆT ĐƠN KIẾN NGHỊ MỞ THÊM LỚP HỌC PHẦN</span>
+        </div>
+
+        <!-- THANH TOPBAR 2 TAB CHUYỂN ĐỔI MÀN HÌNH -->
+        <div class="hocvu-tabs" style="margin-bottom: 16px;">
+          <div class="hocvu-tab-item active" id="tab-btn-detail" data-target="view-tab-detail" style="display: flex; align-items: center; gap: 6px;">
+            <span class="material-symbols-outlined" style="font-size: 17px;">format_list_bulleted</span>
+            <span>DANH SÁCH CHI TIẾT CÁC PHIẾU KIẾN NGHỊ MỞ LỚP</span>
+          </div>
+          <div class="hocvu-tab-item" id="tab-btn-summary" data-target="view-tab-summary" style="display: flex; align-items: center; gap: 6px;">
+            <span class="material-symbols-outlined" style="font-size: 17px;">bar_chart</span>
+            <span>THỐNG KÊ NHU CẦU MỞ LỚP THEO MÃ HỌC PHẦN (GOM ĐƠN TỰ ĐỘNG)</span>
+          </div>
+        </div>
+
+        <!-- =========================================================================
+             MÀN 1: DANH SÁCH CHI TIẾT CÁC PHIẾU KIẾN NGHỊ MỞ LỚP (CÓ BỘ LỌC)
+             ========================================================================= -->
+        <div id="view-tab-detail" class="tab-view">
+          <!-- BỘ LỌC ĐA NĂNG (BỎ CÁC TÊN ENUM TRONG OPTION) -->
+          <div class="filter-bar" style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <label style="font-size: 11.5px; font-weight: 700; color: #002D4F;">TRẠNG THÁI:</label>
+                <select id="select-status" class="form-control" style="width: 170px; height: 32px; font-size: 12px;">
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="DAGUI" selected>Đang chờ duyệt</option>
+                  <option value="DUYET">Đã duyệt</option>
+                  <option value="TUCHOI">Từ chối</option>
+                </select>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <label style="font-size: 11.5px; font-weight: 700; color: #002D4F;">LỌC THEO MÃ HP:</label>
+                <select id="select-course-filter" class="form-control" style="width: 220px; height: 32px; font-size: 12px; font-weight: 600;">
+                  <option value="all">-- Tất cả học phần --</option>
+                </select>
+              </div>
+
+              <div class="search-input-wrap" style="width: 230px;">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="input-search" class="search-input" placeholder="Tìm MSSV, tên SV, mã HP..." style="height: 32px; font-size: 12px;" />
+              </div>
+
+              <button id="btn-reset-filter" class="btn btn-outline btn-sm" style="height: 32px; font-size: 11.5px; display: flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 14px;">filter_alt_off</span>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+
+            <div style="font-size: 12px; font-weight: 700; color: #D97706;" id="pending-count">
+              Đang chờ duyệt: ...
+            </div>
+          </div>
+
+          <!-- BẢNG CHI TIẾT PHIẾU KIẾN NGHỊ -->
+          <div class="hocvu-card" style="margin-bottom: 20px;">
+            <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="hocvu-card-title">
+                <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">inbox</span>
+                <span>DANH SÁCH CHI TIẾT CÁC PHIẾU KIẾN NGHỊ MỞ LỚP</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted);" id="table-info">Đang tải...</div>
+            </div>
+
+            <div class="hocvu-card-body" style="padding: 0;">
+              <div class="hocvu-table-responsive" style="border: none;">
+                <table class="hocvu-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 45px; text-align: center;">STT</th>
+                      <th style="width: 105px;">Mã phiếu</th>
+                      <th style="width: 90px;">Mã HP</th>
+                      <th>Tên môn học</th>
+                      <th>Sinh viên kiến nghị</th>
+                      <th>Lý do cần mở lớp</th>
+                      <th style="width: 160px;">Thời gian mong muốn</th>
+                      <th style="width: 105px; text-align: center;">Trạng thái</th>
+                      <th style="width: 130px; text-align: center;">Thao tác duyệt</th>
+                    </tr>
+                  </thead>
+                  <tbody id="request-tbody">
+                    <tr><td colspan="9" style="text-align: center; padding: 25px;">Đang tải danh sách kiến nghị...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- PHÂN TRANG -->
+              <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
+                <div id="pagination-info" style="color: var(--text-muted);">
+                  Đang hiển thị...
+                </div>
+                <div style="display: flex; gap: 4px;" id="pagination-controls">
+                  <button class="btn btn-outline-primary btn-sm" id="btn-prev-page" disabled>Trước</button>
+                  <button class="btn btn-outline-primary btn-sm" id="btn-next-page" disabled>Sau</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================================================
+             MÀN 2: THỐNG KÊ NHU CẦU MỞ LỚP THEO MÃ HỌC PHẦN (CHỈ XEM SỐ LƯỢNG)
+             ========================================================================= -->
+        <div id="view-tab-summary" class="tab-view" style="display: none;">
+          <div class="hocvu-card" style="margin-bottom: 20px;">
+            <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="hocvu-card-title">
+                <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">analytics</span>
+                <span>BẢNG THỐNG KÊ SỐ LƯỢNG SINH VIÊN XIN MỞ LỚP THEO TỪNG HỌC PHẦN</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted);" id="group-summary-meta">Đang thống kê...</div>
+            </div>
+            <div class="hocvu-card-body" style="padding: 0;">
+              <div class="hocvu-table-responsive" style="border: none;">
+                <table class="hocvu-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px; text-align: center;">STT</th>
+                      <th style="width: 120px;">Mã học phần</th>
+                      <th>Tên môn học</th>
+                      <th style="width: 150px; text-align: center;">Tổng số đơn xin mở</th>
+                      <th style="width: 130px; text-align: center;">Chờ duyệt</th>
+                      <th style="width: 110px; text-align: center;">Đã duyệt</th>
+                      <th style="width: 160px; text-align: center;">Đánh giá khả năng mở</th>
+                      <th style="width: 120px; text-align: center;">Mở lớp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="course-groups-tbody">
+                    <tr><td colspan="8" style="text-align: center; padding: 25px;">Đang gom dữ liệu theo môn...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let allRawRequests = [];
+      let currentPage = 1;
+      const pageSize = 5;
+
+      // Tab switcher
+      const tabDetailBtn = document.getElementById('tab-btn-detail');
+      const tabSummaryBtn = document.getElementById('tab-btn-summary');
+      const viewTabDetail = document.getElementById('view-tab-detail');
+      const viewTabSummary = document.getElementById('view-tab-summary');
+
+      tabDetailBtn.addEventListener('click', () => {
+        tabDetailBtn.classList.add('active');
+        tabSummaryBtn.classList.remove('active');
+        viewTabDetail.style.display = 'block';
+        viewTabSummary.style.display = 'none';
+      });
+
+      tabSummaryBtn.addEventListener('click', () => {
+        tabSummaryBtn.classList.add('active');
+        tabDetailBtn.classList.remove('active');
+        viewTabSummary.style.display = 'block';
+        viewTabDetail.style.display = 'none';
+      });
+
+      const tbody = document.getElementById('request-tbody');
+      const groupsTbody = document.getElementById('course-groups-tbody');
+      const selectStatus = document.getElementById('select-status');
+      const selectCourseFilter = document.getElementById('select-course-filter');
+      const inputSearch = document.getElementById('input-search');
+      const btnReset = document.getElementById('btn-reset-filter');
+      const pendingCountEl = document.getElementById('pending-count');
+      const tableInfo = document.getElementById('table-info');
+      const paginationInfo = document.getElementById('pagination-info');
+      const btnPrevPage = document.getElementById('btn-prev-page');
+      const btnNextPage = document.getElementById('btn-next-page');
+
+      // Tải dữ liệu ban đầu
+      initData();
+      if (window.location.hash === '#summary') {
+        tabSummaryBtn.click();
+      }
+
+
+      async function initData() {
+        try {
+          const res = await AssistantApi.getClassRequests('all', 1, 100);
+          if (res && res.success && res.data) {
+            allRawRequests = res.data;
+            renderCourseGroups();
+            populateCourseFilterOptions();
+            renderTable();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // 1. Render Màn 2: Thống kê số lượng theo mã học phần (Chỉ xem số lượng, nút Tạo lớp căn giữa frame không có icon)
+      function renderCourseGroups() {
+        const groups = {};
+        allRawRequests.forEach(r => {
+          if (!groups[r.maHP]) {
+            groups[r.maHP] = {
+              maHP: r.maHP,
+              tenHP: r.tenHP,
+              tongSo: 0,
+              choDuyet: 0,
+              daDuyet: 0,
+              tuChoi: 0
+            };
+          }
+          groups[r.maHP].tongSo++;
+          if (r.trangThai === 'DAGUI') groups[r.maHP].choDuyet++;
+          else if (r.trangThai === 'DUYET') groups[r.maHP].daDuyet++;
+          else if (r.trangThai === 'TUCHOI') groups[r.maHP].tuChoi++;
+        });
+
+        const groupList = Object.values(groups).sort((a, b) => b.tongSo - a.tongSo);
+        document.getElementById('group-summary-meta').textContent = `Tổng cộng: ${groupList.length} môn có nhu cầu mở`;
+
+        if (groupList.length === 0) {
+          groupsTbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Chưa có yêu cầu nào</td></tr>';
+          return;
+        }
+
+        groupsTbody.innerHTML = groupList.map((g, idx) => {
+          const isEligible = g.tongSo >= 4;
+          return `
+            <tr>
+              <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
+              <td><strong style="color: #0284C7; font-family: monospace;">${g.maHP}</strong></td>
+              <td><div style="font-weight: 600; color: #002D4F;">${g.tenHP}</div></td>
+              <td style="text-align: center;">
+                <strong style="color: #0284C7; font-size: 13px;">${g.tongSo}</strong> <span style="font-size: 12px; color: var(--text-muted);">sinh viên</span>
+              </td>
+              <td style="text-align: center;">
+                <strong style="color: #D97706;">${g.choDuyet}</strong> đơn
+              </td>
+              <td style="text-align: center;">
+                <strong style="color: #107C41;">${g.daDuyet}</strong> đơn
+              </td>
+              <td style="text-align: center;">
+                ${isEligible ? `
+                  <span class="badge badge-success" style="font-size: 11px;">
+                    Đủ điều kiện gom lớp (≥ 4 SV)
+                  </span>
+                ` : `
+                  <span class="badge badge-warning" style="font-size: 11px;">
+                    Đang gom thêm SV
+                  </span>
+                `}
+              </td>
+              <td style="text-align: center;">
+                <a href="class-management.html?createMaHP=${g.maHP}" class="btn-create-class-clean" title="Tạo lớp học phần mới cho môn ${g.maHP}">
+                  Tạo lớp
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // 2. Điền danh sách học phần vào dropdown lọc
+      function populateCourseFilterOptions() {
+        const uniqueCourses = {};
+        allRawRequests.forEach(r => {
+          if (!uniqueCourses[r.maHP]) {
+            uniqueCourses[r.maHP] = r.tenHP;
+          }
+        });
+
+        const currentVal = selectCourseFilter.value;
+        selectCourseFilter.innerHTML = '<option value="all">-- Tất cả học phần --</option>' +
+          Object.entries(uniqueCourses).map(([code, name]) => `
+            <option value="${code}">${code} - ${name}</option>
+          `).join('');
+
+        selectCourseFilter.value = currentVal || 'all';
+      }
+
+      // 3. Render Màn 1: Danh sách chi tiết các đơn theo bộ lọc
+      function renderTable() {
+        const st = selectStatus.value;
+        const selectedCourse = selectCourseFilter.value;
+        const kw = (inputSearch.value || '').trim().toLowerCase();
+
+        // Đếm tổng số đơn chờ duyệt
+        const pendingCount = allRawRequests.filter(r => r.trangThai === 'DAGUI').length;
+        pendingCountEl.textContent = `Đang chờ duyệt: ${pendingCount} phiếu`;
+
+        // Lọc theo điều kiện
+        let filtered = allRawRequests;
+
+        if (st !== 'all') {
+          filtered = filtered.filter(r => r.trangThai === st);
+        }
+
+        if (selectedCourse !== 'all') {
+          filtered = filtered.filter(r => r.maHP === selectedCourse);
+        }
+
+        if (kw) {
+          filtered = filtered.filter(r => 
+            (r.maSV && r.maSV.toLowerCase().includes(kw)) ||
+            (r.hoTenSV && r.hoTenSV.toLowerCase().includes(kw)) ||
+            (r.maHP && r.maHP.toLowerCase().includes(kw)) ||
+            (r.tenHP && r.tenHP.toLowerCase().includes(kw)) ||
+            (r.maYeuCau && r.maYeuCau.toLowerCase().includes(kw))
+          );
+        }
+
+        const totalItems = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const start = (currentPage - 1) * pageSize;
+        const pagedData = filtered.slice(start, start + pageSize);
+
+        tableInfo.textContent = `Hiển thị ${pagedData.length} / ${totalItems} phiếu`;
+        paginationInfo.textContent = `Đang hiển thị trang ${currentPage} / ${totalPages} (Tổng số ${totalItems} phiếu thỏa điều kiện)`;
+        btnPrevPage.disabled = (currentPage <= 1);
+        btnNextPage.disabled = (currentPage >= totalPages);
+
+        if (pagedData.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#6B7280; padding: 30px;">Không có phiếu kiến nghị nào phù hợp bộ lọc</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = pagedData.map((r, idx) => {
+          const stt = start + idx + 1;
+
+          let statusText = '';
+          if (r.trangThai === 'DAGUI') statusText = `<span class="status-text-pending">Chờ duyệt</span>`;
+          else if (r.trangThai === 'DUYET') statusText = `<span class="status-text-approved">Đã duyệt</span>`;
+          else statusText = `<span class="status-text-rejected">Từ chối</span>`;
+
+          let actions = '';
+          if (r.trangThai === 'DAGUI') {
+            actions = `
+              <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                <button type="button" class="btn-action-icon btn-approve" data-id="${r.maYeuCau}" title="Duyệt (✓ Đồng ý kiến nghị mở lớp)">
+                  <span class="material-symbols-outlined" style="font-size: 18px; font-weight: 700;">check</span>
+                </button>
+                <button type="button" class="btn-action-icon btn-reject" data-id="${r.maYeuCau}" title="Từ chối (✕ Không duyệt kiến nghị)">
+                  <span class="material-symbols-outlined" style="font-size: 18px; font-weight: 700;">close</span>
+                </button>
+              </div>
+            `;
+          } else if (r.trangThai === 'DUYET') {
+            actions = `
+              <span class="badge" style="background: #107C41; color: #FFFFFF; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; padding: 4px 8px; font-weight: 600; border-radius: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 13px; font-weight: 700;">check</span> Đã duyệt
+              </span>
+            `;
+          } else {
+            actions = `
+              <span class="badge" style="background: #DC2626; color: #FFFFFF; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; padding: 4px 8px; font-weight: 600; border-radius: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 13px; font-weight: 700;">close</span> Từ chối
+              </span>
+            `;
+          }
+
+          return `
+            <tr>
+              <td style="text-align: center; color: var(--text-muted);">${stt}</td>
+              <td><strong style="color: #0284C7;">${r.maYeuCau}</strong></td>
+              <td><span style="font-weight: 700; color: #002D4F; font-family: monospace;">${r.maHP}</span></td>
+              <td><div style="font-weight: 600; color: #002D4F;">${r.tenHP}</div></td>
+              <td>
+                <div style="font-weight: 600;">${r.hoTenSV || 'Sinh viên'}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">${r.maSV || ''}</div>
+              </td>
+              <td><div style="max-width: 260px; font-size: 12px; line-height: 1.4;">${r.lyDo}</div></td>
+              <td style="font-size: 12px; color: #475569;">${r.lichHocMongMuon || 'Chưa chọn'}</td>
+              <td style="text-align: center;">${statusText}</td>
+              <td style="text-align: center;">${actions}</td>
+            </tr>
+          `;
+        }).join('');
+
+        // Gán sự kiện Duyệt (tick v) / Từ chối (x)
+        tbody.querySelectorAll('.btn-approve').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const btnEl = e.currentTarget;
+            const id = btnEl.getAttribute('data-id');
+            if (id) await handleUpdateStatus(id, 'DUYET');
+          });
+        });
+
+        tbody.querySelectorAll('.btn-reject').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const btnEl = e.currentTarget;
+            const id = btnEl.getAttribute('data-id');
+            if (id) await handleUpdateStatus(id, 'TUCHOI');
+          });
+        });
+      }
+
+      function showToast(message, type = 'success') {
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+          toastContainer = document.createElement('div');
+          toastContainer.id = 'toast-container';
+          toastContainer.style.position = 'fixed';
+          toastContainer.style.bottom = '24px';
+          toastContainer.style.right = '24px';
+          toastContainer.style.zIndex = '9999';
+          toastContainer.style.display = 'flex';
+          toastContainer.style.flexDirection = 'column';
+          toastContainer.style.gap = '8px';
+          document.body.appendChild(toastContainer);
+        }
+
+        const toast = document.createElement('div');
+        const bg = type === 'success' ? '#059669' : '#E11D48';
+        const icon = type === 'success' ? 'check_circle' : 'cancel';
+        toast.style.cssText = `
+          background: ${bg};
+          color: white;
+          padding: 10px 18px;
+          border-radius: 6px;
+          box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+          font-size: 13px;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          animation: slideInToast 0.25s ease-out;
+        `;
+        toast.innerHTML = `<span class="material-symbols-outlined" style="font-size: 19px;">${icon}</span><span>${message}</span>`;
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transition = 'opacity 0.3s ease';
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      async function handleUpdateStatus(maYeuCau, newStatus) {
+        try {
+          const res = await AssistantApi.updateClassRequestStatus(maYeuCau, newStatus);
+          if (res && res.success) {
+            const item = allRawRequests.find(r => r.maYeuCau === maYeuCau);
+            if (item) item.trangThai = newStatus;
+
+            renderCourseGroups();
+            renderTable();
+
+            if (newStatus === 'DUYET') {
+              showToast(`✓ Đã duyệt kiến nghị mở lớp ${maYeuCau}`, 'success');
+            } else {
+              showToast(`✕ Đã từ chối kiến nghị mở lớp ${maYeuCau}`, 'error');
+            }
+          } else {
+            showToast('Lỗi cập nhật trạng thái đơn', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+          showToast('Có lỗi xảy ra khi xử lý đơn', 'error');
+        }
+      }
+
+      // Sự kiện bộ lọc
+      selectStatus.addEventListener('change', () => {
+        currentPage = 1;
+        renderTable();
+      });
+
+      selectCourseFilter.addEventListener('change', () => {
+        currentPage = 1;
+        renderTable();
+      });
+
+      inputSearch.addEventListener('input', () => {
+        currentPage = 1;
+        renderTable();
+      });
+
+      btnReset.addEventListener('click', () => {
+        selectStatus.value = 'all';
+        selectCourseFilter.value = 'all';
+        inputSearch.value = '';
+        currentPage = 1;
+        renderTable();
+      });
+
+      btnPrevPage.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderTable();
+        }
+      });
+
+      btnNextPage.addEventListener('click', () => {
+        currentPage++;
+        renderTable();
+      });
+    });
+  </script>
+  <script src="../../js/user-menu.js"></script>
+</body>
+</html>

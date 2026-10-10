@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cài đặt Đợt mở Đăng ký học phần - Giáo vụ khoa</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .config-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .form-inline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr auto;
+      gap: 14px;
+      align-items: flex-end;
+    }
+    /* Chữ trạng thái - KHÔNG FRAME KHÔNG BACKGROUND */
+    .status-text-active { color: #107C41; font-weight: 600; }
+    .status-text-closed { color: #6B7280; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+        <a href="profile.html" class="sidebar-profile" style="text-decoration: none;">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Le Van Cuong">Le Van Cuong</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV002</div>
+            <div class="sidebar-user-status" id="sidebar-user-status" style="color: #0284C7;">● Giáo vụ khoa CNTT</div>
+          </div>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <div class="nav-section-title">BÀN LÀM VIỆC</div>
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link">
+              <span class="material-symbols-outlined">dashboard</span>
+              <span>Tổng quan giáo vụ</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link">
+              <span class="material-symbols-outlined">person</span>
+              <span>Hồ sơ cán bộ</span>
+            </a>
+          </li>
+          <div class="nav-section-title">QUẢN LÝ ĐÀO TẠO</div>
+          <li class="nav-item">
+            <a href="class-management.html" class="nav-link">
+              <span class="material-symbols-outlined">menu_book</span>
+              <span>Quản lý lớp học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="open-registration.html" class="nav-link active">
+              <span class="material-symbols-outlined">how_to_reg</span>
+              <span>Cài đặt đợt đăng ký</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-students.html" class="nav-link">
+              <span class="material-symbols-outlined">groups</span>
+              <span>Sinh viên ghi danh lớp</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="class-requests.html" class="nav-link">
+              <span class="material-symbols-outlined">approval_delegation</span>
+              <span>Duyệt kiến nghị mở lớp</span>
+            </a>
+          </li>
+          </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0284C7;">how_to_reg</span>
+          CÀI ĐẶT ĐỢT MỞ ĐĂNG KÝ HỌC PHẦN TRỰC TUYẾN
+        </div>
+        <div class="topbar-actions">
+          
+          <a href="profile.html" style="display: flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;">
+            <img src="https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">ThS. Trần Thị Mai Phương</span>
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="page-banner">
+          <span class="material-symbols-outlined" style="font-size: 18px;">tune</span>
+          <span>CẤU HÌNH ĐỢT MỞ ĐĂNG KÝ TRỰC TUYẾN</span>
+        </div>
+
+        <!-- CẢNH BÁO HỌC KỲ ĐANG DIỄN RA - KHÓA MỞ ĐỢT ĐĂNG KÝ THEO QUY CHẾ -->
+        <div id="semester-locked-banner" style="background: #FFFBEB; border: 1px solid #FCD34D; border-left: 4px solid #F59E0B; padding: 14px 18px; border-radius: 6px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px;">
+          <span class="material-symbols-outlined" style="color: #D97706; font-size: 24px; margin-top: 2px;">lock_clock</span>
+          <div>
+            <div style="font-size: 13.5px; font-weight: 700; color: #92400E; margin-bottom: 3px;">
+              CỔNG ĐĂNG KÝ ĐÃ KHÓA HOÀN TOÀN (HỌC KỲ 1 NĂM HỌC 2026 - 2027 ĐANG DIỄN RA)
+            </div>
+            <div style="font-size: 12px; color: #78350F; line-height: 1.5;">
+              Học kỳ hiện hành đã bắt đầu từ ngày <strong>01/09/2026</strong> (Hiện tại đang ở <strong>Tuần 6</strong>).<br>
+              Theo Quy chế Đào tạo: Cổng mở đợt đăng ký và điều chỉnh học phần <strong>chỉ được phép thực hiện trước khi vào học kỳ</strong>. Không cho phép mở đợt đăng ký mới hay đăng ký bổ sung khi học kỳ đang diễn ra.
+            </div>
+          </div>
+        </div>
+
+        <!-- KHUNG CẤU HÌNH THỜI GIAN (KHÓA KHI HỌC KỲ ĐANG DIỄN RA) -->
+        <div class="config-card" style="opacity: 0.85; background: #F8FAFC; border: 1px dashed #CBD5E1;">
+          <div style="font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 18px; color: #64748B;">lock</span>
+            <span>Thiết lập thời gian mở cổng đăng ký (Đã khóa - Học kỳ 1 2026 - 2027 đang diễn ra)</span>
+          </div>
+          <div class="form-inline-grid">
+            <div>
+              <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">THỜI GIAN BẮT ĐẦU (thoiGianBDDK)</label>
+              <input type="datetime-local" id="input-bddk" class="form-control" value="2026-08-15T08:00" disabled style="background:#E2E8F0; cursor:not-allowed;" />
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">THỜI GIAN KẾT THÚC (thoiGianKTDK)</label>
+              <input type="datetime-local" id="input-ktdk" class="form-control" value="2026-08-25T17:00" disabled style="background:#E2E8F0; cursor:not-allowed;" />
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">GHI CHÚ ĐỢT</label>
+              <input type="text" id="input-note" class="form-control" value="Đợt chính (Đã đóng)" disabled style="background:#E2E8F0; cursor:not-allowed;" />
+            </div>
+            <div>
+              <button id="btn-apply-reg" class="btn btn-secondary" disabled style="height: 38px; display: flex; align-items: center; gap: 6px; padding: 0 16px; cursor: not-allowed; opacity: 0.65;">
+                <span class="material-symbols-outlined" style="font-size: 18px;">lock</span>
+                <span>Đã khóa (Đang trong kỳ học)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BẢNG ĐẶT VÀO KHUNG CARD CHUẨN STUDENT -->
+        <div class="hocvu-card" style="margin-bottom: 20px;">
+          <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="hocvu-card-title">
+              <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">checklist</span>
+              <span>DANH SÁCH LỚP HỌC PHẦN TRONG KỲ (CHỌN LỚP ĐỂ CẤU HÌNH ĐỢT)</span>
+            </div>
+            <div style="font-size: 12px; font-weight: 600; color: #0284C7;" id="selected-count">Đã chọn: 0 lớp</div>
+          </div>
+
+          <div class="hocvu-card-body" style="padding: 0;">
+            <div class="hocvu-table-responsive" style="border: none;">
+              <table class="hocvu-table">
+                <thead>
+                  <tr>
+                    <th style="width: 35px; text-align: center;">
+                      <input type="checkbox" id="check-all" disabled title="Học kỳ đang diễn ra - Toàn bộ lớp đã khóa đăng ký" style="cursor: not-allowed; opacity: 0.4;" />
+                    </th>
+                    <th style="width: 100px;">Mã LHP</th>
+                    <th>Tên môn học / Lớp</th>
+                    <th style="width: 50px; text-align: center;">TC</th>
+                    <th style="width: 100px; text-align: center;">Thứ - Tiết</th>
+                    <th>Giảng viên</th>
+                    <th style="width: 90px; text-align: center;">Sĩ số</th>
+                    <th style="width: 110px; text-align: center;">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody id="open-tbody">
+                  <tr><td colspan="8" style="text-align: center; padding: 25px;">Đang tải danh sách lớp...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- PHÂN TRANG BÓC TÁCH TỪ GÓI META -->
+            <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
+              <div id="pagination-info" style="color: var(--text-muted);">
+                Đang hiển thị trang 1 / 1 (Tổng 0 lớp)
+              </div>
+              <div style="display: flex; gap: 4px;" id="pagination-controls">
+                <button class="btn btn-outline-primary btn-sm" id="btn-prev-page" disabled>Trước</button>
+                <button class="btn btn-outline-primary btn-sm" id="btn-next-page" disabled>Sau</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let currentPage = 1;
+      const pageSize = 6;
+      let totalPages = 1;
+
+      const tbody = document.getElementById('open-tbody');
+      const checkAll = document.getElementById('check-all');
+      const selectedCountEl = document.getElementById('selected-count');
+      const paginationInfo = document.getElementById('pagination-info');
+      const btnPrevPage = document.getElementById('btn-prev-page');
+      const btnNextPage = document.getElementById('btn-next-page');
+
+      const selectedCodes = new Set();
+
+      async function loadClasses() {
+        try {
+          let curSem = '2026_2027_HK1';
+        try {
+          const semRes = await (window.CommonApi ? CommonApi.getCurrentSemester() : ApiClient.get('/common/current-semester'));
+          if (semRes && semRes.success && semRes.data) curSem = semRes.data.maHocKy;
+        } catch (e) {}
+        const res = await AssistantApi.getClasses(curSem, '', currentPage, pageSize);
+          if (!res || !res.success || !res.data) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">Lỗi tải dữ liệu</td></tr>`;
+            return;
+          }
+
+          const classes = res.data;
+
+          // Phân trang từ gói META
+          if (res.meta) {
+            currentPage = res.meta.page;
+            totalPages = res.meta.totalPages || 1;
+            paginationInfo.textContent = `Đang hiển thị trang ${res.meta.page} / ${totalPages} (Tổng số ${res.meta.totalItems} lớp học phần)`;
+            btnPrevPage.disabled = (currentPage <= 1);
+            btnNextPage.disabled = (currentPage >= totalPages);
+          }
+
+          let html = '';
+          classes.forEach(c => {
+            const isChecked = '';
+            // Học kỳ đang diễn ra: Toàn bộ lớp đã đóng đăng ký và đang học
+            const statusText = `<span class="status-text-closed" style="color: #64748B; font-weight: 600;">● Đang học (Đã khóa ĐK)</span>`;
+
+            html += `
+              <tr style="background: #FAFAFA;">
+                <td style="text-align: center;">
+                  <input type="checkbox" class="class-checkbox" data-code="${c.maLHP}" disabled title="Học kỳ đang diễn ra, không thể thay đổi đợt đăng ký" style="cursor: not-allowed; opacity: 0.4;" />
+                </td>
+                <td><strong style="color: #0284C7;">${c.maLHP}</strong></td>
+                <td>
+                  <div style="font-weight: 600; color: #002D4F;">${c.tenHP}</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">${c.tenLHP || ''}</div>
+                </td>
+                <td style="text-align: center; font-weight: 700;">${c.soTinChi}</td>
+                <td style="text-align: center;">Thứ ${c.thu} (${c.tietBatDau || c.tietBD}-${(c.tietBatDau || c.tietBD) + c.soTiet - 1})</td>
+                <td>${c.tenGiangVien}</td>
+                <td style="text-align: center;">${c.siSoHienTai}/${c.siSoToiDa}</td>
+                <td style="text-align: center;">${statusText}</td>
+              </tr>
+            `;
+          });
+          tbody.innerHTML = html;
+
+          // Checkbox events
+          document.querySelectorAll('.class-checkbox').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+              const code = e.target.dataset.code;
+              if (e.target.checked) selectedCodes.add(code);
+              else selectedCodes.delete(code);
+              updateSelectedCount();
+            });
+          });
+
+        } catch (e) {
+          console.error(e);
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">Lỗi kết nối API</td></tr>`;
+        }
+      }
+
+      function updateSelectedCount() {
+        selectedCountEl.textContent = `Đã khóa (0 lớp)`;
+      }
+
+      checkAll.addEventListener('change', (e) => {
+        const isChecked = e.target.checked;
+        document.querySelectorAll('.class-checkbox').forEach(cb => {
+          cb.checked = isChecked;
+          const code = cb.dataset.code;
+          if (isChecked) selectedCodes.add(code);
+          else selectedCodes.delete(code);
+        });
+        updateSelectedCount();
+      });
+
+      // Áp dụng đợt mở
+      document.getElementById('btn-apply-reg').addEventListener('click', async () => {
+        showToast('Học kỳ 1 (2026 - 2027) đã bắt đầu từ 01/09/2026. Quy chế đào tạo không cho phép mở đợt đăng ký khi học kỳ đang diễn ra!', 'error');
+        return;
+        if (selectedCodes.size === 0) {
+          alert('Vui lòng chọn ít nhất 1 lớp học phần để cài đặt đợt mở!');
+          return;
+        }
+
+        const bddk = document.getElementById('input-bddk').value;
+        const ktdk = document.getElementById('input-ktdk').value;
+
+        if (!bddk || !ktdk) {
+          showToast('Vui lòng chọn thời gian bắt đầu và kết thúc đăng ký!', 'error');
+          return;
+        }
+
+        const bddkDate = new Date(bddk);
+        const ktdkDate = new Date(ktdk);
+        if (bddkDate >= ktdkDate) {
+          showToast('Thời gian kết thúc đăng ký phải sau thời gian bắt đầu đăng ký!', 'error');
+          return;
+        }
+
+        const payload = {
+          dsMaLHP: Array.from(selectedCodes),
+          classCodes: Array.from(selectedCodes),
+          thoiGianBD: bddk,
+          thoiGianBDDK: bddk,
+          thoiGianKT: ktdk,
+          thoiGianKTDK: ktdk
+        };
+
+        const res = await AssistantApi.openRegistrationPeriod(payload);
+        if (res && res.success) {
+          showToast(res.message, 'success');
+          await loadClasses();
+        } else {
+          showToast(res.message || 'Lỗi cài đặt đợt mở', 'error');
+        }
+      });
+
+      btnPrevPage.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          loadClasses();
+        }
+      });
+      btnNextPage.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          loadClasses();
+        }
+      });
+
+      function showToast(msg, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg ' + (type === 'error' ? 'toast-error' : 'toast-success');
+        toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">${type === 'error' ? 'error' : 'check_circle'}</span><span>${msg}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+      }
+
+      loadClasses();
+    });
+  </script>
+  <script src="../../js/user-menu.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "portal-frontend",
+  "version": "1.0.0",
+  "description": "Cổng thông tin đào tạo & Quản lý học vụ",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

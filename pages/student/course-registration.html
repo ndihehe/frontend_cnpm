@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký học phần - Hệ thống quản lý học vụ</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <style>
+    .reg-info-bar {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 12.5px;
+      box-shadow: var(--shadow-sm);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .badge-registered {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #E6F4EA;
+      color: #107C41;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #A6E9B9;
+    }
+    .badge-full {
+      background: #FEE2E2;
+      color: #DC2626;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #FCA5A5;
+    }
+
+    /* TOAST NOTIFICATION CONTAINER */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast-msg {
+      pointer-events: auto;
+      background: #FFFFFF;
+      color: var(--text-main);
+      border-radius: 6px;
+      padding: 11px 16px;
+      font-size: 12.5px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 4px solid #107C41;
+      animation: toastSlideIn 0.25s ease-out;
+      min-width: 280px;
+      max-width: 420px;
+    }
+    .toast-success { border-left-color: #107C41; background: #F0FDF4; color: #166534; }
+    .toast-error { border-left-color: #EF4444; background: #FEF2F2; color: #991B1B; }
+    .toast-warning { border-left-color: #D97706; background: #FFFBEB; color: #92400E; }
+    .toast-info { border-left-color: #0284C7; background: #F0F9FF; color: #075985; }
+    @keyframes toastSlideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .confirm-modal-card {
+      background: #FFFFFF;
+      border-radius: var(--radius-sm);
+      width: 460px;
+      max-width: 90vw;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="sidebar-brand">
+          <span class="material-symbols-outlined" style="font-size: 26px; color: #00365D;">account_balance</span>
+          <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
+        </a>
+
+        <!-- Profile Widget sinh viên Glassmorphism -->
+        <div class="sidebar-profile">
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_01.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Nguyen+An&background=0284C7&color=fff&size=80'" />
+          <div style="min-width: 0;">
+            <div class="sidebar-user-name" id="sidebar-user-name" title="Nguyen Van An">Nguyen Van An</div>
+            <div class="sidebar-user-mssv" id="sidebar-user-code">SV: SV001</div>
+            <div class="sidebar-user-status" id="sidebar-user-status">● Đang học</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">HỌC VỤ SINH VIÊN</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <a href="dashboard.html" class="nav-link ">
+              <span class="material-symbols-outlined">campaign</span>
+              <span>Bảng tin thông báo</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="profile.html" class="nav-link ">
+              <span class="material-symbols-outlined">person</span>
+              <span>Thông tin cá nhân</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="student-schedule.html" class="nav-link ">
+              <span class="material-symbols-outlined">calendar_month</span>
+              <span>Thời khóa biểu</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="my-classes.html" class="nav-link ">
+              <span class="material-symbols-outlined">school</span>
+              <span>Lớp học phần của tôi</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="course-registration.html" class="nav-link active">
+              <span class="material-symbols-outlined">app_registration</span>
+              <span>Đăng ký học phần</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="transcript.html" class="nav-link ">
+              <span class="material-symbols-outlined">fact_check</span>
+              <span>Xem điểm học phần</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="app-main">
+      <!-- TOPBAR -->
+      <header class="app-topbar">
+        <div class="topbar-title">
+          <span class="material-symbols-outlined" style="font-size: 19px; color: #0284C7;">school</span>
+          HỆ THỐNG QUẢN LÝ HỌC VỤ
+        </div>
+        <div class="topbar-actions">
+          
+          <div style="display: flex; align-items: center; gap: 7px; cursor: pointer;">
+            <img src="https://ui-avatars.com/api/?name=Bui+Duy&background=0284C7&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">Nguyen Van An</span>
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-body">
+        <div class="page-banner" style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">app_registration</span>
+            <span>CỔNG ĐĂNG KÝ HỌC PHẦN TRỰC TUYẾN</span>
+          </div>
+          <button id="btn-open-request-modal" class="btn btn-outline-primary btn-sm" style="background:#fff; font-weight:700;">
+            <span class="material-symbols-outlined" style="font-size: 15px;">add_circle</span>
+            Kiến nghị mở lớp mới
+          </button>
+        </div>
+
+        <!-- THANH META THÔNG TIN TÍN CHỈ VÀ HẠN MỨC -->
+        <div class="reg-info-bar">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <div>
+              <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700; display:block;">Đợt đăng ký:</span>
+              <strong id="meta-semester-name" style="color: #00365D;">Đang tải học kỳ...</strong>
+            </div>
+            <div style="height: 24px; width: 1px; background: #E2E8F0;"></div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700; display:block;">Số lớp đã ghi danh:</span>
+              <strong id="meta-total-classes" style="color: #0284C7; font-size: 14px;">3 lớp</strong>
+            </div>
+            <div style="height: 24px; width: 1px; background: #E2E8F0;"></div>
+            <div>
+              <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700; display:block;">Tín chỉ đăng ký / Hạn mức:</span>
+              <span style="font-size: 14px;">
+                <strong id="meta-total-credits" style="color: #107C41;">9</strong> / <strong id="meta-max-credits">24</strong> TC
+              </span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge-closed" id="reg-status-badge" style="background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; font-size: 12px; padding: 5px 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; border-radius: 4px;">
+              <span class="material-symbols-outlined" style="font-size: 15px;">lock</span> Cổng đăng ký đã đóng (Đã vào kỳ học từ 01/09/2026)
+            </span>
+          </div>
+        </div>
+
+        <!-- PHẦN 1: BẢNG DANH SÁCH LỚP HỌC PHẦN ĐANG MỞ ĐĂNG KÝ (ROUTE 13) -->
+        <div class="hocvu-card" style="margin-bottom: 20px;">
+          <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div class="hocvu-card-title">
+              <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">list_alt</span>
+              LỚP HỌC PHẦN ĐANG MỞ ĐĂNG KÝ
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="text" id="open-search" class="filter-select" placeholder="Tìm tên môn, mã HP, mã lớp..." style="width: 250px; font-size: 12px;" />
+              <button id="btn-search" class="btn btn-primary btn-sm" style="font-weight: 600;">
+                <span class="material-symbols-outlined" style="font-size: 15px;">search</span> Tìm
+              </button>
+            </div>
+          </div>
+          <div class="hocvu-card-body" style="padding: 0;">
+            <div class="hocvu-table-responsive" style="border: none;">
+              <table class="hocvu-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40px; text-align: center;">STT</th>
+                    <th style="width: 105px;">Mã LHP</th>
+                    <th style="text-align: left;">Tên môn học / Lớp</th>
+                    <th style="width: 45px; text-align: center;">TC</th>
+                    <th style="width: 60px; text-align: center;">Thứ</th>
+                    <th style="width: 65px; text-align: center;">Tiết</th>
+                    <th style="width: 75px; text-align: center;">Phòng</th>
+                    <th style="text-align: left;">Giảng viên</th>
+                    <th style="width: 80px; text-align: center;">Sĩ số</th>
+                    <th style="width: 100px; text-align: center;">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="open-classes-tbody">
+                  <tr><td colspan="10" style="text-align: center; padding: 30px;">Đang tải danh sách lớp mở...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- THANH PHÂN TRANG TỪ META -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid #E2E8F0; font-size: 12px; background: #F8FAFC;">
+              <div id="pagination-info" style="color: var(--text-muted);">
+                Đang hiển thị trang 1 / 1 (Tổng 0 lớp)
+              </div>
+              <div style="display: flex; gap: 4px;" id="pagination-controls">
+                <button class="btn btn-outline-primary btn-sm" id="btn-prev-page" disabled>Trước</button>
+                <button class="btn btn-outline-primary btn-sm" id="btn-next-page" disabled>Sau</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHẦN 2: BẢNG LỚP HỌC PHẦN ĐÃ GHI DANH THÀNH CÔNG (ROUTE 14) -->
+        <div class="hocvu-card" style="margin-bottom: 24px;">
+          <div class="hocvu-card-header" style="background: #EBF5FB;">
+            <div class="hocvu-card-title" style="color: #00365D;">
+              <span class="material-symbols-outlined" style="font-size: 18px; color: #107C41;">task_alt</span>
+              KẾT QUẢ ĐĂNG KÝ: CÁC LỚP HỌC PHẦN ĐÃ GHI DANH THÀNH CÔNG
+            </div>
+          </div>
+          <div class="hocvu-card-body" style="padding: 0;">
+            <div class="hocvu-table-responsive" style="border: none;">
+              <table class="hocvu-table">
+                <thead>
+                  <tr style="background: #E2F2FC;">
+                    <th style="width: 40px; text-align: center;">STT</th>
+                    <th style="width: 90px; text-align: center;">Mã hồ sơ</th>
+                    <th style="width: 105px;">Mã LHP</th>
+                    <th style="text-align: left;">Tên môn học</th>
+                    <th style="width: 45px; text-align: center;">TC</th>
+                    <th style="width: 60px; text-align: center;">Thứ</th>
+                    <th style="width: 65px; text-align: center;">Tiết</th>
+                    <th style="width: 75px; text-align: center;">Phòng</th>
+                    <th style="text-align: left;">Giảng viên</th>
+                    <th style="width: 115px; text-align: center;">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="registered-classes-tbody">
+                  <tr><td colspan="10" style="text-align: center; padding: 25px;">Đang tải danh sách đã đăng ký...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- MODAL XÁC NHẬN HỦY LỚP (ROUTE 16) -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="confirm-modal-card">
+      <div style="padding: 16px 20px; border-bottom: 1px solid #E2E8F0; display:flex; align-items:center; gap:8px;">
+        <span class="material-symbols-outlined" style="color: #EF4444;">warning</span>
+        <strong style="color: #002D4F; font-size: 14px;">Xác nhận hủy đăng ký môn học</strong>
+      </div>
+      <div style="padding: 20px; font-size: 13px; line-height: 1.5; color: var(--text-main);" id="confirm-modal-text">
+        Bạn có chắc chắn muốn hủy đăng ký lớp học phần này không?
+      </div>
+      <div style="padding: 12px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: flex-end; gap: 8px;">
+        <button class="btn btn-outline-primary btn-sm" id="btn-cancel-modal">Đóng</button>
+        <button class="btn btn-sm" id="btn-confirm-cancel-action" style="background:#EF4444; color:#fff; font-weight:700;">Hủy đăng ký</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL KIẾN NGHỊ MỞ THÊM LỚP (ROUTE 17) -->
+  <div class="modal-overlay" id="request-modal">
+    <div class="confirm-modal-card" style="width: 500px;">
+      <div style="padding: 16px 20px; border-bottom: 1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="material-symbols-outlined" style="color: #0284C7;">edit_note</span>
+          <strong style="color: #002D4F; font-size: 14px;">Phiếu kiến nghị mở thêm lớp học phần</strong>
+        </div>
+        <button id="btn-close-request-modal" style="border:none; background:none; cursor:pointer;"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div style="padding: 20px;">
+        <div style="margin-bottom: 12px;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">MÃ HỌC PHẦN (*)</label>
+          <input type="text" id="req-maHP" class="filter-select" placeholder="Ví dụ: INT1405" style="width: 100%; box-sizing: border-box;" />
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">LÝ DO KIẾN NGHỊ (*)</label>
+          <textarea id="req-lyDo" class="filter-select" rows="3" placeholder="Nhập lý do cần mở thêm lớp (ví dụ: cần học để kịp tiến độ tốt nghiệp...)" style="width: 100%; box-sizing: border-box; resize: vertical;"></textarea>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">LỊCH HỌC MONG MUỐN (NẾU CÓ)</label>
+          <input type="text" id="req-lichHoc" class="filter-select" placeholder="Ví dụ: Thứ 4 (Tiết 1-3) hoặc Thứ 6" style="width: 100%; box-sizing: border-box;" />
+        </div>
+      </div>
+      <div style="padding: 12px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: flex-end; gap: 8px;">
+        <button class="btn btn-outline-primary btn-sm" id="btn-cancel-request-modal">Hủy</button>
+        <button class="btn btn-primary btn-sm" id="btn-submit-request-action" style="font-weight:700;">Gửi kiến nghị</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS HỆ THỐNG -->
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let currentPage = 1;
+      let totalPages = 1;
+      let targetHoSoToCancel = null;
+      let registeredClassCodes = new Set();
+
+      const openSearchInput = document.getElementById('open-search');
+      const btnSearch = document.getElementById('btn-search');
+      const btnPrevPage = document.getElementById('btn-prev-page');
+      const btnNextPage = document.getElementById('btn-next-page');
+      const paginationInfo = document.getElementById('pagination-info');
+
+      const openTbody = document.getElementById('open-classes-tbody');
+      const regTbody = document.getElementById('registered-classes-tbody');
+
+      const metaTotalClasses = document.getElementById('meta-total-classes');
+      const metaTotalCredits = document.getElementById('meta-total-credits');
+      const metaMaxCredits = document.getElementById('meta-max-credits');
+
+      // Modals
+      const confirmModal = document.getElementById('confirm-modal');
+      const confirmModalText = document.getElementById('confirm-modal-text');
+      const btnCancelModal = document.getElementById('btn-cancel-modal');
+      const btnConfirmCancelAction = document.getElementById('btn-confirm-cancel-action');
+
+      const requestModal = document.getElementById('request-modal');
+      const btnOpenRequestModal = document.getElementById('btn-open-request-modal');
+      const btnCloseRequestModal = document.getElementById('btn-close-request-modal');
+      const btnCancelRequestModal = document.getElementById('btn-cancel-request-modal');
+      const btnSubmitRequestAction = document.getElementById('btn-submit-request-action');
+
+      // Toast Notification Helper
+      function showToast(msg, type = 'success') {
+        const c = document.getElementById('toast-container');
+        if (!c) return;
+        const t = document.createElement('div');
+        t.className = `toast-msg toast-${type}`;
+        const iconName = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
+        t.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">${iconName}</span><span>${msg}</span>`;
+        c.appendChild(t);
+        setTimeout(() => {
+          t.style.opacity = '0';
+          t.style.transition = 'opacity 0.3s';
+          setTimeout(() => t.remove(), 300);
+        }, 4000);
+      }
+
+      // 1. TẢI DANH SÁCH LỚP ĐÃ GHI DANH (ROUTE 14)
+      async function loadRegisteredClasses() {
+        regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 20px; color: var(--text-muted);">Đang tải lớp đã đăng ký...</td></tr>`;
+        try {
+          const res = await StudentApi.getRegisteredClasses();
+          if (!res || !res.success || !res.data) {
+            regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #EF4444;">Không thể tải lớp đã ghi danh</td></tr>`;
+            return;
+          }
+
+          // Cập nhật Meta
+          if (res.meta) {
+            if (res.meta.tenHocKy) {
+              const semEl = document.getElementById('meta-semester-name');
+              if (semEl) semEl.textContent = res.meta.tenHocKy;
+            }
+            metaTotalClasses.textContent = (res.meta.tongSoLopDaDangKy != null ? res.meta.tongSoLopDaDangKy : res.data.length) + ' lớp';
+            const totCredits = res.meta.tongSoTinChiDaDangKy != null ? res.meta.tongSoTinChiDaDangKy : 0;
+            const maxCredits = res.meta.hanMucTinChiToiDa || 24;
+            const creditsEl = document.getElementById('meta-total-credits');
+            const maxEl = document.getElementById('meta-max-credits');
+            if (creditsEl) creditsEl.textContent = totCredits;
+            if (maxEl) maxEl.textContent = maxCredits;
+            const ratioEl = document.getElementById('meta-credits-ratio');
+            if (ratioEl && (!creditsEl || !maxEl)) ratioEl.textContent = `${totCredits} / ${maxCredits} TC`;
+          }
+
+          registeredClassCodes.clear();
+          const list = res.data;
+          if (list.length === 0) {
+            regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 25px; color: var(--text-muted);">Chưa có lớp học phần nào được ghi danh.</td></tr>`;
+            return;
+          }
+
+          let html = '';
+          list.forEach((item, idx) => {
+            registeredClassCodes.add(item.maLHP);
+            html += `
+              <tr>
+                <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
+                <td style="text-align: center; font-family: monospace; font-weight: 600;">#${item.maHoSo}</td>
+                <td><strong>${item.maLHP}</strong></td>
+                <td>${item.tenHP}</td>
+                <td style="text-align: center; font-weight: 700;">${item.soTinChi}</td>
+                <td style="text-align: center;">Thứ ${item.thu}</td>
+                <td style="text-align: center;">${item.tietBatDau} - ${item.tietBatDau + item.soTiet - 1}</td>
+                <td style="text-align: center;">${item.phongHoc || '-'}</td>
+                <td>${item.tenGiangVien || '-'}</td>
+                <td style="text-align: center;">
+                  ${(item.canCancel === true) ? `
+                  <button class="btn btn-sm btn-outline-danger btn-cancel-enroll" data-hoso="${item.maHoSo}" data-name="${item.tenHP} (${item.maLHP})" style="padding: 3px 8px; font-size: 11px; border: 1px solid #FCA5A5; color: #DC2626; background: #FEF2F2; border-radius: 4px; cursor: pointer;">
+                    <span class="material-symbols-outlined" style="font-size: 13px; vertical-align: middle;">cancel</span> Hủy
+                  </button>
+                  ` : `
+                  <button class="btn btn-sm btn-secondary" disabled title="Học kỳ đã bắt đầu từ 01/09/2026. Không thể hủy học phần theo quy chế đào tạo." style="padding: 4px 8px; font-size: 11px; border-radius: 4px; opacity: 0.75; cursor: not-allowed; background: #E2E8F0; color: #64748B; border: 1px solid #CBD5E1; font-weight: 600; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;">
+                    <span class="material-symbols-outlined" style="font-size: 13px; vertical-align: middle;">event_busy</span> Hết hạn hủy
+                  </button>
+                  `}
+                </td>
+              </tr>
+            `;
+          });
+          regTbody.innerHTML = html;
+
+          // Lắng nghe nút Hủy
+          document.querySelectorAll('.btn-cancel-enroll').forEach(btn => {
+            btn.addEventListener('click', function() {
+              targetHoSoToCancel = {
+                maHoSo: this.getAttribute('data-hoso'),
+                name: this.getAttribute('data-name')
+              };
+              confirmModalText.innerHTML = `Bạn có chắc chắn muốn hủy đăng ký lớp học phần <strong>${targetHoSoToCancel.name}</strong> không?<br><span style="font-size:11.5px; color:#EF4444;">Hành động này sẽ giải phóng sĩ số lớp.</span>`;
+              confirmModal.classList.add('open');
+            });
+          });
+
+        } catch (err) {
+          console.error(err);
+          regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #EF4444;">Lỗi kết nối lớp đã ghi danh.</td></tr>`;
+        }
+      }
+
+      // 2. TẢI DANH SÁCH LỚP ĐANG MỞ (ROUTE 13)
+      async function loadOpenClasses() {
+        openTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 25px; color: var(--text-muted);">Đang tải lớp học phần mở...</td></tr>`;
+        try {
+          const kw = openSearchInput.value.trim();
+          const res = await StudentApi.getOpenClasses(kw, currentPage, 10);
+
+          if (!res || !res.success || !res.data) {
+            openTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #EF4444;">Không thể tải danh sách lớp mở.</td></tr>`;
+            return;
+          }
+
+          // Cập nhật Pagination Meta
+          if (res.meta) {
+            currentPage = res.meta.page;
+            totalPages = res.meta.totalPages || 1;
+            paginationInfo.textContent = `Đang hiển thị trang ${res.meta.page} / ${res.meta.totalPages} (Tổng số ${res.meta.totalItems} lớp mở)`;
+            btnPrevPage.disabled = (currentPage <= 1);
+            btnNextPage.disabled = (currentPage >= totalPages);
+          }
+
+          const list = res.data;
+          if (list.length === 0) {
+            openTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px;"><span class="material-symbols-outlined" style="font-size: 24px; vertical-align: middle; color: #94A3B8; margin-right: 6px;">event_busy</span> Cổng đăng ký học phần cho Học kỳ 1 (2026 - 2027) đã đóng. Theo quy chế đào tạo, việc đăng ký/hủy học phần chỉ thực hiện trước khi học kỳ bắt đầu (trước 01/09/2026).</td></tr>`;
+            return;
+          }
+
+          let html = '';
+          list.forEach((item, idx) => {
+            const isRegistered = registeredClassCodes.has(item.maLHP);
+            const isFull = (item.siSoHienTai >= item.siSoToiDa);
+
+            html += `
+              <tr>
+                <td style="text-align: center; color: var(--text-muted);">${(currentPage - 1) * 10 + idx + 1}</td>
+                <td><strong style="color: #0284C7;">${item.maLHP}</strong></td>
+                <td>
+                  <div style="font-weight: 600; color: #002D4F;">${item.tenHP}</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">${item.tenLHP}</div>
+                </td>
+                <td style="text-align: center; font-weight: 700;">${item.soTinChi}</td>
+                <td style="text-align: center;">Thứ ${item.thu}</td>
+                <td style="text-align: center;">${item.tietBatDau} - ${item.tietBatDau + item.soTiet - 1}</td>
+                <td style="text-align: center;">${item.phongHoc || '-'}</td>
+                <td>${item.tenGiangVien || 'Chưa phân công'}</td>
+                <td style="text-align: center;">
+                  <span style="font-weight: 600; color: ${isFull ? '#DC2626' : '#107C41'};">${item.siSoHienTai}/${item.siSoToiDa}</span>
+                </td>
+                <td style="text-align: center;">
+            `;
+
+            if (isRegistered) {
+              html += `<span class="badge-registered"><span class="material-symbols-outlined" style="font-size:12px;">check</span> Đã ĐK</span>`;
+            } else if (isFull) {
+              html += `<span class="badge-full">Hết chỗ</span>`;
+            } else {
+              html += `
+                <button class="btn btn-primary btn-sm btn-enroll-action" data-lhp="${item.maLHP}" data-name="${item.tenHP}" style="padding: 3px 10px; font-size: 11.5px; font-weight: 700;">
+                  Đăng ký
+                </button>
+              `;
+            }
+
+            html += `</td></tr>`;
+          });
+
+          openTbody.innerHTML = html;
+
+          // Lắng nghe sự kiện click Đăng ký
+          document.querySelectorAll('.btn-enroll-action').forEach(btn => {
+            btn.addEventListener('click', async function() {
+              const maLHP = this.getAttribute('data-lhp');
+              const name = this.getAttribute('data-name');
+              this.disabled = true;
+              this.textContent = '...';
+
+              try {
+                // Gọi API Route 15: POST /student/registration/enroll
+                const enrollRes = await StudentApi.enrollCourse(maLHP);
+                if (enrollRes && enrollRes.success) {
+                  showToast(`Đăng ký thành công lớp ${maLHP} - ${name}!`, 'success');
+                  await loadRegisteredClasses();
+                  await loadOpenClasses();
+                } else {
+                  // Xử lý thông báo lỗi (ví dụ: HTTP 409 Xung đột lịch học)
+                  showToast(enrollRes.message || 'Đăng ký thất bại.', 'error');
+                  this.disabled = false;
+                  this.textContent = 'Đăng ký';
+                }
+              } catch (err) {
+                showToast('Lỗi máy chủ khi đăng ký học phần', 'error');
+                this.disabled = false;
+                this.textContent = 'Đăng ký';
+              }
+            });
+          });
+
+        } catch (err) {
+          console.error(err);
+          openTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #EF4444;">Lỗi tải lớp mở.</td></tr>`;
+        }
+      }
+
+      // Xử lý xác nhận hủy đăng ký (ROUTE 16)
+      btnConfirmCancelAction.addEventListener('click', async function() {
+        if (!targetHoSoToCancel) return;
+        btnConfirmCancelAction.disabled = true;
+        btnConfirmCancelAction.textContent = 'Đang hủy...';
+
+        try {
+          const res = await StudentApi.cancelEnrollment(targetHoSoToCancel.maHoSo);
+          if (res && res.success) {
+            showToast(`Đã hủy lớp ${targetHoSoToCancel.name} thành công.`, 'info');
+            confirmModal.classList.remove('open');
+            await loadRegisteredClasses();
+            await loadOpenClasses();
+          } else {
+            showToast(res.message || 'Không thể hủy lớp', 'error');
+          }
+        } catch (e) {
+          showToast('Lỗi khi gửi yêu cầu hủy lớp', 'error');
+        } finally {
+          btnConfirmCancelAction.disabled = false;
+          btnConfirmCancelAction.textContent = 'Hủy đăng ký';
+          targetHoSoToCancel = null;
+        }
+      });
+
+      btnCancelModal.addEventListener('click', () => confirmModal.classList.remove('open'));
+
+      // Xử lý gửi phiếu kiến nghị mở lớp (ROUTE 17)
+      btnOpenRequestModal.addEventListener('click', () => requestModal.classList.add('open'));
+      btnCloseRequestModal.addEventListener('click', () => requestModal.classList.remove('open'));
+      btnCancelRequestModal.addEventListener('click', () => requestModal.classList.remove('open'));
+
+      btnSubmitRequestAction.addEventListener('click', async function() {
+        const maHP = document.getElementById('req-maHP').value.trim();
+        const lyDo = document.getElementById('req-lyDo').value.trim();
+        const lichHoc = document.getElementById('req-lichHoc').value.trim();
+
+        if (!maHP || !lyDo) {
+          showToast('Vui lòng nhập đầy đủ mã học phần và lý do kiến nghị.', 'warning');
+          return;
+        }
+
+        btnSubmitRequestAction.disabled = true;
+        btnSubmitRequestAction.textContent = 'Đang gửi...';
+
+        try {
+          const res = await StudentApi.requestOpenCourse({ maHP, lyDo, thoiGianMongMuon: lichHoc });
+          if (res && res.success) {
+            showToast(`Gửi kiến nghị mở lớp thành công! (Mã phiếu: ${res.data.maYeuCau})`, 'success');
+            requestModal.classList.remove('open');
+            document.getElementById('req-maHP').value = '';
+            document.getElementById('req-lyDo').value = '';
+            document.getElementById('req-lichHoc').value = '';
+          } else {
+            showToast(res.message || 'Gửi kiến nghị thất bại.', 'error');
+          }
+        } catch (e) {
+          showToast('Lỗi kết nối khi gửi kiến nghị.', 'error');
+        } finally {
+          btnSubmitRequestAction.disabled = false;
+          btnSubmitRequestAction.textContent = 'Gửi kiến nghị';
+        }
+      });
+
+      // Tìm kiếm & Phân trang
+      btnSearch.addEventListener('click', () => { currentPage = 1; loadOpenClasses(); });
+      openSearchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') { currentPage = 1; loadOpenClasses(); }
+      });
+      btnPrevPage.addEventListener('click', () => {
+        if (currentPage > 1) { currentPage--; loadOpenClasses(); }
+      });
+      btnNextPage.addEventListener('click', () => {
+        if (currentPage < totalPages) { currentPage++; loadOpenClasses(); }
+      });
+
+      // Khởi chạy tuần tự
+      async function init() {
+        await loadRegisteredClasses();
+        await loadOpenClasses();
+      }
+      init();
+    });
+  </script>
+  <script src="../../js/user-menu.js"></script>
+</body>
+</html>
