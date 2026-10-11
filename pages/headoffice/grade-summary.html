@@ -199,27 +199,16 @@
             <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khóa đào tạo:</label>
             <select id="select-nienkhoa" class="form-control" style="width: 150px; font-size: 12px; height: 32px;">
               <option value="all">Tất cả khóa</option>
-              <option value="2022-2026">Khóa 2022 - 2026</option>
-              <option value="2021-2025">Khóa 2021 - 2025</option>
-              <option value="2020-2024">Khóa 2020 - 2024</option>
             </select>
 
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khoa:</label>
-            <select id="select-khoa" class="form-control" style="width: 170px; font-size: 12px; height: 32px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khoa / Viện:</label>
+            <select id="select-khoa" class="form-control" style="width: 180px; font-size: 12px; height: 32px;">
               <option value="all">Tất cả khoa / viện</option>
-              <option value="Công nghệ thông tin">Khoa CNTT</option>
-              <option value="Kinh tế">Khoa Kinh tế</option>
-              <option value="Điện - Điện tử">Khoa Điện - Điện tử</option>
-              <option value="Cơ khí ô tô">Khoa Cơ khí Ô tô</option>
             </select>
 
             <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Trạng thái HV:</label>
             <select id="select-status" class="form-control" style="width: 170px; font-size: 12px; height: 32px;">
               <option value="all">Tất cả trạng thái</option>
-              <option value="Bình thường">Bình thường</option>
-              <option value="Cảnh báo HV mức 1">Cảnh báo HV mức 1</option>
-              <option value="Cảnh báo HV mức 2">Cảnh báo HV mức 2</option>
-              <option value="Đủ điều kiện tốt nghiệp">Đủ ĐK tốt nghiệp</option>
             </select>
 
             <!-- Search box chuẩn không out icon -->
@@ -288,7 +277,7 @@
   <script src="../../js/api.js"></script>
   <script>
     let currentPage = 1;
-    const pageSize = 10;
+    const pageSize = 20;
 
     function debounce(fn, wait) {
       let t;
@@ -405,6 +394,51 @@
         loadSummary(currentPage + 1);
       });
 
+      async function initDynamicFilters() {
+        try {
+          const stats = await HeadOfficeApi.getStatistics();
+          if (stats && stats.success && stats.data) {
+            const d = stats.data;
+            if (d.sinhVienTheoKhoa && typeof d.sinhVienTheoKhoa === 'object') {
+              const faculties = Object.keys(d.sinhVienTheoKhoa);
+              if (faculties.length > 0) {
+                const cur = selectKhoa.value;
+                selectKhoa.innerHTML = '<option value="all">Tất cả khoa / viện</option>' +
+                  faculties.map(f => `<option value="${f}">${f.startsWith('Khoa') ? f : 'Khoa ' + f}</option>`).join('');
+                if (faculties.includes(cur)) selectKhoa.value = cur;
+              }
+            }
+          }
+
+          const stdRes = await HeadOfficeApi.getStudents('all', 'all', '', 1, 250);
+          if (stdRes && stdRes.success && Array.isArray(stdRes.data)) {
+            const cohorts = Array.from(new Set(stdRes.data.map(s => s.nienKhoa).filter(Boolean))).sort();
+            cohorts.forEach(coh => {
+              const opt = document.createElement('option');
+              opt.value = coh;
+              opt.textContent = `Khóa ${coh}`;
+              selectNienKhoa.appendChild(opt);
+            });
+
+            const standardStatuses = [
+              'Bình thường',
+              'Cảnh báo HV mức 1',
+              'Cảnh báo HV mức 2',
+              'Đủ điều kiện tốt nghiệp'
+            ];
+            const liveStatuses = Array.from(new Set(stdRes.data.map(s => s.trangThaiHocVu || s.trangThai).filter(Boolean)));
+            const allStatuses = Array.from(new Set([...standardStatuses, ...liveStatuses]));
+            const curStatus = selectStatus.value;
+            selectStatus.innerHTML = '<option value="all">Tất cả trạng thái</option>' +
+              allStatuses.map(st => `<option value="${st}">${st}</option>`).join('');
+            if (allStatuses.includes(curStatus)) selectStatus.value = curStatus;
+          }
+        } catch (e) {
+          console.warn('Lỗi nạp bộ lọc động:', e);
+        }
+      }
+
+      initDynamicFilters();
       loadSummary(1);
     });
   </script>

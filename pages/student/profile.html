@@ -362,7 +362,7 @@
                     </div>
                     <div class="gpa-filter-item">
                       <label style="color: var(--text-muted); font-size: 10px; display: block;">Năm học</label>
-                      <select id="p-select-year"><option>2026-2027</option><option>2025-2026</option></select>
+                      <select id="p-select-year"><option value="all">Tất cả năm học</option></select>
                     </div>
                     <div class="gpa-filter-item">
                       <label style="color: var(--text-muted); font-size: 10px; display: block;">Học kỳ</label>
@@ -633,6 +633,22 @@
                 selectSem.addEventListener('change', () => {
                   filterAndRenderGpa(selectSem.value);
                 });
+              }
+
+              const selectYear = document.getElementById('p-select-year');
+              if (selectYear) {
+                const years = Array.from(new Set(allGradeSemesters.map(s => {
+                  if (s.namHoc) return s.namHoc;
+                  const parts = (s.maHocKy || '').split('_');
+                  if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                    return `${parts[0]}-${parts[1]}`;
+                  }
+                  return null;
+                }).filter(Boolean)));
+                if (years.length > 0) {
+                  selectYear.innerHTML = '<option value="all">Tất cả năm học</option>' +
+                    years.map(y => `<option value="${y}">Năm học ${y}</option>`).join('');
+                }
               }
 
               const btnRefresh = document.getElementById('btn-refresh-gpa');

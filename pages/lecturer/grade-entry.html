@@ -219,6 +219,10 @@
                   Quy chế học vụ: Tổng kết = (QT × 0.4) + (CK × 0.6). Sinh viên vắng trên 3 buổi (> 3) sẽ tự động bị Cấm thi (Điểm F).
                 </div>
                 <div style="display: flex; gap: 8px;">
+                  <button type="button" id="btn-export-all" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 6px; color: #0284C7; border-color: #0284C7; font-weight: 600; cursor: pointer; padding: 6px 14px;" title="Xuất toàn bộ bảng điểm của tất cả các lớp học phần được phân công">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">folder_zip</span>
+                    <span>Xuất toàn bộ bảng điểm</span>
+                  </button>
                   <button type="button" id="btn-export-excel" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 6px; color: #107C41; border-color: #107C41; font-weight: 600; cursor: pointer; padding: 6px 14px;">
                     <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
                     <span>Xuất file điểm</span>
@@ -364,9 +368,9 @@
               <td><div style="font-weight: 600; color: #002D4F;">${s.hoTen}</div></td>
               <td><span style="font-size: 12px;">${s.lopSV || s.lopDanhNghia || 'CNTT-K26'}</span></td>
               <td style="text-align: center;">
-                <input type="number" min="0" max="30" class="grade-input input-vang" 
-                       style="width: 55px; ${vangVal > 3 ? 'border-color:#DC2626; color:#DC2626; font-weight:700; background:#FEF2F2;' : ''}" 
-                       value="${vangVal}" data-field="soBuoiVang" title="Số buổi vắng. Vắng > 3 buổi sẽ tự động cấm thi" />
+                <input type="number" min="0" max="30" class="grade-input input-vang" readonly
+                       style="width: 55px; background: #F1F5F9; cursor: not-allowed; ${vangVal > 3 ? 'border-color:#DC2626; color:#DC2626; font-weight:700; background:#FEF2F2;' : 'color:#475569;'}" 
+                       value="${vangVal}" data-field="soBuoiVang" title="Số buổi vắng được tự động đồng bộ từ chức năng Điểm danh theo quy chế (Readonly). Vắng > 3 buổi sẽ tự động cấm thi." />
               </td>
               <td style="text-align: center;">
                 <input type="number" step="0.1" min="0" max="10" required class="grade-input input-qt" style="width: 75px;" value="${s.diemQuaTrinh != null ? s.diemQuaTrinh : ''}" data-field="diemQuaTrinh" title="Điểm quá trình (Hệ số 0.4)" />
@@ -479,6 +483,64 @@
             ApiClient.showToast('success', 'Xuất file thành công', `Đã xuất và tải về bảng điểm lớp ${currentLHP}.`);
           } else {
             alert(`Đã xuất và tải về bảng điểm lớp ${currentLHP} thành công!`);
+          }
+        });
+      }
+
+      // Xử lý Xuất toàn bộ bảng điểm của tất cả các lớp giảng dạy
+      const btnExportAll = document.getElementById('btn-export-all');
+      if (btnExportAll) {
+        btnExportAll.addEventListener('click', async () => {
+          const selectClass = document.getElementById('select-class');
+          const options = Array.from(selectClass.options).filter(opt => opt.value);
+          if (options.length === 0) {
+            alert('Không có lớp học phần nào để xuất bảng điểm.');
+            return;
+          }
+
+          btnExportAll.disabled = true;
+          btnExportAll.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">hourglass_top</span><span>Đang tổng hợp...</span>';
+
+          try {
+            let fullCsv = '\uFEFFHỆ THỐNG QUẢN LÝ HỌC VỤ - TỔNG HỢP TOÀN BỘ BẢNG ĐIỂM GIẢNG VIÊN\nNgày xuất: ' + new Date().toLocaleDateString('vi-VN') + '\n\n';
+
+            for (const opt of options) {
+              const maLHP = opt.value;
+              const res = await LecturerApi.getClassGradeSheet(maLHP);
+              const students = (res && res.success && Array.isArray(res.data)) ? res.data : [];
+
+              fullCsv += `BẢNG ĐIỂM LỚP HỌC PHẦN: ${opt.text}\n`;
+              fullCsv += 'STT,Mã sinh viên,Họ và tên,Lớp SV,Số buổi vắng,Điểm quá trình,Điểm cuối kỳ,Điểm tổng kết,Điểm chữ,Kết quả\n';
+
+              students.forEach((s, idx) => {
+                const vangVal = s.soBuoiVang !== undefined ? s.soBuoiVang : 0;
+                const r = calculateGrade(s.diemQuaTrinh, s.diemCuoiKy, vangVal);
+                fullCsv += `"${idx + 1}","${s.maSV}","${s.hoTen}","${s.lopSV || ''}","${vangVal}","${s.diemQuaTrinh != null ? s.diemQuaTrinh : ''}","${s.diemCuoiKy != null ? s.diemCuoiKy : ''}","${r.tk}","${r.chu}","${r.kq}"\n`;
+              });
+              fullCsv += '\n';
+            }
+
+            const blob = new Blob([fullCsv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `TongHopBangDiem_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            if (window.ApiClient && ApiClient.showToast) {
+              ApiClient.showToast('success', 'Xuất toàn bộ bảng điểm thành công', `Đã tổng hợp và tải về dữ liệu của ${options.length} lớp học phần.`);
+            } else {
+              alert(`Đã xuất toàn bộ bảng điểm của ${options.length} lớp thành công!`);
+            }
+          } catch (err) {
+            console.error('Lỗi xuất toàn bộ bảng điểm:', err);
+            alert('Có lỗi xảy ra khi tổng hợp bảng điểm tất cả các lớp.');
+          } finally {
+            btnExportAll.disabled = false;
+            btnExportAll.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">folder_zip</span><span>Xuất toàn bộ bảng điểm</span>';
           }
         });
       }

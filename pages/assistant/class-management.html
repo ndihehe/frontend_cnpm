@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản lý Lớp học phần - Giáo vụ khoa</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
   <link rel="stylesheet" href="../../css/variables.css">
   <link rel="stylesheet" href="../../css/layout.css">
   <link rel="stylesheet" href="../../css/components.css">
@@ -21,43 +23,131 @@
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
-    .filter-group { display: flex; align-items: center; gap: 10px; }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .btn-action-icon {
-      background: none; border: 1px solid var(--border-subtle); border-radius: 6px;
-      width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.15s;
+      background: none;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .btn-action-icon:hover { background: #F0F9FF; border-color: #0284C7; color: #0284C7; }
-    .btn-action-icon.danger:hover { background: #FEF2F2; border-color: #DC2626; color: #DC2626; }
+
+    .btn-action-icon:hover {
+      background: #F0F9FF;
+      border-color: #0284C7;
+      color: #0284C7;
+    }
+
+    .btn-action-icon.danger:hover {
+      background: #FEF2F2;
+      border-color: #DC2626;
+      color: #DC2626;
+    }
 
     /* Chữ trạng thái - KHÔNG FRAME KHÔNG BACKGROUND */
-    .status-text-active { color: #107C41; font-weight: 600; }
-    .status-text-full { color: #DC2626; font-weight: 600; }
-    .status-text-closed { color: #6B7280; font-weight: 600; }
+    .status-text-active {
+      color: #107C41;
+      font-weight: 600;
+    }
+
+    .status-text-full {
+      color: #DC2626;
+      font-weight: 600;
+    }
+
+    .status-text-closed {
+      color: #6B7280;
+      font-weight: 600;
+    }
 
     /* Modal */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
     }
+
     .modal-dialog {
-      background: #FFFFFF; border-radius: 10px; width: 95%; max-width: 580px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); overflow: hidden;
+      background: #FFFFFF;
+      border-radius: 10px;
+      width: 95%;
+      max-width: 580px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
     }
+
     .modal-header {
-      background: #F0F9FF; padding: 14px 20px; border-bottom: 1px solid #BAE6FD;
-      display: flex; align-items: center; justify-content: space-between;
+      background: #F0F9FF;
+      padding: 14px 20px;
+      border-bottom: 1px solid #BAE6FD;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .modal-title { font-size: 14px; font-weight: 700; color: #002D4F; display: flex; align-items: center; gap: 8px; }
-    .modal-body { padding: 18px 20px; max-height: 75vh; overflow-y: auto; }
-    .modal-footer { padding: 12px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: flex-end; gap: 10px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-    .form-group { margin-bottom: 14px; }
-    .form-label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; display: block; }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #002D4F;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      padding: 18px 20px;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 12px 20px;
+      background: #F8FAFC;
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+    }
   </style>
 </head>
+
 <body>
   <div class="app-container">
     <aside class="app-sidebar">
@@ -67,7 +157,9 @@
           <div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div>
         </a>
         <a href="profile.html" class="sidebar-profile" style="text-decoration: none;">
-          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=80'" />
+          <img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg" alt="Avatar" class="sidebar-avatar"
+            id="sidebar-user-avatar"
+            onerror="this.src='https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=80'" />
           <div style="min-width: 0;">
             <div class="sidebar-user-name" id="sidebar-user-name" title="Le Van Cuong">Le Van Cuong</div>
             <div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV002</div>
@@ -115,7 +207,7 @@
               <span>Duyệt kiến nghị mở lớp</span>
             </a>
           </li>
-          </ul>
+        </ul>
       </nav>
     </aside>
 
@@ -126,11 +218,14 @@
           QUẢN LÝ DANH SÁCH LỚP HỌC PHẦN & PHÂN CÔNG GIẢNG VIÊN
         </div>
         <div class="topbar-actions">
-          
-          <a href="profile.html" style="display: flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;">
-            <img src="https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=60" alt="User" class="topbar-avatar-img" />
+
+          <a href="profile.html"
+            style="display: flex; align-items: center; gap: 7px; cursor: pointer; text-decoration: none;">
+            <img src="https://ui-avatars.com/api/?name=Mai+Phuong&background=0369A1&color=fff&size=60" alt="User"
+              class="topbar-avatar-img" />
             <span style="font-size: 12px; font-weight: 600; color: var(--text-main);">ThS. Trần Thị Mai Phương</span>
-            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--text-muted);">expand_more</span>
+            <span class="material-symbols-outlined"
+              style="font-size: 16px; color: var(--text-muted);">expand_more</span>
           </a>
         </div>
       </header>
@@ -149,12 +244,15 @@
             </select>
 
             <div style="position: relative; width: 280px;">
-              <input type="text" id="input-search" class="form-control" placeholder="Tìm theo tên môn, mã LHP, GV..." style="padding-left: 32px;" />
-              <span class="material-symbols-outlined" style="position: absolute; left: 8px; top: 7px; font-size: 18px; color: var(--text-muted);">search</span>
+              <input type="text" id="input-search" class="form-control" placeholder="Tìm theo tên môn, mã LHP, GV..."
+                style="padding-left: 32px;" />
+              <span class="material-symbols-outlined"
+                style="position: absolute; left: 8px; top: 7px; font-size: 18px; color: var(--text-muted);">search</span>
             </div>
           </div>
 
-          <button id="btn-open-create-modal" class="btn btn-primary btn-sm" style="display: flex; align-items: center; gap: 6px;">
+          <button id="btn-open-create-modal" class="btn btn-primary btn-sm"
+            style="display: flex; align-items: center; gap: 6px;">
             <span class="material-symbols-outlined" style="font-size: 17px;">add_circle</span>
             <span>Tạo lớp học phần mới</span>
           </button>
@@ -188,13 +286,16 @@
                   </tr>
                 </thead>
                 <tbody id="class-tbody">
-                  <tr><td colspan="10" style="text-align: center; padding: 25px;">Đang tải dữ liệu...</td></tr>
+                  <tr>
+                    <td colspan="10" style="text-align: center; padding: 25px;">Đang tải dữ liệu...</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
 
             <!-- PHÂN TRANG BÓC TÁCH TỪ GÓI META -->
-            <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
+            <div class="pagination-footer"
+              style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
               <div id="pagination-info" style="color: var(--text-muted);">
                 Đang hiển thị trang 1 / 1 (Tổng 0 lớp)
               </div>
@@ -238,20 +339,31 @@
           <input type="text" id="create-tenHP" class="form-control" placeholder="VD: Kỹ nghệ phần mềm" required />
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Số tín chỉ *</label>
-            <input type="number" id="create-soTinChi" class="form-control" value="3" min="1" max="10" required />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Sĩ số tối đa *</label>
-            <input type="number" id="create-siSoToiDa" class="form-control" value="60" min="10" max="120" required />
+        <div
+          style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #0369A1; display: flex; align-items: flex-start; gap: 8px;">
+          <span class="material-symbols-outlined"
+            style="font-size: 18px; color: #0284C7; flex-shrink: 0; margin-top: 1px;">info</span>
+          <div>
+            <strong>Lưu ý nghiệp vụ:</strong> Số tín chỉ và phòng học được hệ thống tự động gán theo danh mục học phần.
+            Sau khi tạo lớp thành công, vui lòng nhấp vào biểu tượng <strong>Phân công GV</strong> trên từng dòng để
+            kiểm tra xung đột lịch dạy (Conflict 2) trước khi mở cổng đăng ký.
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Thứ học (2 - 7) *</label>
+            <label class="form-label">Sĩ số tối đa *</label>
+            <input type="number" id="create-siSoToiDa" class="form-control" value="60" min="10" max="120" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Số tiết học mỗi buổi *</label>
+            <input type="number" id="create-soTiet" class="form-control" value="3" min="1" max="5" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Thứ học trong tuần (2 - 7) *</label>
             <select id="create-thu" class="form-control">
               <option value="2">Thứ 2</option>
               <option value="3">Thứ 3</option>
@@ -269,24 +381,9 @@
               <option value="4">Tiết 4 (09:40)</option>
               <option value="6">Tiết 6 (12:30)</option>
               <option value="7">Tiết 7 (13:20)</option>
+              <option value="9">Tiết 9 (15:10)</option>
             </select>
           </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Số tiết *</label>
-            <input type="number" id="create-soTiet" class="form-control" value="3" min="1" max="5" required />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Phòng học *</label>
-            <input type="text" id="create-phongHoc" class="form-control" placeholder="VD: A2-303, Lab-02"  required />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Giảng viên giảng dạy</label>
-          <input type="text" id="create-tenGV" class="form-control" placeholder="VD: TS. Trần Thị Bình"  />
         </div>
       </div>
       <div class="modal-footer">
@@ -296,7 +393,7 @@
     </div>
   </div>
 
-    <!-- MODAL: CHỈNH SỬA LỚP HỌC PHẦN (UC-04) -->
+  <!-- MODAL: CHỈNH SỬA LỚP HỌC PHẦN (UC-04) -->
   <div id="modal-edit" class="modal-overlay">
     <div class="modal-dialog">
       <div class="modal-header">
@@ -312,7 +409,8 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Mã lớp học phần</label>
-            <input type="text" id="edit-maLHP" class="form-control" disabled style="background:#F1F5F9; font-weight:700; color:#0284C7;" />
+            <input type="text" id="edit-maLHP" class="form-control" disabled
+              style="background:#F1F5F9; font-weight:700; color:#0284C7;" />
           </div>
           <div class="form-group">
             <label class="form-label">Mã học phần</label>
@@ -322,7 +420,8 @@
 
         <div class="form-group">
           <label class="form-label">Tên môn học</label>
-          <input type="text" id="edit-tenHP" class="form-control" disabled style="background:#F1F5F9; font-weight:600;" />
+          <input type="text" id="edit-tenHP" class="form-control" disabled
+            style="background:#F1F5F9; font-weight:600;" />
         </div>
 
         <div class="form-row">
@@ -407,7 +506,8 @@
         </button>
       </div>
       <div class="modal-body">
-        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 12px; margin-bottom: 14px;">
+        <div
+          style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 12px; margin-bottom: 14px;">
           <div style="font-size: 13px; font-weight: 700; color: #002D4F;" id="assign-class-name">...</div>
           <div style="font-size: 11.5px; color: var(--text-muted);" id="assign-class-code">Mã LHP: ...</div>
         </div>
@@ -415,13 +515,7 @@
         <div class="form-group">
           <label class="form-label">Chọn giảng viên phụ trách *</label>
           <select id="assign-select-gv" class="form-control">
-            <option >TS. Trần Thị Bình (Khoa CNTT)</option>
-            <option value="ThS. Hoàng Minh Tuấn">ThS. Hoàng Minh Tuấn (Khoa CNTT)</option>
-            <option value="ThS. Đặng Thị Mai">ThS. Đặng Thị Mai (Khoa CNTT)</option>
-            <option value="PGS.TS. Nguyễn Văn Hùng">PGS.TS. Nguyễn Văn Hùng (Khoa CNTT)</option>
-            <option value="TS. Vũ Hải Đăng">TS. Vũ Hải Đăng (Khoa CNTT)</option>
-            <option value="TS. Lê Quang Huy">TS. Lê Quang Huy (Khoa CNTT)</option>
-            <option value="ThS. Nguyễn Thị Lan">ThS. Nguyễn Thị Lan (Khoa CNTT)</option>
+            <option value="">-- Đang tải danh sách giảng viên... --</option>
           </select>
         </div>
       </div>
@@ -432,12 +526,59 @@
     </div>
   </div>
 
+  <!-- MODAL: XEM LỊCH HỌC CHI TIẾT THEO MỤC 4.3 -->
+  <div id="modal-schedule" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 680px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="material-symbols-outlined" style="color: #0284C7;">calendar_month</span>
+          <span id="schedule-modal-title">LỊCH HỌC CHI TIẾT TRONG KỲ</span>
+        </div>
+        <button class="btn-action-icon" onclick="closeModal('modal-schedule')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div
+          style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 13px; font-weight: 700; color: #002D4F;" id="schedule-class-name">...</div>
+            <div style="font-size: 11.5px; color: var(--text-muted);" id="schedule-class-code">Mã LHP: ...</div>
+          </div>
+          <div style="font-size: 11.5px; color: #0284C7; font-weight: 600;" id="schedule-class-info">...</div>
+        </div>
+
+        <div style="max-height: 380px; overflow-y: auto;">
+          <table class="hocvu-table" style="font-size: 12px;">
+            <thead>
+              <tr>
+                <th style="width: 45px; text-align: center;">STT</th>
+                <th style="width: 120px;">Mã lịch học</th>
+                <th>Ngày học</th>
+                <th style="width: 90px; text-align: center;">Phòng học</th>
+                <th style="width: 75px; text-align: center;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="schedule-tbody">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 20px;">Đang tải lịch học...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modal-schedule')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
   <script src="../../js/config.js"></script>
   <script src="../../js/api.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       let currentPage = 1;
-      const pageSize = 5;
+      const pageSize = 20;
       let totalPages = 1;
 
       const tbody = document.getElementById('class-tbody');
@@ -449,8 +590,33 @@
       const btnNextPage = document.getElementById('btn-next-page');
 
       let currentAssignLHP = null;
-    let currentEditLHP = null;
-    let currentLoadedClasses = [];
+      let currentEditLHP = null;
+      let currentLoadedClasses = [];
+      let loadedLecturers = [];
+
+      async function loadLecturers() {
+        const select = document.getElementById('assign-select-gv');
+        if (!select) return;
+        try {
+          const res = await AssistantApi.getLecturers();
+          if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+            loadedLecturers = res.data;
+            select.innerHTML = '<option value="">-- Chọn giảng viên phụ trách --</option>' +
+              res.data.map(gv => {
+                const code = gv.maNV || gv.maGV || '';
+                const name = gv.hoTen || '';
+                const faculty = gv.khoa || gv.tenKhoa || 'Khoa CNTT';
+                const degree = gv.hocVi ? `${gv.hocVi}. ` : '';
+                return `<option value="${code}">${degree}${name} (${faculty} - ${code})</option>`;
+              }).join('');
+          } else {
+            select.innerHTML = '<option value="">Không tìm thấy giảng viên</option>';
+          }
+        } catch (err) {
+          console.error('Lỗi nạp danh sách giảng viên:', err);
+          select.innerHTML = '<option value="">Lỗi tải danh mục giảng viên</option>';
+        }
+      }
 
       async function initSemesters() {
         function formatSemesterOption(s) {
@@ -571,12 +737,21 @@
                       <span class="material-symbols-outlined" style="font-size: 17px; color: #0284C7;">person_add</span>
                     </button>
                     `}
+                    <button class="btn-action-icon btn-schedule" data-lhp="${c.maLHP}" data-name="${c.tenHP}" title="Xem lịch học chi tiết (Mục 4.3)">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #0284C7;">calendar_month</span>
+                    </button>
                     <a href="class-students.html?maLHP=${c.maLHP}" class="btn-action-icon" title="Xem danh sách sinh viên">
                       <span class="material-symbols-outlined" style="font-size: 17px; color: #0D9488;">groups</span>
                     </a>
+                    ${(c.siSoHienTai > 0 || isPastSemester) ? `
+                    <button class="btn-action-icon" disabled style="opacity: 0.35; cursor: not-allowed;" title="${isPastSemester ? 'Học kỳ đã kết thúc' : 'Không thể xóa: Lớp đã có ' + c.siSoHienTai + ' sinh viên ghi danh'}">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #94A3B8;">delete</span>
+                    </button>
+                    ` : `
                     <button class="btn-action-icon danger btn-delete" data-lhp="${c.maLHP}" data-name="${c.tenHP}" title="Xóa lớp học phần">
                       <span class="material-symbols-outlined" style="font-size: 17px; color: #DC2626;">delete</span>
                     </button>
+                    `}
                   </div>
                 </td>
               </tr>
@@ -612,8 +787,76 @@
               currentAssignLHP = btn.dataset.lhp;
               document.getElementById('assign-class-name').textContent = btn.dataset.name;
               document.getElementById('assign-class-code').textContent = 'Mã LHP: ' + currentAssignLHP;
-              document.getElementById('assign-select-gv').value = btn.dataset.gv || '';
+              const gvName = (btn.dataset.gv || '').trim();
+              const select = document.getElementById('assign-select-gv');
+              if (select) {
+                const matched = loadedLecturers.find(l => (l.hoTen && l.hoTen.trim() === gvName) || l.maNV === gvName || l.maGV === gvName);
+                select.value = matched ? (matched.maNV || matched.maGV) : '';
+              }
               openModal('modal-assign');
+            });
+          });
+
+          // Sự kiện xem lịch học chi tiết (Mục 4.3)
+          document.querySelectorAll('.btn-schedule').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const lhp = btn.dataset.lhp;
+              const name = btn.dataset.name;
+              const cls = currentLoadedClasses.find(c => c.maLHP === lhp);
+              document.getElementById('schedule-class-name').textContent = name;
+              document.getElementById('schedule-class-code').textContent = 'Mã LHP: ' + lhp;
+              document.getElementById('schedule-class-info').textContent = cls ? `Thứ ${cls.thu} (Tiết ${cls.tietBatDau || cls.tietBD}-${(cls.tietBatDau || cls.tietBD) + (cls.soTiet || 3) - 1})` : '';
+
+              const schedTbody = document.getElementById('schedule-tbody');
+              schedTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px;">Đang tải lịch học chi tiết...</td></tr>`;
+              openModal('modal-schedule');
+
+              try {
+                const res = await AssistantApi.getClassSchedules(lhp);
+                if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+                  let sHtml = '';
+                  res.data.forEach((s, idx) => {
+                    const dateStr = Array.isArray(s.ngayHoc)
+                      ? `${String(s.ngayHoc[2]).padStart(2, '0')}/${String(s.ngayHoc[1]).padStart(2, '0')}/${s.ngayHoc[0]}`
+                      : (s.ngayHoc || '--');
+                    sHtml += `
+                      <tr>
+                        <td style="text-align: center;">${idx + 1}</td>
+                        <td><strong style="color: #0284C7;">${s.maLichHoc}</strong></td>
+                        <td><div style="font-weight: 600; color: #002D4F;">${dateStr}</div></td>
+                        <td style="text-align: center;">
+                          <span style="background: #E0F2FE; color: #0369A1; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${s.phongHoc || cls?.phongHoc || '--'}</span>
+                        </td>
+                        <td style="text-align: center;">
+                          <button class="btn-action-icon danger btn-delete-sched" data-malh="${s.maLichHoc}" title="Xóa buổi học (nghỉ lễ/đột xuất)">
+                            <span class="material-symbols-outlined" style="font-size: 16px; color: #DC2626;">delete</span>
+                          </button>
+                        </td>
+                      </tr>
+                    `;
+                  });
+                  schedTbody.innerHTML = sHtml;
+
+                  schedTbody.querySelectorAll('.btn-delete-sched').forEach(dBtn => {
+                    dBtn.addEventListener('click', async () => {
+                      const malh = dBtn.dataset.malh;
+                      if (confirm(`Bạn có chắc muốn xóa buổi học [${malh}] của lớp này?`)) {
+                        const delRes = await AssistantApi.deleteClassSchedule(malh);
+                        if (delRes && delRes.success) {
+                          showToast(delRes.message || 'Đã xóa buổi học thành công!', 'success');
+                          btn.click();
+                        } else {
+                          showToast(delRes?.message || 'Xóa buổi học thất bại!', 'error');
+                        }
+                      }
+                    });
+                  });
+                } else {
+                  schedTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">Lớp học phần này chưa có lịch học chi tiết</td></tr>`;
+                }
+              } catch (err) {
+                schedTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: #DC2626;">Lỗi tải lịch học: ${err.message}</td></tr>`;
+              }
             });
           });
 
@@ -649,14 +892,13 @@
         const payload = {
           maLHP: document.getElementById('create-maLHP').value.trim(),
           maHP: document.getElementById('create-maHP').value.trim(),
+          tenLHP: document.getElementById('create-tenHP').value.trim(),
           tenHP: document.getElementById('create-tenHP').value.trim(),
-          soTinChi: Number(document.getElementById('create-soTinChi').value),
-          siSoToiDa: Number(document.getElementById('create-siSoToiDa').value),
-          thu: Number(document.getElementById('create-thu').value),
-          tietBatDau: Number(document.getElementById('create-tietBD').value),
-          soTiet: Number(document.getElementById('create-soTiet').value),
-          phongHoc: document.getElementById('create-phongHoc').value.trim(),
-          tenGiangVien: document.getElementById('create-tenGV').value.trim()
+          siSoToiDa: Number(document.getElementById('create-siSoToiDa').value) || 60,
+          thu: Number(document.getElementById('create-thu').value) || 2,
+          tietBD: Number(document.getElementById('create-tietBD').value) || 1,
+          tietBatDau: Number(document.getElementById('create-tietBD').value) || 1,
+          soTiet: Number(document.getElementById('create-soTiet').value) || 3
         };
 
         if (!payload.maLHP || !payload.maHP || !payload.tenHP) {
@@ -702,7 +944,7 @@
       document.getElementById('btn-submit-assign').addEventListener('click', async () => {
         if (!currentAssignLHP) return;
         const selectedGv = document.getElementById('assign-select-gv').value;
-        const res = await AssistantApi.assignLecturer(currentAssignLHP, 'GV_NEW', selectedGv);
+        const res = await AssistantApi.assignLecturer(currentAssignLHP, selectedGv);
         if (res && res.success) {
           showToast(res.message || 'Phân công giảng viên thành công!', 'success');
           closeModal('modal-assign');
@@ -752,8 +994,10 @@
       }
 
       initSemesters().then(() => loadClasses());
+      loadLecturers();
     });
   </script>
   <script src="../../js/user-menu.js"></script>
 </body>
+
 </html>

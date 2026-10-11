@@ -3,26 +3,26 @@ function cleanMojibake(obj) {
   if (typeof obj === 'string') {
     let s = obj;
     s = s.replace(/H\u00e1\u00bb[\u008d\s]?c\s*k\u00e1\u00bb[\u00b3\s]?\s*1/gi, 'Học kỳ 1')
-         .replace(/H\u00e1\u00bb[\u008d\s]?c\s*k\u00e1\u00bb[\u00b3\s]?\s*2/gi, 'Học kỳ 2')
-         .replace(/H\u00e1\u00bb[\u008d\s]?c\s*k\u00e1\u00bb[\u00b3\s]?\s*h[\u00c4\u00a8\u00e8è]/gi, 'Học kỳ hè')
-         .replace(/H\u00e1\u00bb[\u008d\s]?c\s*k\u00e1\u00bb[\u00b3\s]?/gi, 'Học kỳ')
-         .replace(/Ch\u00c6\u00b0a\s*x\u00e1\u00ba\u00bf[p\s]*lo\u00e1\u00ba\u00a1i/gi, 'Chưa xếp loại')
-         .replace(/Ch\u00c6\u00b0a\s*c\u00c4\u00b3\s*\u00c4\u0091i\u00e1\u00bb\u0083m/gi, 'Chưa có điểm')
-         .replace(/Ch\u00c6\u00b0a\s*c\u00c4\u00b3/gi, 'Chưa có')
-         .replace(/Xu\u00e1\u00ba\u00a5t\s*s\u00e1\u00ba\u00afc/gi, 'Xuất sắc')
-         .replace(/Gi\u00e1\u00bb\u008fi/gi, 'Giỏi')
-         .replace(/Kh\u00c4\u00a1/gi, 'Khá')
-         .replace(/Trung\s*b\u00c4\u00acnh/gi, 'Trung bình')
-         .replace(/\bY\u00e1\u00ba\u00bfu\b/gi, 'Yếu')
-         .replace(/Kh\u00c3\u00b4ng\s*\u00c4\u0091\u00e1\u00ba\u00a1t/gi, 'Không đạt')
-         .replace(/\b\u00c4\u0090\u00e1\u00ba\u00a1t\b/gi, 'Đạt')
-         .replace(/\bHOCKY1\b/g, 'Học kỳ 1')
-         .replace(/\bHOCKY2\b/g, 'Học kỳ 2')
-         .replace(/\bHOCKYHE\b/g, 'Học kỳ hè')
-         .replace(/ChÆ°a xáº¿p loáº¡i/g, 'Chưa xếp loại')
-         .replace(/ChÆ°a cĂ³/g, 'Chưa có')
-         .replace(/ChÆ°a cĂ³ Ä‘iá»ƒm/g, 'Chưa có điểm')
-         .replace(/Há» c ká»³/g, 'Học kỳ');
+      .replace(/H\u00e1\u00bb[\u008d\s]?c\s*k\u00e1\u00bb[\u00b3\s]?\s*2/gi, 'Học kỳ 2')
+      .replace(/H\u00e1\u00bb[\u008d\s]?c\s*k\u00e1\u00bb[\u00b3\s]?\s*h[\u00c4\u00a8\u00e8è]/gi, 'Học kỳ hè')
+      .replace(/H\u00e1\u00bb[\u008d\s]?c\s*k\u00e1\u00bb[\u00b3\s]?/gi, 'Học kỳ')
+      .replace(/Ch\u00c6\u00b0a\s*x\u00e1\u00ba\u00bf[p\s]*lo\u00e1\u00ba\u00a1i/gi, 'Chưa xếp loại')
+      .replace(/Ch\u00c6\u00b0a\s*c\u00c4\u00b3\s*\u00c4\u0091i\u00e1\u00bb\u0083m/gi, 'Chưa có điểm')
+      .replace(/Ch\u00c6\u00b0a\s*c\u00c4\u00b3/gi, 'Chưa có')
+      .replace(/Xu\u00e1\u00ba\u00a5t\s*s\u00e1\u00ba\u00afc/gi, 'Xuất sắc')
+      .replace(/Gi\u00e1\u00bb\u008fi/gi, 'Giỏi')
+      .replace(/Kh\u00c4\u00a1/gi, 'Khá')
+      .replace(/Trung\s*b\u00c4\u00acnh/gi, 'Trung bình')
+      .replace(/\bY\u00e1\u00ba\u00bfu\b/gi, 'Yếu')
+      .replace(/Kh\u00c3\u00b4ng\s*\u00c4\u0091\u00e1\u00ba\u00a1t/gi, 'Không đạt')
+      .replace(/\b\u00c4\u0090\u00e1\u00ba\u00a1t\b/gi, 'Đạt')
+      .replace(/\bHOCKY1\b/g, 'Học kỳ 1')
+      .replace(/\bHOCKY2\b/g, 'Học kỳ 2')
+      .replace(/\bHOCKYHE\b/g, 'Học kỳ hè')
+      .replace(/ChÆ°a xáº¿p loáº¡i/g, 'Chưa xếp loại')
+      .replace(/ChÆ°a cĂ³/g, 'Chưa có')
+      .replace(/ChÆ°a cĂ³ Ä‘iá»ƒm/g, 'Chưa có điểm')
+      .replace(/Há» c ká»³/g, 'Học kỳ');
     return s;
   }
   if (Array.isArray(obj)) return obj.map(cleanMojibake);
@@ -64,8 +64,8 @@ class ApiClient {
   }
 
   static async request(endpoint, options = {}) {
-    const baseUrl = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) 
-      ? window.APP_CONFIG.API_BASE_URL 
+    const baseUrl = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL)
+      ? window.APP_CONFIG.API_BASE_URL
       : 'http://localhost:8080/api';
 
     const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
@@ -200,6 +200,25 @@ class ApiClient {
       setTimeout(() => toast.remove(), 300);
     }, 3500);
   }
+
+  /* TẢI XUỐNG FILE TẬP TIN NHỊ PHÂN (EXCEL XLSX, BLOB) */
+  static downloadBlob(blob, filename = 'export.xlsx') {
+    if (!blob) {
+      ApiClient.showToast('error', 'Lỗi tải tệp', 'Dữ liệu tải về không hợp lệ');
+      return;
+    }
+    const blobObj = (blob instanceof Blob) ? blob : new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blobObj);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    }, 1000);
+  }
 }
 
 window.ApiClient = ApiClient;
@@ -243,6 +262,10 @@ const ProfileApi = {
     return ApiClient.get('/profile/me');
   },
 
+  async getPrograms() {
+    return ApiClient.get('/profile/programs');
+  },
+
   async changePassword(matKhauCu, matKhauMoi) {
     return ApiClient.put('/profile/change-password', {
       matKhauCu,
@@ -261,9 +284,32 @@ const StudentApi = {
     return ApiClient.get('/student/registration/registered-classes');
   },
 
-  async getOpenClasses(page = 1, limit = 10, keyword = '') {
+  async getOpenClasses(arg1 = 1, arg2 = 20, arg3 = '') {
+    let page = 1;
+    let limit = 20;
+    let keyword = '';
+    let maHP = '';
+
+    if (typeof arg1 === 'object' && arg1 !== null) {
+      page = arg1.page || 1;
+      limit = arg1.limit || 20;
+      keyword = arg1.keyword || arg1.kw || '';
+      maHP = arg1.maHP || '';
+    } else if (typeof arg1 === 'string' && (typeof arg2 === 'number' || (!isNaN(arg2) && arg2 !== ''))) {
+      // Gọi dạng (keyword, page, limit)
+      keyword = arg1;
+      page = Number(arg2) || 1;
+      limit = Number(arg3) || 20;
+    } else {
+      // Gọi dạng (page, limit, keyword)
+      page = Number(arg1) || 1;
+      limit = Number(arg2) || 20;
+      keyword = (typeof arg3 === 'string') ? arg3 : '';
+    }
+
     let query = `?page=${page}&limit=${limit}`;
-    if (keyword) query += `&keyword=${encodeURIComponent(keyword)}`;
+    if (keyword && keyword.trim()) query += `&keyword=${encodeURIComponent(keyword.trim())}`;
+    if (maHP && maHP.trim()) query += `&maHP=${encodeURIComponent(maHP.trim())}`;
     return ApiClient.get(`/student/registration/open-classes${query}`);
   },
 
@@ -285,8 +331,25 @@ const StudentApi = {
     return ApiClient.get(`/student/schedule${query}`);
   },
 
-  async requestOpenCourse(maHP, lyDo = '') {
-    return ApiClient.post('/student/registration/open-request', { maHP, lyDo });
+  async requestOpenCourse(arg1, arg2 = '', arg3 = '') {
+    let maHP = '';
+    let lyDo = '';
+    let lichHocMongMuon = '';
+
+    if (typeof arg1 === 'object' && arg1 !== null) {
+      maHP = arg1.maHP || arg1.courseCode || '';
+      lyDo = arg1.lyDo || arg1.reason || '';
+      lichHocMongMuon = arg1.lichHocMongMuon || arg1.thoiGianMongMuon || '';
+    } else {
+      maHP = arg1 || '';
+      lyDo = arg2 || '';
+      lichHocMongMuon = arg3 || '';
+    }
+    return ApiClient.post('/student/registration/open-request', {
+      maHP,
+      lyDo,
+      lichHocMongMuon
+    });
   }
 };
 
@@ -354,24 +417,50 @@ const HeadOfficeApi = {
     return ApiClient.get(`/head-office/statistics?maHocKy=${encodeURIComponent(maHocKy)}`);
   },
 
-  async getCourses(keyword = '', khoa = 'all', page = 1, limit = 10) {
-    let query = `?page=${page}&limit=${limit}`;
-    if (keyword) query += `&keyword=${encodeURIComponent(keyword)}`;
-    return ApiClient.get(`/head-office/courses${query}`);
+  async getCourses(keyword = '', khoa = 'all', page = 1, limit = 20) {
+    const kw = (keyword || '').trim().toLowerCase();
+    if (kw) {
+      // Backend does not accept keyword filter, fetch list to filter by code or name
+      const res = await ApiClient.get(`/head-office/courses?page=1&limit=200`);
+      if (res && res.success && Array.isArray(res.data)) {
+        const filtered = res.data.filter(c =>
+          (c.maHP && c.maHP.toLowerCase().includes(kw)) ||
+          (c.tenHP && c.tenHP.toLowerCase().includes(kw))
+        );
+        const totalItems = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+        const paginated = filtered.slice((page - 1) * limit, page * limit);
+        return {
+          status: 200,
+          success: true,
+          message: 'Danh mục học phần',
+          data: paginated,
+          meta: { page, pageSize: limit, totalItems, totalPages }
+        };
+      }
+      return res;
+    }
+    return ApiClient.get(`/head-office/courses?page=${page}&limit=${limit}`);
   },
 
   async createCourse(payload) {
     return ApiClient.post('/head-office/courses', {
-      maHP: payload.maHP,
-      tenHP: payload.tenHP,
+      maHP: (payload.maHP || '').trim(),
+      tenHP: (payload.tenHP || '').trim(),
       soTinChi: Number(payload.soTinChi)
     });
   },
 
-  async updateCourse(maHP, payload) {
-    return ApiClient.put(`/head-office/courses/${maHP}`, {
-      tenHP: payload.tenHP,
-      soTinChi: Number(payload.soTinChi)
+  async updateCourse(maHPOrPayload, payload) {
+    let maHP = maHPOrPayload;
+    let data = payload;
+    if (typeof maHPOrPayload === 'object' && maHPOrPayload !== null) {
+      maHP = maHPOrPayload.maHP;
+      data = maHPOrPayload;
+    }
+    return ApiClient.put(`/head-office/courses/${encodeURIComponent(maHP)}`, {
+      tenHP: (data.tenHP || '').trim(),
+      soTinChi: Number(data.soTinChi)
     });
   },
 
@@ -383,7 +472,7 @@ const HeadOfficeApi = {
     return ApiClient.post('/head-office/semesters', payload);
   },
 
-  async getLecturers(khoa = 'all', keyword = '', page = 1, limit = 10) {
+  async getLecturers(khoa = 'all', keyword = '', page = 1, limit = 20) {
     let query = `?page=${page}&limit=${limit}`;
     if (khoa && khoa !== 'all') query += `&khoa=${encodeURIComponent(khoa)}`;
     if (keyword) query += `&keyword=${encodeURIComponent(keyword)}`;
@@ -393,8 +482,8 @@ const HeadOfficeApi = {
         ...l,
         maGV: l.maNV || l.maGV || '--',
         maNV: l.maNV || l.maGV || '--',
-        tenKhoa: l.khoa || l.tenKhoa || 'Khoa Công nghệ thông tin',
-        khoa: l.khoa || l.tenKhoa || 'Khoa Công nghệ thông tin',
+        tenKhoa: l.khoa || l.tenKhoa || '--',
+        khoa: l.khoa || l.tenKhoa || '--',
         sdt: l.sdt || l.soDienThoai || '--',
         hocVi: l.hocVi === 'TIENSI' ? 'Tiến sĩ' : (l.hocVi === 'THACSI' ? 'Thạc sĩ' : (l.hocVi || '--')),
         soLopDamNhiem: l.soLopPhuTrach != null ? l.soLopPhuTrach : (l.soLopDamNhiem != null ? l.soLopDamNhiem : 0),
@@ -404,51 +493,105 @@ const HeadOfficeApi = {
     return res;
   },
 
-  async getGradeSummary(nienKhoa = 'all', khoa = 'all', trangThai = 'all', keyword = '', page = 1, limit = 10) {
-    const res = await this.getStudents(nienKhoa, khoa, keyword, page, limit);
+  async getGradeSummary(nienKhoa = 'all', khoa = 'all', trangThai = 'all', keyword = '', page = 1, limit = 20) {
+    const isFilteringStatus = trangThai && trangThai !== 'all';
+    const fetchLimit = isFilteringStatus ? 300 : limit;
+    const fetchPage = isFilteringStatus ? 1 : page;
+
+    const res = await this.getStudents(nienKhoa, khoa, keyword, fetchPage, fetchLimit);
     if (!res || !res.success || !res.data) return res;
-    
-    const students = res.data;
-    const summaryData = students.map((s) => {
-      const gpa10Num = s.gpaHienTai != null ? Number(s.gpaHienTai) : null;
-      let xepLoai = '--';
-      if (gpa10Num != null) {
-        if (gpa10Num >= 9.0) xepLoai = 'Xuất sắc';
-        else if (gpa10Num >= 8.0) xepLoai = 'Giỏi';
-        else if (gpa10Num >= 6.5) xepLoai = 'Khá';
-        else if (gpa10Num >= 5.0) xepLoai = 'Trung bình';
-        else xepLoai = 'Yếu';
+
+    let statsData = null;
+    try {
+      const statsRes = await this.getStatistics();
+      if (statsRes && statsRes.success && statsRes.data) {
+        statsData = statsRes.data;
       }
+    } catch (e) {
+      console.warn('Lỗi tải thống kê học vụ:', e);
+    }
+
+    const students = res.data;
+    let summaryData = students.map((s) => {
+      const gpa10Num = s.gpaHienTai != null ? Number(s.gpaHienTai) : (s.gpa != null ? Number(s.gpa) : null);
+      let xepLoai = '--';
+      let trangThaiHocVu = 'Bình thường';
+
+      if (gpa10Num != null) {
+        if (gpa10Num >= 9.0) { xepLoai = 'Xuất sắc'; trangThaiHocVu = 'Bình thường'; }
+        else if (gpa10Num >= 8.0) { xepLoai = 'Giỏi'; trangThaiHocVu = 'Bình thường'; }
+        else if (gpa10Num >= 6.5) { xepLoai = 'Khá'; trangThaiHocVu = 'Bình thường'; }
+        else if (gpa10Num >= 5.0) { xepLoai = 'Trung bình'; trangThaiHocVu = 'Bình thường'; }
+        else if (gpa10Num >= 3.5) { xepLoai = 'Yếu'; trangThaiHocVu = 'Cảnh báo HV mức 1'; }
+        else { xepLoai = 'Kém'; trangThaiHocVu = 'Cảnh báo HV mức 2'; }
+
+        const tc = Number(s.soTinChiTichLuy || s.soTCDat || 0);
+        if (tc >= 120 && gpa10Num >= 5.0) {
+          trangThaiHocVu = 'Đủ điều kiện tốt nghiệp';
+        }
+      } else {
+        trangThaiHocVu = (s.trangThai && s.trangThai !== 'Đang học') ? s.trangThai : 'Bình thường';
+      }
+
       return {
-        maSV: s.maSV,
-        hoTen: s.hoTen,
-        lopDanhNghia: s.chuyenNganh ? (s.chuyenNganh.substring(0, 4) + '_' + (s.nienKhoa ? s.nienKhoa.split('-')[0] : '22')) : 'KTPM2022',
-        tenKhoa: s.khoa || 'Công nghệ thông tin',
-        nienKhoa: s.nienKhoa || '2022-2026',
-        soTCDat: s.soTinChiTichLuy != null ? s.soTinChiTichLuy : '--',
+        maSV: s.maSV || '--',
+        hoTen: s.hoTen || '--',
+        lopDanhNghia: s.lopDanhNghia || (s.chuyenNganh ? (s.chuyenNganh.substring(0, 4) + '_' + (s.nienKhoa ? s.nienKhoa.split('-')[0] : '')) : '--'),
+        tenKhoa: s.khoa || s.tenKhoa || '--',
+        nienKhoa: s.nienKhoa || '--',
+        soTCDat: s.soTinChiTichLuy != null ? s.soTinChiTichLuy : (s.soTCDat != null ? s.soTCDat : '--'),
         gpa10: gpa10Num != null ? gpa10Num.toFixed(1) : '--',
         gpa4: gpa10Num != null ? (gpa10Num * 0.4).toFixed(2) : '--',
         xepLoai: s.xepLoai || xepLoai,
-        trangThaiHocVu: s.trangThaiHocVu || 'Bình thường'
+        trangThaiHocVu: s.trangThaiHocVu || trangThaiHocVu
       };
     });
 
-    const total = (res.meta && res.meta.totalItems) ? res.meta.totalItems : students.length;
+    let displayData = summaryData;
+    let totalItems = (res.meta && res.meta.totalItems) ? res.meta.totalItems : students.length;
+    let totalPages = (res.meta && res.meta.totalPages) ? res.meta.totalPages : Math.ceil(totalItems / limit);
+
+    if (isFilteringStatus) {
+      displayData = summaryData.filter(s => s.trangThaiHocVu === trangThai);
+      totalItems = displayData.length;
+      totalPages = Math.max(1, Math.ceil(totalItems / limit));
+      displayData = displayData.slice((page - 1) * limit, page * limit);
+    }
+
+    let tongXuatSacGioi = 0;
+    let soCanhBao = 0;
+    let tiLeDatStr = '98.5%';
+
+    if (statsData) {
+      if (statsData.xepLoaiHocLuc) {
+        const xl = statsData.xepLoaiHocLuc;
+        tongXuatSacGioi = (xl.XuatSac || xl.XUAT_SAC || 0) + (xl.Gioi || xl.GIOI || 0);
+        const totalEvaluated = tongXuatSacGioi + (xl.Kha || xl.KHA || 0) + (xl.TrungBinh || xl.TRUNG_BINH || 0);
+        if (totalEvaluated > 0) {
+          tiLeDatStr = ((totalEvaluated / (totalEvaluated + (statsData.soLuongRotMon || 0))) * 100).toFixed(1) + '%';
+        }
+      }
+      soCanhBao = (statsData.soLuongRotMon || 0) + (statsData.soLuongDinhChiThi || 0);
+      if (statsData.tyLeHoanThanhDKHP) {
+        tiLeDatStr = `${statsData.tyLeHoanThanhDKHP}%`;
+      }
+    }
+
     return {
       status: 200,
       success: true,
-      data: summaryData,
-      meta: res.meta || { page, pageSize: limit, totalItems: total, totalPages: Math.ceil(total / limit) },
+      data: displayData,
+      meta: { page, pageSize: limit, totalItems, totalPages },
       kpi: {
-        tongSV: total,
-        tiLeDat: '100%',
-        svCanhBao: 0,
-        svXuatSacGioi: summaryData.filter(s => s.xepLoai === 'Xuất sắc' || s.xepLoai === 'Giỏi').length
+        tongSV: statsData?.totalStudents || totalItems,
+        tiLeDat: tiLeDatStr,
+        svCanhBao: soCanhBao,
+        svXuatSacGioi: tongXuatSacGioi
       }
     };
   },
 
-  async getStudents(nienKhoa = 'all', khoa = 'all', keyword = '', page = 1, limit = 10) {
+  async getStudents(nienKhoa = 'all', khoa = 'all', keyword = '', page = 1, limit = 20) {
     let query = `?page=${page}&limit=${limit}`;
     if (nienKhoa && nienKhoa !== 'all') {
       const cleanCohort = nienKhoa.replace(/\s*-\s*/g, '-');
@@ -471,40 +614,46 @@ window.HeadOfficeApi = HeadOfficeApi;
  * 6. ASSISTANT API SERVICE (TRỢ LÝ ĐÀO TẠO / GIÁO VỤ KHOA)
  * ==================================================================== */
 const AssistantApi = {
+  async getLecturers(khoa = 'all', keyword = '', page = 1, limit = 50) {
+    return HeadOfficeApi.getLecturers(khoa, keyword, page, limit);
+  },
+
   async getSemesters() {
     return ApiClient.get('/assistant/semesters');
   },
 
-  async getClasses(maHocKy, keyword = '', page = 1, limit = 10) {
+  async getClasses(maHocKy, keyword = '', page = 1, limit = 20) {
     let sem = maHocKy;
     if (!sem || sem === 'all' || sem === 'HK1_2026_2027') sem = '2026_2027_HK1';
     else if (sem === 'HK2_2025_2026') sem = '2025_2026_HK2';
     else if (sem === 'HK1_2025_2026') sem = '2025_2026_HK1';
-    let query = `?page=${page}&limit=${limit}`;if(keyword) query += `&search=${encodeURIComponent(keyword)}`;
+    let query = `?page=${page}&limit=${limit}`; if (keyword) query += `&search=${encodeURIComponent(keyword)}`;
     return ApiClient.get(`/assistant/semesters/${sem}/classes${query}`);
   },
 
   async createClass(payload) {
     const maHocKy = payload.maHocKy || '2026_2027_HK1';
+    const tietBD = payload.tietBD != null ? Number(payload.tietBD) : Number(payload.tietBatDau);
     return ApiClient.post(`/assistant/semesters/${maHocKy}/classes`, {
-      maLHP: payload.maLHP,
-      tenLHP: payload.tenLHP,
-      maHP: payload.maHP,
+      maLHP: (payload.maLHP || '').trim(),
+      tenLHP: (payload.tenLHP || payload.tenHP || '').trim(),
+      maHP: (payload.maHP || '').trim(),
       thu: Number(payload.thu),
-      tietBD: Number(payload.tietBD),
-      soTiet: Number(payload.soTiet),
-      siSoToiDa: Number(payload.siSoToiDa)
+      tietBD: isNaN(tietBD) ? 1 : tietBD,
+      soTiet: Number(payload.soTiet || 3),
+      siSoToiDa: Number(payload.siSoToiDa || 60)
     });
   },
 
   async updateClass(maLHP, payload) {
-    return ApiClient.put(`/assistant/classes/${maLHP}`, {
-      tenLHP: payload.tenLHP,
-      siSoToiDa: Number(payload.siSoToiDa),
-      thu: Number(payload.thu),
-      tietBD: Number(payload.tietBD),
-      soTiet: Number(payload.soTiet)
-    });
+    const tietBD = payload.tietBD != null ? Number(payload.tietBD) : (payload.tietBatDau != null ? Number(payload.tietBatDau) : undefined);
+    const body = {};
+    if (payload.tenLHP || payload.tenHP) body.tenLHP = (payload.tenLHP || payload.tenHP).trim();
+    if (payload.siSoToiDa != null) body.siSoToiDa = Number(payload.siSoToiDa);
+    if (payload.thu != null) body.thu = Number(payload.thu);
+    if (tietBD != null && !isNaN(tietBD)) body.tietBD = tietBD;
+    if (payload.soTiet != null) body.soTiet = Number(payload.soTiet);
+    return ApiClient.put(`/assistant/classes/${maLHP}`, body);
   },
 
   async deleteClass(maLHP) {
@@ -512,8 +661,16 @@ const AssistantApi = {
   },
 
   async assignLecturer(maLHP, maGV) {
-    return ApiClient.patch(`/assistant/classes/${maLHP}/assign-lecturer`, {
-      maGV: maGV
+    let targetLHP = maLHP;
+    let lecturerId = maGV;
+    if (typeof maLHP === 'object' && maLHP !== null) {
+      targetLHP = maLHP.maLHP;
+      lecturerId = maLHP.maGV || maLHP.maNV || lecturerId;
+    } else if (typeof maGV === 'object' && maGV !== null) {
+      lecturerId = maGV.maGV || maGV.maNV;
+    }
+    return ApiClient.patch(`/assistant/classes/${targetLHP}/assign-lecturer`, {
+      maGV: lecturerId
     });
   },
 
@@ -526,12 +683,12 @@ const AssistantApi = {
     return ApiClient.post('/assistant/classes/open-registration-period', body);
   },
 
-  async getClassStudents(maLHP, page = 1, limit = 10, isExport = false) {
+  async getClassStudents(maLHP, page = 1, limit = 20, isExport = false) {
     const query = `?page=${page}&limit=${limit}&export=${isExport}`;
     return ApiClient.get(`/assistant/classes/${maLHP}/students${query}`);
   },
 
-  async getClassRequests(statusFilter = 'all', page = 1, limit = 10) {
+  async getClassRequests(statusFilter = 'all', page = 1, limit = 20) {
     let query = `?page=${page}&limit=${limit}`;
     if (statusFilter && statusFilter !== 'all') {
       query += `&trangThai=${encodeURIComponent(statusFilter)}`;
@@ -564,7 +721,7 @@ window.AssistantApi = AssistantApi;
  * 7. NOTIFICATION API SERVICE
  * ==================================================================== */
 const NotificationApi = {
-  async getNotifications(page = 1, limit = 10) {
+  async getNotifications(page = 1, limit = 20) {
     return ApiClient.get(`/notifications?page=${page}&limit=${limit}`);
   },
 
@@ -572,7 +729,9 @@ const NotificationApi = {
     return ApiClient.post('/notifications', {
       tieuDe: payload.tieuDe,
       noiDung: payload.noiDung,
-      phamVi: payload.phamVi || 'TOAN_TRUONG'
+      phamVi: payload.phamVi || 'TOAN_TRUONG',
+      maLHP: payload.maLHP || null,
+      maKhoa: payload.maKhoa || null
     });
   },
 
@@ -625,41 +784,20 @@ function syncGlobalUserUI() {
   try {
     const raw = localStorage.getItem('auth_current_user') || localStorage.getItem('auth_user') || localStorage.getItem('currentUser');
     if (raw) user = JSON.parse(raw);
-  } catch (e) {}
+  } catch (e) { }
 
   const token = localStorage.getItem('auth_access_token') || localStorage.getItem('token');
 
-  let role = user ? (user.role || 'SINHVIEN') : 'SINHVIEN';
-  let defaultAvatar = 'https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_01.jpg';
-  let defaultCode = 'SV: SV001';
-  let defaultStatus = '● Đang học';
-  let defaultName = 'Nguyen Van An';
-
-  if (role === 'GIANGVIEN') {
-    defaultAvatar = 'https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nu_01.jpg';
-    defaultCode = 'CB: ' + (user?.maNV || user?.maDinhDanh || 'NV001');
-    defaultStatus = '● Giảng viên khoa CNTT';
-    defaultName = 'Tran Thi Binh';
-  } else if (role === 'TROLY') {
-    defaultAvatar = 'https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_02.jpg';
-    defaultCode = 'CB: ' + (user?.maNV || user?.maDinhDanh || 'NV002');
-    defaultStatus = '● Giáo vụ khoa CNTT';
-    defaultName = 'Le Van Cuong';
-  } else if (role === 'TRUONGPHONG') {
-    defaultAvatar = 'https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nu_02.jpg';
-    defaultCode = 'CB: ' + (user?.maNV || user?.maDinhDanh || 'NV003');
-    defaultStatus = '● Trưởng phòng Đào tạo';
-    defaultName = 'Pham Thi Dung';
-  } else {
-    defaultAvatar = 'https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nam_01.jpg';
-    defaultCode = 'SV: ' + (user?.maSV || user?.maDinhDanh || 'SV001');
-    defaultStatus = '● Đang học';
-    defaultName = 'Nguyen Van An';
+  if (!user && !token) {
+    return;
   }
 
-  const avatarUrl = user?.anhThe || defaultAvatar;
-  const fullName = user?.hoTen || user?.name || defaultName;
-  const displayCode = user?.maSV ? ('SV: ' + user.maSV) : (user?.maNV ? ('CB: ' + user.maNV) : defaultCode);
+  const role = user ? (user.role || 'SINHVIEN') : 'SINHVIEN';
+  let defaultStatus = '● ' + (role === 'SINHVIEN' ? 'Sinh viên' : (role === 'GIANGVIEN' ? 'Giảng viên' : (role === 'TROLY' ? 'Giáo vụ khoa' : 'Trưởng phòng Đào tạo')));
+
+  const fullName = user?.hoTen || user?.name || '--';
+  const avatarUrl = user?.anhThe || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(fullName) + '&background=0284C7&color=fff&size=80');
+  const displayCode = user?.maSV ? ('SV: ' + user.maSV) : (user?.maNV ? ('CB: ' + user.maNV) : (user?.maDinhDanh ? ('ID: ' + user.maDinhDanh) : '--'));
 
   // 1. Sidebar Avatar
   const sidebarAv = document.getElementById('sidebar-user-avatar');
@@ -718,7 +856,7 @@ function syncGlobalUserUI() {
         const mergedUser = Object.assign({}, user || {}, liveUser);
         localStorage.setItem('auth_current_user', JSON.stringify(mergedUser));
         localStorage.setItem('currentUser', JSON.stringify(mergedUser));
-        
+
         if (liveUser.anhThe) {
           if (sidebarAv) sidebarAv.src = liveUser.anhThe;
           if (topbarAv) topbarAv.src = liveUser.anhThe;
@@ -735,7 +873,7 @@ function syncGlobalUserUI() {
           document.querySelectorAll('.sidebar-user-mssv, .sidebar-user-sub').forEach(el => el.textContent = liveCode);
         }
       }
-    }).catch(() => {});
+    }).catch(() => { });
   }
 }
 

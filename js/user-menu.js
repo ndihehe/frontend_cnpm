@@ -382,16 +382,147 @@
     if (modal) modal.style.display = 'none';
   };
 
-  window.handleUserSubmitChangePassword = function(e) {
+  window.handleUserSubmitChangePassword = async function(e) {
     e.preventDefault();
+    const oldP = document.getElementById('user-old-pwd').value;
     const newP = document.getElementById('user-new-pwd').value;
     const confirmP = document.getElementById('user-confirm-pwd').value;
     if (newP !== confirmP) {
-      alert('Mật khẩu xác nhận không khớp!');
+      if (window.ApiClient && ApiClient.showToast) {
+        ApiClient.showToast('error', 'Lỗi đổi mật khẩu', 'Mật khẩu xác nhận không khớp!');
+      } else {
+        alert('Mật khẩu xác nhận không khớp!');
+      }
       return;
     }
-    alert('Đổi mật khẩu thành công!');
-    closeUserChangePasswordModal();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Đang xử lý...'; }
+    try {
+      if (window.ProfileApi && window.ProfileApi.changePassword) {
+        const res = await ProfileApi.changePassword(oldP, newP);
+        if (res && (res.success || res.status === 200)) {
+          if (window.ApiClient && ApiClient.showToast) {
+            ApiClient.showToast('success', 'Thành công', res.message || 'Đổi mật khẩu thành công!');
+          } else {
+            alert('Đổi mật khẩu thành công!');
+          }
+          closeUserChangePasswordModal();
+        } else {
+          const msg = (res && res.message) ? res.message : 'Đổi mật khẩu không thành công!';
+          if (window.ApiClient && ApiClient.showToast) {
+            ApiClient.showToast('error', 'Thất bại', msg);
+          } else {
+            alert(msg);
+          }
+        }
+      } else {
+        alert('Chức năng đổi mật khẩu chưa sẵn sàng');
+      }
+    } catch (err) {
+      alert('Đã xảy ra lỗi: ' + (err.message || 'Không thể đổi mật khẩu'));
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Cập nhật'; }
+    }
+  };
+
+  /* TÍCH HỢP CHUÔNG THÔNG BÁO VỚI API NOTIFICATIONS THẬT */
+  function setupNotificationBell(topbarActions) {
+    if (!topbarActions || document.getElementById('topbar-notif-root')) return;
+
+    const notifContainer = document.createElement('div');
+    notifContainer.id = 'topbar-notif-root';
+    notifContainer.style.cssText = 'position: relative; display: inline-flex; align-items: center; margin-right: 8px;';
+
+    notifContainer.innerHTML = `
+      <button type="button" id="topbar-notif-btn" title="Thông báo hệ thống" style="position: relative; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 6px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; transition: all 0.15s ease;">
+        <span class="material-symbols-outlined" style="font-size: 19px;">notifications</span>
+        <span id="topbar-notif-badge" style="display: none; position: absolute; top: -3px; right: -3px; background: #DC2626; color: white; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 5px; line-height: 1.2; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">0</span>
+      </button>
+
+      <div id="topbar-notif-dropdown" style="display: none; position: absolute; top: calc(100% + 8px); right: 0; width: 320px; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.18); z-index: 999999; overflow: hidden; font-family: inherit;">
+        <div style="padding: 10px 14px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 13px; font-weight: 700; color: #002D4F; display: flex; align-items: center; gap: 6px;">
+            <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">notifications_active</span>
+            <span>THÔNG BÁO MỚI</span>
+          </div>
+          <span id="topbar-notif-count-text" style="font-size: 11px; color: #64748B;">0 thông báo</span>
+        </div>
+        <div id="topbar-notif-list" style="max-height: 320px; overflow-y: auto; padding: 6px 0;">
+          <div style="padding: 18px; text-align: center; color: #94A3B8; font-size: 12px;">Đang tải thông báo...</div>
+        </div>
+      </div>
+    `;
+
+    topbarActions.insertBefore(notifContainer, topbarActions.firstChild);
+
+    const btn = notifContainer.querySelector('#topbar-notif-btn');
+    const dropdown = notifContainer.querySelector('#topbar-notif-dropdown');
+    const badge = notifContainer.querySelector('#topbar-notif-badge');
+    const list = notifContainer.querySelector('#topbar-notif-list');
+    const countText = notifContainer.querySelector('#topbar-notif-count-text');
+
+    async function loadNotifications() {
+      if (!window.NotificationApi || !window.NotificationApi.getNotifications) return;
+      try {
+        const res = await NotificationApi.getNotifications(1, 5);
+        if (res && res.success && Array.isArray(res.data)) {
+          const items = res.data;
+          const total = (res.meta && res.meta.totalItems != null) ? res.meta.totalItems : items.length;
+          if (total > 0) {
+            badge.textContent = total > 9 ? '9+' : total;
+            badge.style.display = 'block';
+            countText.textContent = `${total} thông báo`;
+          } else {
+            badge.style.display = 'none';
+            countText.textContent = '0 thông báo';
+          }
+
+          if (items.length === 0) {
+            list.innerHTML = `<div style="padding: 20px; text-align: center; color: #94A3B8; font-size: 12.5px;">Không có thông báo nào</div>`;
+            return;
+          }
+
+          list.innerHTML = items.map(n => `
+            <div style="padding: 10px 14px; border-bottom: 1px solid #F1F5F9; transition: background 0.15s; cursor: default;">
+              <div style="font-size: 12.5px; font-weight: 600; color: #0F172A; line-height: 1.35; margin-bottom: 3px;">${n.tieuDe || 'Thông báo học vụ'}</div>
+              <div style="font-size: 11.5px; color: #64748B; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${n.noiDung || ''}</div>
+              <div style="font-size: 10.5px; color: #94A3B8; margin-top: 4px;">${n.ngayTao ? new Date(n.ngayTao).toLocaleDateString('vi-VN') : 'Hôm nay'}</div>
+            </div>
+          `).join('');
+        } else {
+          list.innerHTML = `<div style="padding: 16px; text-align: center; color: #94A3B8; font-size: 12px;">Không có thông báo mới</div>`;
+        }
+      } catch (e) {
+        list.innerHTML = `<div style="padding: 16px; text-align: center; color: #EF4444; font-size: 12px;">Không thể tải thông báo</div>`;
+      }
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropdown.style.display === 'block';
+      dropdown.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen) loadNotifications();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!notifContainer.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    // Tự động kiểm tra số thông báo lúc nạp trang
+    loadNotifications();
+    window.refreshNotificationBell = loadNotifications;
+  }
+
+  // Hook vào syncUserDisplay
+  const origSync = syncUserDisplay;
+  syncUserDisplay = function() {
+    origSync();
+    const topbarActions = document.querySelector('.topbar-actions');
+    if (topbarActions) {
+      setupNotificationBell(topbarActions);
+    }
   };
 
   if (document.readyState === 'loading') {

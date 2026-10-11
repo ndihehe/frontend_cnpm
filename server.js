@@ -23,23 +23,48 @@ const MIME_TYPES = {
 
 const server = http.createServer((req, res) => {
   let reqUrl = decodeURI(req.url.split('?')[0]);
-  if (reqUrl === '/') reqUrl = '/index.html';
+  if (reqUrl === '/' || reqUrl === '/login' || reqUrl === '/login.html' || 
+      reqUrl === '/admin' || reqUrl === '/admin/' || reqUrl === '/admin/login' || reqUrl === '/admin/login.html' ||
+      reqUrl === '/pages/auth/admin-login.html') {
+    reqUrl = '/pages/auth/login.html';
+  }
 
   let filePath = path.join(ROOT, reqUrl);
 
+  // If not found directly, check alternative paths
   if (!fs.existsSync(filePath)) {
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('404 Not Found: ' + reqUrl);
-    return;
+    const pagesPath = path.join(ROOT, 'pages', reqUrl);
+    const strippedPagesPath = reqUrl.startsWith('/pages/') ? path.join(ROOT, reqUrl.replace(/^\/pages\//, '')) : null;
+
+    if (fs.existsSync(pagesPath)) {
+      filePath = pagesPath;
+    } else if (strippedPagesPath && fs.existsSync(strippedPagesPath)) {
+      filePath = strippedPagesPath;
+    } else if (fs.existsSync(filePath + '.html')) {
+      filePath = filePath + '.html';
+    } else if (fs.existsSync(pagesPath + '.html')) {
+      filePath = pagesPath + '.html';
+    }
   }
 
-  if (fs.statSync(filePath).isDirectory()) {
-    filePath = path.join(filePath, 'index.html');
-    if (!fs.existsSync(filePath)) {
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+    if (fs.existsSync(path.join(filePath, 'dashboard.html'))) {
+      filePath = path.join(filePath, 'dashboard.html');
+    } else if (fs.existsSync(path.join(filePath, 'schedule.html'))) {
+      filePath = path.join(filePath, 'schedule.html');
+    } else if (fs.existsSync(path.join(filePath, 'index.html'))) {
+      filePath = path.join(filePath, 'index.html');
+    } else {
       res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('403 Forbidden');
       return;
     }
+  }
+
+  if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('404 Not Found: ' + reqUrl);
+    return;
   }
 
   const ext = path.extname(filePath).toLowerCase();

@@ -196,8 +196,7 @@
           </span>
         </div>
 
-        <!-- Toolbar điều hướng tuần -->
-        <div class="filter-bar" style="margin-bottom: 12px;">
+        <div class="filter-bar" style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Học kỳ:</span>
             <select id="schedule-semester-select" class="form-select" style="font-weight: 700; color: #0284C7; border: 1px solid #BAE6FD; border-radius: 6px; padding: 5px 12px; background: #E0F2FE; font-size: 12.5px; cursor: pointer;">
@@ -205,11 +204,17 @@
             </select>
             <span id="current-semester-name" style="display: none;"></span>
           </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Tuần học:</span>
+            <select id="schedule-week-select" class="form-select" style="font-weight: 600; color: #002D4F; border: 1px solid #CBD5E1; border-radius: 6px; padding: 5px 12px; background: #FFFFFF; font-size: 12px; cursor: pointer; min-width: 250px;">
+              <option value="1">Đang tải tuần học...</option>
+            </select>
+          </div>
           <div style="margin-left: auto; display: flex; gap: 6px;">
             <button class="btn btn-outline-primary btn-sm" id="btn-reload-schedule" style="font-weight: 600;">
               <span class="material-symbols-outlined" style="font-size: 14px;">refresh</span> Làm mới
             </button>
-            <button class="btn btn-primary btn-sm" style="font-weight: 700;">
+            <button class="btn btn-primary btn-sm" id="btn-current-week" style="font-weight: 700;">
               <span class="material-symbols-outlined" style="font-size: 14px;">today</span> TUẦN NÀY
             </button>
             <button class="btn btn-outline-primary btn-sm" onclick="window.print()">
@@ -224,31 +229,26 @@
             <div class="hocvu-table-responsive" style="border: none;">
               <table class="schedule-matrix">
                 <thead>
-                  <tr>
-                    <th class="ca-hoc-header">Ca học</th>
-                    <th>Thứ 2</th>
-                    <th>Thứ 3</th>
-                    <th>Thứ 4</th>
-                    <th>Thứ 5</th>
-                    <th>Thứ 6</th>
-                    <th>Thứ 7</th>
-                    <th>Chủ nhật</th>
+                  <tr id="schedule-thead-row">
+                    <th class="ca-hoc-header" style="width: 120px;">Ca học</th>
+                    <th data-col-day="2">Thứ 2<br><span class="day-date" style="font-size: 10.5px; font-weight: 400; color: #64748B;">--</span></th>
+                    <th data-col-day="3">Thứ 3<br><span class="day-date" style="font-size: 10.5px; font-weight: 400; color: #64748B;">--</span></th>
+                    <th data-col-day="4">Thứ 4<br><span class="day-date" style="font-size: 10.5px; font-weight: 400; color: #64748B;">--</span></th>
+                    <th data-col-day="5">Thứ 5<br><span class="day-date" style="font-size: 10.5px; font-weight: 400; color: #64748B;">--</span></th>
+                    <th data-col-day="6">Thứ 6<br><span class="day-date" style="font-size: 10.5px; font-weight: 400; color: #64748B;">--</span></th>
+                    <th data-col-day="7">Thứ 7<br><span class="day-date" style="font-size: 10.5px; font-weight: 400; color: #64748B;">--</span></th>
+                    <th data-col-day="8">Chủ nhật<br><span class="day-date" style="font-size: 10.5px; font-weight: 400; color: #64748B;">--</span></th>
                   </tr>
                 </thead>
                 <tbody id="schedule-matrix-body">
-                  <!-- Render tự động 3 hàng Sáng - Chiều - Tối -->
+                  <!-- 2 ca chuẩn theo mục 2.4 SystemDescription.md: Sáng (tiết 1-6), Chiều (tiết 7-12) -->
                   <tr data-session="morning">
-                    <td class="session-label-cell">Sáng<br><span style="font-size:10px;font-weight:normal;color:#8D6E63;">(Tiết 1-5)</span></td>
+                    <td class="session-label-cell"><strong>Sáng</strong><br><span style="font-size:11px; font-weight:600; color:#0284C7;">Tiết 1 - 6</span><br><span style="font-size:10px; color:#64748B;">(07:00 - 12:15)</span></td>
                     <td data-day="2"></td><td data-day="3"></td><td data-day="4"></td>
                     <td data-day="5"></td><td data-day="6"></td><td data-day="7"></td><td data-day="8"></td>
                   </tr>
                   <tr data-session="afternoon">
-                    <td class="session-label-cell">Chiều<br><span style="font-size:10px;font-weight:normal;color:#8D6E63;">(Tiết 6-10)</span></td>
-                    <td data-day="2"></td><td data-day="3"></td><td data-day="4"></td>
-                    <td data-day="5"></td><td data-day="6"></td><td data-day="7"></td><td data-day="8"></td>
-                  </tr>
-                  <tr data-session="evening">
-                    <td class="session-label-cell">Tối<br><span style="font-size:10px;font-weight:normal;color:#8D6E63;">(Tiết 11-13)</span></td>
+                    <td class="session-label-cell"><strong>Chiều</strong><br><span style="font-size:11px; font-weight:600; color:#D97706;">Tiết 7 - 12</span><br><span style="font-size:10px; color:#64748B;">(12:45 - 18:00)</span></td>
                     <td data-day="2"></td><td data-day="3"></td><td data-day="4"></td>
                     <td data-day="5"></td><td data-day="6"></td><td data-day="7"></td><td data-day="8"></td>
                   </tr>
@@ -265,19 +265,78 @@
   <script src="../../js/config.js"></script>
   <script src="../../js/api.js"></script>
   <script src="../../js/user-menu.js"></script>
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const btnReload = document.getElementById('btn-reload-schedule');
+      const btnCurrentWeek = document.getElementById('btn-current-week');
       const badgeMeta = document.getElementById('semester-meta-badge');
       const semesterNameEl = document.getElementById('current-semester-name');
       const semSelect = document.getElementById('schedule-semester-select');
+      const weekSelect = document.getElementById('schedule-week-select');
+
+      // Khởi tạo danh sách tuần học thực tế (15 tuần)
+      function initWeeks() {
+        const semesterStartDate = new Date(2026, 8, 1); // 01/09/2026
+        const today = new Date();
+        let currentWeekIndex = 1;
+        let optionsHtml = '';
+
+        for (let i = 1; i <= 20; i++) {
+          const start = new Date(semesterStartDate);
+          start.setDate(start.getDate() + (i - 1) * 7);
+          const end = new Date(start);
+          end.setDate(end.getDate() + 6);
+
+          const startStr = `${String(start.getDate()).padStart(2, '0')}/${String(start.getMonth() + 1).padStart(2, '0')}/${start.getFullYear()}`;
+          const endStr = `${String(end.getDate()).padStart(2, '0')}/${String(end.getMonth() + 1).padStart(2, '0')}/${end.getFullYear()}`;
+
+          if (today >= start && today <= end) {
+            currentWeekIndex = i;
+          }
+
+          optionsHtml += `<option value="${i}" data-start="${start.toISOString()}">Tuần ${i} [${startStr} -- ${endStr}]</option>`;
+        }
+
+        if (weekSelect) {
+          weekSelect.innerHTML = optionsHtml;
+          weekSelect.value = String(currentWeekIndex);
+          updateHeaderDates(currentWeekIndex);
+        }
+      }
+
+      function updateHeaderDates(weekNum) {
+        const semesterStartDate = new Date(2026, 8, 1);
+        const weekStart = new Date(semesterStartDate);
+        weekStart.setDate(weekStart.getDate() + (weekNum - 1) * 7);
+
+        for (let day = 2; day <= 8; day++) {
+          const dayDate = new Date(weekStart);
+          dayDate.setDate(dayDate.getDate() + (day - 2));
+          const dateStr = `${String(dayDate.getDate()).padStart(2, '0')}/${String(dayDate.getMonth() + 1).padStart(2, '0')}`;
+          const th = document.querySelector(`#schedule-thead-row th[data-col-day="${day}"] .day-date`);
+          if (th) th.textContent = dateStr;
+        }
+      }
+
+      if (weekSelect) {
+        weekSelect.addEventListener('change', (e) => {
+          updateHeaderDates(parseInt(e.target.value) || 1);
+          renderSchedule();
+        });
+      }
+
+      if (btnCurrentWeek) {
+        btnCurrentWeek.addEventListener('click', () => {
+          initWeeks();
+          renderSchedule();
+        });
+      }
 
       if (semSelect) {
         semSelect.addEventListener('change', () => renderSchedule());
       }
 
-            async function initSemesters() {
+      async function initSemesters() {
         function formatSemesterOption(s) {
           const parts = (s.maHocKy || '').split('_');
           let label = s.tenHocKy || s.maHocKy;
@@ -318,8 +377,6 @@
         if (semesterNameEl) semesterNameEl.textContent = 'Đang đồng bộ...';
 
         try {
-          // Gọi API GET /student/schedule không truyền tham số học kỳ
-          // Backend Tomcat tự động lấy học kỳ hiện hành đang kích hoạt trong hệ thống
           const res = await StudentApi.getSchedule(selectedSemester);
 
           if (!res || !res.success || !res.data) {
@@ -328,7 +385,6 @@
             return;
           }
 
-          // Cập nhật tên học kỳ hiện hành động từ gói meta
           function formatCleanSemester(tenHocKy, maHocKy) {
             let cleanName = 'Học kỳ 1';
             if (maHocKy && maHocKy.includes('HK2')) cleanName = 'Học kỳ 2';
@@ -343,7 +399,7 @@
             badgeMeta.innerHTML = '<span class="material-symbols-outlined" style="font-size: 14px;">event_available</span> ' + currentSemesterLabel;
           }
 
-          // Render danh sách các môn vào ma trận tuần (khử trùng lặp theo LHP + Thứ + Tiết)
+          // Render danh sách các môn vào 2 ca chuẩn: Sáng (tiết 1-6) và Chiều (tiết 7-12)
           const items = res.data;
           const renderedKeys = new Set();
 
@@ -357,10 +413,8 @@
             if (renderedKeys.has(key)) return;
             renderedKeys.add(key);
 
-            // Xác định ca học: Sáng (tiết 1-5), Chiều (tiết 6-10), Tối (tiết 11+)
-            let session = 'morning';
-            if (startLesson >= 6 && startLesson <= 10) session = 'afternoon';
-            else if (startLesson > 10) session = 'evening';
+            // Phân ca theo mục 2.4: Ca Sáng (tiết 1-6), Ca Chiều (tiết 7-12)
+            const session = (startLesson <= 6) ? 'morning' : 'afternoon';
 
             const targetCell = document.querySelector('#schedule-matrix-body tr[data-session="' + session + '"] td[data-day="' + day + '"]');
             if (targetCell) {
@@ -386,6 +440,7 @@
       if (btnReload) btnReload.addEventListener('click', renderSchedule);
 
       // Khởi chạy
+      initWeeks();
       initSemesters().then(() => renderSchedule());
     });
   </script>

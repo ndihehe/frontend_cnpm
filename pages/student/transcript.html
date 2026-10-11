@@ -192,6 +192,10 @@
             <span class="meta-stat-value" id="meta-credits">0 TC</span>
           </div>
           <div class="meta-stat-item">
+            <span class="meta-stat-label">Điểm TB tích lũy (Hệ 10)</span>
+            <span class="meta-stat-value" id="meta-gpa10" style="color: #0284C7;">0.00</span>
+          </div>
+          <div class="meta-stat-item">
             <span class="meta-stat-label">Điểm TB tích lũy (Hệ 4)</span>
             <span class="meta-stat-value" id="meta-gpa">0.00</span>
           </div>
@@ -297,15 +301,36 @@
             return;
           }
 
-          // 1. Cập nhật khối Meta học vụ tích lũy
+          const semesters = res.data || [];
+
+          // 1. Cập nhật khối Meta học vụ tích lũy (Song song Hệ 10 & Hệ 4)
+          let totalCreditsWithScore = 0;
+          let totalScore10Weighted = 0;
+          semesters.forEach(sem => {
+            if (Array.isArray(sem.danhSachMonHoc)) {
+              sem.danhSachMonHoc.forEach(m => {
+                if (m.diemTongKet != null && m.soTinChi) {
+                  totalCreditsWithScore += Number(m.soTinChi);
+                  totalScore10Weighted += Number(m.diemTongKet) * Number(m.soTinChi);
+                }
+              });
+            }
+          });
+
+          const gpa10Val = (res.meta && res.meta.diemTBTichLuy10 != null)
+            ? Number(res.meta.diemTBTichLuy10).toFixed(2)
+            : (totalCreditsWithScore > 0 
+                ? (totalScore10Weighted / totalCreditsWithScore).toFixed(2) 
+                : (res.meta && res.meta.diemTBTichLuy != null ? ((Number(res.meta.diemTBTichLuy) / 4) * 10).toFixed(2) : '0.00'));
+
           if (res.meta) {
             metaCard.style.display = 'flex';
             document.getElementById('meta-credits').textContent = (res.meta.soTinChiTichLuy || 0) + ' TC';
+            document.getElementById('meta-gpa10').textContent = gpa10Val;
             document.getElementById('meta-gpa').textContent = (res.meta.diemTBTichLuy != null ? Number(res.meta.diemTBTichLuy).toFixed(2) : '0.00');
             document.getElementById('meta-rank').textContent = formatRankTitle(res.meta.xepLoaiHocLucTichLuy);
           }
 
-          const semesters = res.data;
           if (semesters.length === 0) {
             container.innerHTML = '<div style="padding: 30px; text-align: center; color: var(--text-muted);">Chưa có dữ liệu điểm cho học kỳ này.</div>';
             return;
