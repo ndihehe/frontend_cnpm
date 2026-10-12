@@ -663,7 +663,7 @@
             }
             fillCourseName();
           } else {
-            courseSelect.innerHTML = '<option value="">Không thể tải danh mục học phần</option>';
+            courseSelect.innerHTML = `<option value="">${res?.message || 'Không thể tải danh mục học phần'}</option>`;
           }
         } catch (error) {
           console.error('Lỗi nạp danh mục học phần:', error);
@@ -1079,15 +1079,15 @@
         const maHP = new URLSearchParams(window.location.search).get('createMaHP');
         if (!maHP) return;
         document.getElementById('create-maHP').value = maHP;
+        fillCourseName();
         openModal('modal-create');
       }
 
-      initSemesters().then(() => {
+      Promise.all([initSemesters(), loadCourses()]).then(() => {
         loadClasses();
         openCreateModalFromCourseRequest();
       });
       loadLecturers();
-      loadCourses();
     });
   </script>
   <script src="../../js/user-menu.js"></script>
