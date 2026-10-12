@@ -482,7 +482,7 @@
           <div class="form-group">
             <label class="form-label">Trạng thái lớp *</label>
             <select id="edit-trangThai" class="form-control">
-              <option value="CHO_MO">Chờ mở</option>
+              <option value="CHUA_MO">Chưa mở</option>
               <option value="DANG_MO">Đang mở</option>
               <option value="DANGHOC" disabled>Đang học</option>
               <option value="DA_KHOA" id="edit-status-locked">Đã khóa</option>
@@ -651,7 +651,7 @@
         const courseSelect = document.getElementById('create-maHP');
         if (!courseSelect) return;
         try {
-          const res = await HeadOfficeApi.getCourses('', 'all', 1, 200);
+          const res = await HeadOfficeApi.getCourses('', 'all', 1, 100);
           if (res && res.success && Array.isArray(res.data)) {
             loadedCourses = res.data;
             const prefilledCourse = new URLSearchParams(window.location.search).get('createMaHP');

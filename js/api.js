@@ -421,7 +421,7 @@ const HeadOfficeApi = {
     const kw = (keyword || '').trim().toLowerCase();
     if (kw) {
       // Backend does not accept keyword filter, fetch list to filter by code or name
-      const res = await ApiClient.get(`/head-office/courses?page=1&limit=200`);
+      const res = await ApiClient.get(`/head-office/courses?page=1&limit=100`);
       if (res && res.success && Array.isArray(res.data)) {
         const filtered = res.data.filter(c =>
           (c.maHP && c.maHP.toLowerCase().includes(kw)) ||
