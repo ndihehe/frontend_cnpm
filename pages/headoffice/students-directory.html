@@ -114,10 +114,6 @@
             <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khoa:</label>
             <select id="select-faculty" class="form-control" style="width: 180px; font-size: 12px; height: 32px;">
               <option value="all">Tất cả khoa</option>
-              <option value="Công nghệ thông tin">Công nghệ Thông tin</option>
-              <option value="Kinh tế">Khoa Kinh tế</option>
-              <option value="Điện - Điện tử">Điện - Điện tử</option>
-              <option value="CKOT">Cơ khí Ô tô</option>
             </select>
 
             <!-- Search input wrap chuẩn CSS giải quyết triệt để icon out khung -->
@@ -202,6 +198,7 @@
   </div>
 
   <script src="../../js/config.js"></script>
+  <script src="../../js/faculties.js"></script>
   <script src="../../js/api.js"></script>
   <script>
     let currentPage = 1;
@@ -233,6 +230,8 @@
       const paginationInfo = document.getElementById('pagination-info');
       const btnPrev = document.getElementById('btn-prev-page');
       const btnNext = document.getElementById('btn-next-page');
+
+      populateFacultySelect(facultySelect, 'Tất cả khoa');
 
       async function loadStudents(page = 1) {
         try {
