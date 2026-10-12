@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách lớp học - Cổng Giảng viên</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/layout.css">
+  <link rel="stylesheet" href="../../css/components.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="schedule.html" class="sidebar-brand"><span class="material-symbols-outlined" style="font-size:26px;color:#00365D;">account_balance</span><div class="sidebar-brand-title">HỆ THỐNG<br>QUẢN LÝ HỌC VỤ</div></a>
+        <a href="profile.html" class="sidebar-profile" style="text-decoration:none;"><img src="https://pub-cecf49575b944a78a4f75f51cf7636f6.r2.dev/nu_01.jpg" alt="Avatar" class="sidebar-avatar" id="sidebar-user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Tran+Binh&background=854D0E&color=fff&size=80'"><div style="min-width:0;"><div class="sidebar-user-name" id="sidebar-user-name">Trần Thị Bình</div><div class="sidebar-user-mssv" id="sidebar-user-code">CB: NV001</div><div class="sidebar-user-status" id="sidebar-user-status" style="color:#B45309;">● Giảng viên khoa CNTT</div></div></a>
+      </div>
+      <nav class="sidebar-nav"><ul class="nav-list">
+        <div class="nav-section-title">BÀN LÀM VIỆC</div>
+        <li class="nav-item"><a href="profile.html" class="nav-link"><span class="material-symbols-outlined">person</span><span>Hồ sơ cán bộ</span></a></li>
+        <div class="nav-section-title">QUẢN LÝ GIẢNG DẠY</div>
+        <li class="nav-item"><a href="schedule.html" class="nav-link"><span class="material-symbols-outlined">calendar_month</span><span>Lịch giảng dạy</span></a></li>
+        <li class="nav-item"><a href="teaching-classes.html" class="nav-link active"><span class="material-symbols-outlined">list_alt</span><span>Danh sách lớp học</span></a></li>
+        <li class="nav-item"><a href="grade-entry.html" class="nav-link"><span class="material-symbols-outlined">grading</span><span>Nhập điểm học phần</span></a></li>
+      </ul></nav>
+    </aside>
+    <div class="app-main">
+      <header class="app-topbar"><div class="topbar-title"><span class="material-symbols-outlined" style="font-size:19px;color:#0284C7;">list_alt</span> DANH SÁCH LỚP HỌC PHẦN GIẢNG DẠY</div><div class="topbar-actions"><a href="profile.html" style="display:flex;align-items:center;gap:7px;cursor:pointer;text-decoration:none;"><img src="https://ui-avatars.com/api/?name=Tran+Binh&background=854D0E&color=fff&size=60" alt="User" class="topbar-avatar-img"><span style="font-size:12px;font-weight:600;color:var(--text-main);">TS. Trần Thị Bình</span><span class="material-symbols-outlined" style="font-size:16px;color:var(--text-muted);">expand_more</span></a></div></header>
+      <main class="content-body">
+        <div class="page-banner"><span class="material-symbols-outlined" style="font-size:18px;">list_alt</span><span>DANH SÁCH LỚP HỌC PHẦN ĐƯỢC PHÂN CÔNG GIẢNG DẠY</span></div>
+        <div class="filter-bar" style="display:flex;align-items:center;gap:14px;">
+          <label style="font-size:12px;font-weight:700;color:#002D4F;">HỌC KỲ:</label>
+          <select id="semester-select" class="form-control" style="width:250px;height:34px;font-size:12px;"><option value="">Đang tải học kỳ...</option></select>
+          <button id="reload-classes" type="button" class="btn btn-outline btn-sm"><span class="material-symbols-outlined" style="font-size:16px;">refresh</span> Làm mới</button>
+        </div>
+        <div class="hocvu-card">
+          <div class="hocvu-card-header" style="display:flex;justify-content:space-between;align-items:center;"><div class="hocvu-card-title"><span class="material-symbols-outlined" style="font-size:18px;color:#0284C7;">school</span><span>CÁC LỚP HỌC PHẦN CỦA TÔI</span></div><div id="class-total" style="font-size:12px;color:var(--text-muted);">Đang tải...</div></div>
+          <div class="hocvu-card-body" style="padding:0;"><div class="hocvu-table-responsive" style="border:none;"><table class="hocvu-table"><thead><tr><th style="width:45px;text-align:center;">STT</th><th style="width:120px;">Mã LHP</th><th>Tên học phần</th><th style="width:80px;text-align:center;">Số TC</th><th style="width:90px;text-align:center;">Thứ</th><th style="width:110px;text-align:center;">Tiết dạy</th><th style="width:105px;text-align:center;">Phòng học</th><th style="width:105px;text-align:center;">Sĩ số lớp</th><th style="width:120px;text-align:center;">Thao tác</th></tr></thead><tbody id="classes-tbody"><tr><td colspan="9" style="text-align:center;padding:25px;">Đang tải danh sách lớp...</td></tr></tbody></table></div></div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script src="../../js/config.js"></script>
+  <script src="../../js/api.js"></script>
+  <script>
+    const roomMap = { LHP260121: 'A2-002', LHP260122: 'A3-003', LHP260123: 'A4-004', LHP260124: 'LAB-DB1', LHP260125: 'A1-006' };
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[char]);
+    document.addEventListener('DOMContentLoaded', async () => {
+      const semesterSelect = document.getElementById('semester-select');
+      const tbody = document.getElementById('classes-tbody');
+      const total = document.getElementById('class-total');
+      async function initSemesters() {
+        if (!window.CommonApi?.getAllSemesters) return;
+        const response = await CommonApi.getAllSemesters();
+        if (!response?.success || !Array.isArray(response.data) || !response.data.length) return;
+        semesterSelect.innerHTML = response.data.map(semester => {
+          const parts = (semester.maHocKy || '').split('_');
+          const name = semester.tenHocKy || (parts[2] === 'HK1' ? 'Học kỳ 1' : parts[2] === 'HK2' ? 'Học kỳ 2' : 'Học kỳ hè');
+          return `<option value="${escapeHtml(semester.maHocKy)}" ${(semester.isCurrent || semester.hienHanh) ? 'selected' : ''}>${escapeHtml(name)}${(semester.isCurrent || semester.hienHanh) ? ' [Hiện hành]' : ''}</option>`;
+        }).join('');
+      }
+      async function loadClasses() {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:25px;">Đang tải danh sách lớp...</td></tr>';
+        const response = await LecturerApi.getTeachingClasses(semesterSelect.value);
+        const classes = response?.success && Array.isArray(response.data) ? response.data : null;
+        if (!classes) { tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:25px;color:#B91C1C;">${escapeHtml(response?.message || 'Lỗi tải danh sách lớp học')}</td></tr>`; total.textContent = 'Không tải được dữ liệu'; return; }
+        total.textContent = `${classes.length} lớp học phần`;
+        if (!classes.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:25px;color:var(--text-muted);">Không có lớp học phần giảng dạy trong học kỳ này</td></tr>'; return; }
+        tbody.innerHTML = classes.map((item, index) => {
+          const start = Number(item.tietBatDau || 1), end = start + Number(item.soTiet || 3) - 1;
+          const size = item.siSo ?? item.siSoHienTai ?? 0;
+          return `<tr><td style="text-align:center;color:var(--text-muted);">${index + 1}</td><td><strong style="color:#0369A1;">${escapeHtml(item.maLHP)}</strong></td><td><div style="font-weight:600;color:#002D4F;">${escapeHtml(item.tenHP)}</div><div style="font-size:11px;color:var(--text-muted);">${escapeHtml(item.tenLHP || '')}</div></td><td style="text-align:center;"><span class="badge badge-subtle" style="background:#E0F2FE;color:#0369A1;">${item.soTinChi || 3} TC</span></td><td style="text-align:center;font-weight:600;">Thứ ${item.thu || '--'}</td><td style="text-align:center;">Tiết ${start} - ${end}</td><td style="text-align:center;"><strong style="color:#002D4F;">${escapeHtml(item.phongHoc || roomMap[item.maLHP] || '--')}</strong></td><td style="text-align:center;"><span style="font-weight:600;color:#0284C7;">${size}</span> / ${item.siSoToiDa || '--'}</td><td style="text-align:center;"><a href="grade-entry.html?maLHP=${encodeURIComponent(item.maLHP)}" class="btn btn-outline btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:4px 8px;font-size:11.5px;border-color:#0284C7;color:#0284C7;"><span class="material-symbols-outlined" style="font-size:14px;">grading</span>Nhập điểm</a></td></tr>`;
+        }).join('');
+      }
+      semesterSelect.addEventListener('change', loadClasses);
+      document.getElementById('reload-classes').addEventListener('click', loadClasses);
+      try { await initSemesters(); await loadClasses(); } catch (error) { tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:25px;color:#B91C1C;">${escapeHtml(error.message || 'Lỗi tải danh sách lớp học')}</td></tr>`; }
+    });
+  </script>
+  <script src="../../js/user-menu.js"></script>
+</body>
+</html>

@@ -141,7 +141,13 @@
           <li class="nav-item">
             <a href="schedule.html" class="nav-link active">
               <span class="material-symbols-outlined">calendar_month</span>
-              <span>Thời khóa biểu tuần</span>
+              <span>Lịch giảng dạy</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="teaching-classes.html" class="nav-link">
+              <span class="material-symbols-outlined">list_alt</span>
+              <span>Danh sách lớp học</span>
             </a>
           </li>
           <li class="nav-item">
@@ -251,39 +257,6 @@
           </div>
         </div>
 
-        <!-- BẢNG DANH SÁCH LỚP HỌC PHẦN GIẢNG DẠY -->
-        <div class="hocvu-card">
-          <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
-            <div class="hocvu-card-title">
-              <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">list_alt</span>
-              <span>DANH SÁCH LỚP HỌC PHẦN ĐƯỢC PHÂN CÔNG GIẢNG DẠY</span>
-            </div>
-            <div style="font-size: 12px; color: var(--text-muted);" id="list-total-classes">2 lớp học phần</div>
-          </div>
-          <div class="hocvu-card-body" style="padding: 0;">
-            <div class="hocvu-table-responsive" style="border: none;">
-              <table class="hocvu-table">
-                <thead>
-                  <tr>
-                    <th style="width: 45px; text-align: center;">STT</th>
-                    <th style="width: 120px;">Mã LHP</th>
-                    <th>Tên học phần</th>
-                    <th style="width: 80px; text-align: center;">Số TC</th>
-                    <th style="width: 90px; text-align: center;">Thứ</th>
-                    <th style="width: 110px; text-align: center;">Tiết dạy</th>
-                    <th style="width: 95px; text-align: center;">Phòng học</th>
-                    <th style="width: 110px; text-align: center;">Sĩ số lớp</th>
-                    <th style="width: 115px; text-align: center;">Trạng thái</th>
-                    <th style="width: 120px; text-align: center;" class="btn-action-col">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody id="teaching-list-tbody">
-                  <tr><td colspan="10" style="text-align: center; padding: 25px;">Đang tải danh sách lớp...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
       </main>
     </div>
   </div>
@@ -296,7 +269,6 @@
       const btnReload = document.getElementById('btn-reload-schedule');
       const badgeMeta = document.getElementById('semester-meta-badge');
       const matrixBody = document.getElementById('schedule-matrix-body');
-      const listTbody = document.getElementById('teaching-list-tbody');
 
       await initSemesters().then(() => renderSchedule());
 
@@ -330,27 +302,19 @@
       async function renderSchedule() {
         // Xóa sạch các ô ma trận cũ
         matrixBody.querySelectorAll('td[data-day]').forEach(cell => cell.innerHTML = '');
-        listTbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 25px;">Đang tải danh sách lớp...</td></tr>';
         badgeMeta.innerHTML = `<span class="material-symbols-outlined" style="font-size: 14px;">sync</span> Đang tải...`;
 
         try {
-          const [resSchedule, resClasses] = await Promise.all([
-            LecturerApi.getTeachingSchedule(hkSelect.value),
-            LecturerApi.getTeachingClasses(hkSelect.value)
-          ]);
-
-          const classes = (resClasses && resClasses.success && Array.isArray(resClasses.data)) ? resClasses.data : (resSchedule?.data || []);
+          const resSchedule = await LecturerApi.getTeachingSchedule(hkSelect.value);
           const scheduleSlots = (resSchedule && resSchedule.success && Array.isArray(resSchedule.data)) ? resSchedule.data : [];
-          const meta = resClasses?.meta || resSchedule?.meta || {};
+          const meta = resSchedule?.meta || {};
 
           // Cập nhật Meta học kỳ
           badgeMeta.innerHTML = `
             <span class="material-symbols-outlined" style="font-size: 14px;">event</span>
             ${meta.tenHocKy || hkSelect.options[hkSelect.selectedIndex].text}
           `;
-          document.getElementById('list-total-classes').textContent = `${classes.length} lớp học phần`;
-
-          // 1. Render vào Ma trận tuần chuẩn style sinh viên (Hiển thị đầy đủ tất cả học phần được phân công giảng dạy)
+          // Render vào ma trận tuần từ các buổi dạy thực tế.
           const allSlots = [];
           const slotKeySet = new Set();
 
@@ -374,26 +338,6 @@
             }
           });
 
-          // Đảm bảo toàn bộ 5 lớp giảng dạy đều xuất hiện trên lịch dạy tuần
-          classes.forEach(c => {
-            const day = Number(c.thu || (c.maLHP === 'LHP260121' ? 3 : c.maLHP === 'LHP260122' ? 4 : c.maLHP === 'LHP260123' ? 5 : c.maLHP === 'LHP260124' ? 6 : 7));
-            const startLesson = Number(c.tietBatDau || (c.maLHP === 'LHP260121' ? 1 : c.maLHP === 'LHP260122' ? 2 : c.maLHP === 'LHP260123' ? 3 : c.maLHP === 'LHP260124' ? 4 : 5));
-            const soTiet = Number(c.soTiet || 3);
-            const key = c.maLHP + '_' + day + '_' + startLesson;
-            if (!slotKeySet.has(key)) {
-              slotKeySet.add(key);
-              allSlots.push({
-                maLHP: c.maLHP,
-                tenHP: c.tenHP,
-                tenLHP: c.tenLHP,
-                thu: day,
-                tietBatDau: startLesson,
-                soTiet: soTiet,
-                phongHoc: c.phongHoc || roomMap[c.maLHP] || 'A2-002'
-              });
-            }
-          });
-
           allSlots.forEach(c => {
             const day = Number(c.thu); // 2 -> 8 (Thứ 2 đến CN)
             const startLesson = Number(c.tietBatDau || 1);
@@ -409,7 +353,11 @@
               const card = document.createElement('div');
               card.className = 'course-card';
               card.onclick = () => {
-                window.location.href = `grade-entry.html?maLHP=${c.maLHP}`;
+                if (!c.maLichHoc) {
+                  ApiClient.showToast('error', 'Không mở được điểm danh', 'Không tìm thấy mã buổi học để điểm danh.');
+                  return;
+                }
+                window.location.href = `attendance.html?maLichHoc=${encodeURIComponent(c.maLichHoc)}`;
               };
               card.innerHTML = `
                 <div class="course-card-title">${c.tenHP}</div>
@@ -421,54 +369,9 @@
             }
           });
 
-          // 2. Render vào Bảng danh sách chi tiết (5 lớp giảng dạy của GV) - Khắc phục triệt để undefined
-          if (classes.length === 0) {
-            listTbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:25px; color:var(--text-muted);">Không có lớp học phần giảng dạy trong học kỳ này</td></tr>';
-            return;
-          }
-
-          listTbody.innerHTML = classes.map((c, idx) => {
-            const tc = c.soTinChi || 3;
-            const thu = c.thu || (c.maLHP === 'LHP260121' ? 3 : c.maLHP === 'LHP260122' ? 4 : c.maLHP === 'LHP260123' ? 5 : c.maLHP === 'LHP260124' ? 6 : 7);
-            const startTiet = c.tietBatDau || (c.maLHP === 'LHP260121' ? 1 : c.maLHP === 'LHP260122' ? 2 : c.maLHP === 'LHP260123' ? 3 : c.maLHP === 'LHP260124' ? 4 : 5);
-            const soTiet = c.soTiet || 3;
-            const endTiet = startTiet + soTiet - 1;
-            const phong = c.phongHoc || roomMap[c.maLHP] || 'A2-002';
-            const curSize = (c.siSo !== undefined && c.siSo !== null) ? c.siSo : (c.siSoHienTai !== undefined ? c.siSoHienTai : 20);
-            const maxSize = c.siSoToiDa || 40;
-
-            return `
-            <tr>
-              <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
-              <td><strong style="color: #0369A1;">${c.maLHP}</strong></td>
-              <td>
-                <div style="font-weight: 600; color: #002D4F;">${c.tenHP}</div>
-                <div style="font-size: 11px; color: var(--text-muted);">${c.tenLHP}</div>
-              </td>
-              <td style="text-align: center;"><span class="badge badge-subtle" style="background: #E0F2FE; color: #0369A1;">${tc} TC</span></td>
-              <td style="text-align: center; font-weight: 600;">Thứ ${thu}</td>
-              <td style="text-align: center;">Tiết ${startTiet} - ${endTiet}</td>
-              <td style="text-align: center;"><strong style="color: #002D4F;">${phong}</strong></td>
-              <td style="text-align: center;">
-                <span style="font-weight: 600; color: #0284C7;">${curSize}</span> / ${maxSize}
-              </td>
-              <td style="text-align: center;">
-                <span class="badge badge-success" style="font-size: 11px;">Đang giảng dạy</span>
-              </td>
-              <td style="text-align: center;" class="btn-action-col">
-                <a href="grade-entry.html?maLHP=${c.maLHP}" class="btn btn-outline btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; font-size: 11.5px; border-color: #0284C7; color: #0284C7;">
-                  <span class="material-symbols-outlined" style="font-size: 14px;">grading</span>
-                  <span>Nhập điểm</span>
-                </a>
-              </td>
-            </tr>
-          `;
-          }).join('');
-
         } catch (e) {
           console.error(e);
           badgeMeta.textContent = 'Lỗi kết nối';
-          listTbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:red; padding:20px;">Lỗi tải lịch giảng dạy</td></tr>';
         }
       }
     });
