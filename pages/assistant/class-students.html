@@ -286,6 +286,22 @@
 
       document.getElementById('btn-refresh').addEventListener('click', loadStudents);
 
+      document.getElementById('btn-export-students').addEventListener('click', async () => {
+        const lhp = selectLhp.value;
+        if (!lhp) {
+          ApiClient.showToast('error', 'Không thể xuất danh sách', 'Vui lòng chọn lớp học phần');
+          return;
+        }
+
+        const result = await AssistantApi.getClassStudents(lhp, 1, pageSize, true);
+        if (result instanceof Blob) {
+          ApiClient.downloadBlob(result, `DSSV_${lhp}.xlsx`);
+          return;
+        }
+
+        ApiClient.showToast('error', 'Không thể xuất danh sách', result?.message || 'Lỗi tải tệp Excel');
+      });
+
       btnPrevPage.addEventListener('click', () => {
         if (currentPage > 1) {
           currentPage--;
