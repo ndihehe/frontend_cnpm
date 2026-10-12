@@ -635,7 +635,7 @@
           try {
             const reqRes = await AssistantApi.getClassRequests('all', 1, 100);
             if (reqRes && reqRes.success && Array.isArray(reqRes.data)) {
-              const pendingCount = reqRes.data.filter(r => r.trangThai === 'DAGUI' || r.trangThai === 'DATIEPNHAN').length;
+              const pendingCount = reqRes.data.filter(r => r.trangThai === 'DAGUI').length;
               document.getElementById('stat-pending-requests').textContent = pendingCount;
             } else {
               document.getElementById('stat-pending-requests').textContent = '0';

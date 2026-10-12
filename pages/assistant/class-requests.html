@@ -187,8 +187,8 @@
                 <select id="select-status" class="form-control" style="width: 170px; height: 32px; font-size: 12px;">
                   <option value="all">Tất cả trạng thái</option>
                   <option value="DAGUI" selected>Đang chờ duyệt</option>
-                  <option value="DUYET">Đã duyệt</option>
-                  <option value="TUCHOI">Từ chối</option>
+                  <option value="DADUYET">Đã duyệt</option>
+                  <option value="DATUCHOI">Từ chối</option>
                 </select>
               </div>
 
@@ -377,8 +377,8 @@
           }
           groups[r.maHP].tongSo++;
           if (r.trangThai === 'DAGUI') groups[r.maHP].choDuyet++;
-          else if (r.trangThai === 'DUYET') groups[r.maHP].daDuyet++;
-          else if (r.trangThai === 'TUCHOI') groups[r.maHP].tuChoi++;
+          else if (r.trangThai === 'DADUYET') groups[r.maHP].daDuyet++;
+          else if (r.trangThai === 'DATUCHOI') groups[r.maHP].tuChoi++;
         });
 
         const groupList = Object.values(groups).sort((a, b) => b.tongSo - a.tongSo);
@@ -497,7 +497,7 @@
 
           let statusText = '';
           if (r.trangThai === 'DAGUI') statusText = `<span class="status-text-pending">Chờ duyệt</span>`;
-          else if (r.trangThai === 'DUYET') statusText = `<span class="status-text-approved">Đã duyệt</span>`;
+          else if (r.trangThai === 'DADUYET') statusText = `<span class="status-text-approved">Đã duyệt</span>`;
           else statusText = `<span class="status-text-rejected">Từ chối</span>`;
 
           let actions = '';
@@ -512,7 +512,7 @@
                 </button>
               </div>
             `;
-          } else if (r.trangThai === 'DUYET') {
+          } else if (r.trangThai === 'DADUYET') {
             actions = `
               <span class="badge" style="background: #107C41; color: #FFFFFF; display: inline-flex; align-items: center; gap: 3px; font-size: 11px; padding: 4px 8px; font-weight: 600; border-radius: 4px;">
                 <span class="material-symbols-outlined" style="font-size: 13px; font-weight: 700;">check</span> Đã duyệt
@@ -608,7 +608,7 @@
           const res = await AssistantApi.updateClassRequestStatus(maYeuCau, newStatus);
           if (res && res.success) {
             const item = allRawRequests.find(r => r.maYeuCau === maYeuCau);
-            if (item) item.trangThai = newStatus;
+            if (item) item.trangThai = newStatus === 'DUYET' ? 'DADUYET' : 'DATUCHOI';
 
             renderCourseGroups();
             renderTable();
