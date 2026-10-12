@@ -736,9 +736,7 @@ const NotificationApi = {
     return ApiClient.post('/notifications', {
       tieuDe: payload.tieuDe,
       noiDung: payload.noiDung,
-      phamVi: payload.phamVi || 'TOAN_TRUONG',
-      maLHP: payload.maLHP || null,
-      maKhoa: payload.maKhoa || null
+      phamVi: payload.phamVi || 'TOAN_TRUONG'
     });
   },
 
