@@ -149,7 +149,6 @@
                     <th style="width: 45px; text-align: center;">STT</th>
                     <th style="width: 110px;">Mã sinh viên</th>
                     <th>Họ và tên</th>
-                    <th style="width: 120px;">Lớp danh nghĩa</th>
                     <th>Email liên hệ</th>
                     <th style="width: 140px; text-align: center;">Thời gian ghi danh</th>
                     <th style="width: 100px; text-align: center;">Trạng thái</th>
@@ -157,7 +156,7 @@
                   </tr>
                 </thead>
                 <tbody id="student-tbody">
-                  <tr><td colspan="8" style="text-align: center; padding: 25px;">Đang tải danh sách sinh viên...</td></tr>
+                  <tr><td colspan="7" style="text-align: center; padding: 25px;">Đang tải danh sách sinh viên...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -225,7 +224,7 @@
           const res = await AssistantApi.getClassStudents(lhp, currentPage, pageSize);
 
           if (!res || !res.success || !res.data) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">Lỗi tải dữ liệu</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:red; padding: 20px;">Lỗi tải dữ liệu</td></tr>';
             return;
           }
 
@@ -248,7 +247,7 @@
           }
 
           if (students.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 25px; color: var(--text-muted);">Chưa có sinh viên nào ghi danh vào lớp này</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 25px; color: var(--text-muted);">Chưa có sinh viên nào ghi danh vào lớp này</td></tr>';
             return;
           }
 
@@ -263,7 +262,6 @@
                 <td style="text-align: center; color: var(--text-muted);">${stt}</td>
                 <td><strong style="color: #0284C7;">${s.maSV}</strong></td>
                 <td><strong style="color: #002D4F;">${s.hoTen}</strong></td>
-                <td>${s.lopDanhNghia || 'CNTT-K22'}</td>
                 <td><a href="mailto:${s.email || (s.maSV.toLowerCase() + '@student.edu.vn')}" style="color: #0284C7; text-decoration: none;">${s.email || (s.maSV.toLowerCase() + '@student.edu.vn')}</a></td>
                 <td style="text-align: center; color: var(--text-muted); font-size: 11.5px;">${ngayDkStr}</td>
                 <td style="text-align: center;">${statusText}</td>
@@ -275,7 +273,7 @@
 
         } catch (e) {
           console.error(e);
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red; padding: 20px;">Lỗi kết nối API</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:red; padding: 20px;">Lỗi kết nối API</td></tr>';
         }
       }
 

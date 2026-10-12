@@ -92,6 +92,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="teaching-classes.html" class="nav-link">
+              <span class="material-symbols-outlined">list_alt</span>
+              <span>Danh sách lớp học</span>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="grade-entry.html" class="nav-link active">
               <span class="material-symbols-outlined">grading</span>
               <span>Nhập điểm học phần</span>
@@ -158,7 +164,7 @@
             <span class="class-info-val" id="info-tenHP">...</span>
           </div>
           <div class="class-info-item">
-            <span class="class-info-lbl">Mã LHP & Lớp SV</span>
+            <span class="class-info-lbl">Mã LHP</span>
             <span class="class-info-val" id="info-maLHP">...</span>
           </div>
           <div class="class-info-item">
@@ -198,7 +204,6 @@
                       <th style="width: 45px; text-align: center;">STT</th>
                       <th style="width: 100px;">MSSV</th>
                       <th>Họ và tên sinh viên</th>
-                      <th style="width: 105px;">Lớp SV</th>
                       <th style="width: 85px; text-align: center;" title="Số buổi vắng trong CSDL">Vắng<br><span style="font-weight: 400; font-size: 10.5px;">(buổi)</span></th>
                       <th style="width: 105px; text-align: center;">Quá trình<br><span style="font-weight: 400; font-size: 10.5px;">(Hệ số 0.4)</span></th>
                       <th style="width: 105px; text-align: center;">Cuối kỳ<br><span style="font-weight: 400; font-size: 10.5px;">(Hệ số 0.6)</span></th>
@@ -209,7 +214,7 @@
                     </tr>
                   </thead>
                   <tbody id="grades-tbody">
-                    <tr><td colspan="10" style="text-align: center; padding: 25px;">Đang tải sổ điểm...</td></tr>
+                    <tr><td colspan="9" style="text-align: center; padding: 25px;">Đang tải sổ điểm...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -266,7 +271,7 @@
           await loadGradeSheet(currentLHP);
         } else {
           selectClass.innerHTML = '<option value="">Không có lớp giảng dạy</option>';
-          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:20px;">Không có lớp học phần nào</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">Không có lớp học phần nào</td></tr>';
         }
       } catch (e) {
         console.error(e);
@@ -278,10 +283,10 @@
       });
 
       async function loadGradeSheet(maLHP) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:25px;">Đang tải sổ điểm...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:25px;">Đang tải sổ điểm...</td></tr>';
         const res = await LecturerApi.getClassGradeSheet(maLHP);
         if (!res || !res.success || !res.data) {
-          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:red; padding:20px;">Lỗi tải sổ điểm</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:red; padding:20px;">Lỗi tải sổ điểm</td></tr>';
           return;
         }
 
@@ -350,7 +355,7 @@
         }
 
         if (list.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:25px; color:var(--text-muted);">Không tìm thấy sinh viên phù hợp</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:25px; color:var(--text-muted);">Không tìm thấy sinh viên phù hợp</td></tr>';
           return;
         }
 
@@ -366,7 +371,6 @@
               <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
               <td><strong style="color: #0284C7;">${s.maSV}</strong></td>
               <td><div style="font-weight: 600; color: #002D4F;">${s.hoTen}</div></td>
-              <td><span style="font-size: 12px;">${s.lopSV || s.lopDanhNghia || 'CNTT-K26'}</span></td>
               <td style="text-align: center;">
                 <input type="number" min="0" max="30" class="grade-input input-vang" readonly
                        style="width: 55px; background: #F1F5F9; cursor: not-allowed; ${vangVal > 3 ? 'border-color:#DC2626; color:#DC2626; font-weight:700; background:#FEF2F2;' : 'color:#475569;'}" 
@@ -462,11 +466,11 @@
             return;
           }
 
-          let csvContent = '\uFEFFHỆ THỐNG QUẢN LÝ HỌC VỤ\nBẢNG ĐIỂM LỚP HỌC PHẦN: ' + (currentLHP || '') + '\nSTT,Mã sinh viên,Họ và tên,Lớp SV,Số buổi vắng,Điểm quá trình,Điểm cuối kỳ,Điểm tổng kết,Điểm chữ,Kết quả\n';
+          let csvContent = '\uFEFFHỆ THỐNG QUẢN LÝ HỌC VỤ\nBẢNG ĐIỂM LỚP HỌC PHẦN: ' + (currentLHP || '') + '\nSTT,Mã sinh viên,Họ và tên,Số buổi vắng,Điểm quá trình,Điểm cuối kỳ,Điểm tổng kết,Điểm chữ,Kết quả\n';
           currentStudents.forEach((s, idx) => {
             const vangVal = s.soBuoiVang !== undefined ? s.soBuoiVang : 0;
             const res = calculateGrade(s.diemQuaTrinh, s.diemCuoiKy, vangVal);
-            csvContent += `"${idx + 1}","${s.maSV}","${s.hoTen}","${s.lopSV}","${vangVal}","${s.diemQuaTrinh}","${s.diemCuoiKy}","${res.tk}","${res.chu}","${res.kq}"\n`;
+            csvContent += `"${idx + 1}","${s.maSV}","${s.hoTen}","${vangVal}","${s.diemQuaTrinh}","${s.diemCuoiKy}","${res.tk}","${res.chu}","${res.kq}"\n`;
           });
 
           const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -510,12 +514,12 @@
               const students = (res && res.success && Array.isArray(res.data)) ? res.data : [];
 
               fullCsv += `BẢNG ĐIỂM LỚP HỌC PHẦN: ${opt.text}\n`;
-              fullCsv += 'STT,Mã sinh viên,Họ và tên,Lớp SV,Số buổi vắng,Điểm quá trình,Điểm cuối kỳ,Điểm tổng kết,Điểm chữ,Kết quả\n';
+              fullCsv += 'STT,Mã sinh viên,Họ và tên,Số buổi vắng,Điểm quá trình,Điểm cuối kỳ,Điểm tổng kết,Điểm chữ,Kết quả\n';
 
               students.forEach((s, idx) => {
                 const vangVal = s.soBuoiVang !== undefined ? s.soBuoiVang : 0;
                 const r = calculateGrade(s.diemQuaTrinh, s.diemCuoiKy, vangVal);
-                fullCsv += `"${idx + 1}","${s.maSV}","${s.hoTen}","${s.lopSV || ''}","${vangVal}","${s.diemQuaTrinh != null ? s.diemQuaTrinh : ''}","${s.diemCuoiKy != null ? s.diemCuoiKy : ''}","${r.tk}","${r.chu}","${r.kq}"\n`;
+                fullCsv += `"${idx + 1}","${s.maSV}","${s.hoTen}","${vangVal}","${s.diemQuaTrinh != null ? s.diemQuaTrinh : ''}","${s.diemCuoiKy != null ? s.diemCuoiKy : ''}","${r.tk}","${r.chu}","${r.kq}"\n`;
               });
               fullCsv += '\n';
             }

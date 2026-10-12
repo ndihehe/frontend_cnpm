@@ -536,7 +536,6 @@ const HeadOfficeApi = {
       return {
         maSV: s.maSV || '--',
         hoTen: s.hoTen || '--',
-        lopDanhNghia: s.lopDanhNghia || (s.chuyenNganh ? (s.chuyenNganh.substring(0, 4) + '_' + (s.nienKhoa ? s.nienKhoa.split('-')[0] : '')) : '--'),
         tenKhoa: s.khoa || s.tenKhoa || '--',
         nienKhoa: s.nienKhoa || '--',
         soTCDat: s.soTinChiTichLuy != null ? s.soTinChiTichLuy : (s.soTCDat != null ? s.soTCDat : '--'),

@@ -242,7 +242,6 @@
                     <th style="width: 45px; text-align: center;">STT</th>
                     <th style="width: 100px;">MSSV</th>
                     <th>Họ và tên</th>
-                    <th style="width: 110px;">Lớp SV</th>
                     <th style="width: 160px;">Khoa quản lý</th>
                     <th style="width: 100px; text-align: center;">Niên khóa</th>
                     <th style="width: 75px; text-align: center;">TC tích lũy</th>
@@ -252,7 +251,7 @@
                   </tr>
                 </thead>
                 <tbody id="grade-summary-tbody">
-                  <tr><td colspan="10" style="text-align: center; padding: 25px;">Đang tải dữ liệu tổng hợp...</td></tr>
+                  <tr><td colspan="9" style="text-align: center; padding: 25px;">Đang tải dữ liệu tổng hợp...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -308,7 +307,7 @@
 
           const res = await HeadOfficeApi.getGradeSummary(nk, kh, st, kw, currentPage, pageSize);
           if (!res || !res.success || !res.data) {
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:red; padding:20px;">Lỗi tải dữ liệu</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:red; padding:20px;">Lỗi tải dữ liệu</td></tr>';
             return;
           }
 
@@ -325,7 +324,7 @@
           tableInfo.textContent = `Hiển thị ${list.length} / ${meta.totalItems} sinh viên`;
 
           if (list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:25px; color:var(--text-muted);">Không tìm thấy bản ghi phù hợp</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:25px; color:var(--text-muted);">Không tìm thấy bản ghi phù hợp</td></tr>';
             paginationInfo.textContent = 'Đang hiển thị 0 / 0';
             btnPrev.disabled = true;
             btnNext.disabled = true;
@@ -360,7 +359,6 @@
                 <td style="text-align: center; color: var(--text-muted);">${stt}</td>
                 <td><strong style="color: #0284C7;">${s.maSV}</strong></td>
                 <td><div style="font-weight: 600; color: #002D4F;">${s.hoTen}</div></td>
-                <td><span style="font-size: 12px;">${s.lopDanhNghia}</span></td>
                 <td><span style="font-size: 12px;">${s.tenKhoa}</span></td>
                 <td style="text-align: center; font-size: 12px; color: var(--text-muted);">${s.nienKhoa}</td>
                 <td style="text-align: center; font-weight: 700;">${s.soTCDat}</td>
