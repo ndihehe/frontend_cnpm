@@ -236,8 +236,21 @@
             <input type="text" id="sem-maHocKy" class="form-control" placeholder="VD: 2026_2027_HK1" required />
           </div>
           <div style="margin-bottom: 12px;">
-            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Tên hiển thị học kỳ *</label>
-            <input type="text" id="sem-tenHocKy" class="form-control" placeholder="VD: Học kỳ 1 (2026 - 2027)" required />
+            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Tên học kỳ *</label>
+            <select id="sem-tenHocKy" class="form-control" required>
+              <option value="" selected disabled>Chọn tên học kỳ</option>
+              <option value="HOCKY1">Học kỳ 1</option>
+              <option value="HOCKY2">Học kỳ 2</option>
+              <option value="HOCKYHE">Học kỳ hè</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Thời gian bắt đầu *</label>
+            <input type="date" id="sem-thoiGianBD" class="form-control" required />
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Thời gian kết thúc *</label>
+            <input type="date" id="sem-thoiGianKT" class="form-control" required />
           </div>
         </div>
         <div class="modal-footer">
@@ -318,17 +331,21 @@
       document.getElementById('form-create-sem').addEventListener('submit', (e) => {
         e.preventDefault();
         const maHocKy = document.getElementById('sem-maHocKy').value.trim();
-        const tenHocKy = document.getElementById('sem-tenHocKy').value.trim();
+        const tenHocKySelect = document.getElementById('sem-tenHocKy');
+        const tenHocKy = tenHocKySelect.value;
+        const thoiGianBD = document.getElementById('sem-thoiGianBD').value;
+        const thoiGianKT = document.getElementById('sem-thoiGianKT').value;
 
         pendingSemesterPayload = {
           maHocKy,
           tenHocKy,
-          dangMo: true
+          thoiGianBD,
+          thoiGianKT
         };
 
         // Điền dữ liệu vào thẻ xem lại để người dùng rà soát
         document.getElementById('review-maHocKy').textContent = maHocKy;
-        document.getElementById('review-tenHocKy').textContent = tenHocKy;
+        document.getElementById('review-tenHocKy').textContent = tenHocKySelect.selectedOptions[0].text;
 
         // Mở thẻ xem lại & xác nhận
         openModal('modal-confirm-sem');
@@ -345,6 +362,10 @@
           document.getElementById('form-create-sem').reset();
           pendingSemesterPayload = null;
           await loadSemesters(1);
+          ApiClient.showToast('success', 'Tạo học kỳ thành công', 'Học kỳ mới đã được thêm vào danh sách.');
+        } else {
+          ApiClient.showToast('error', 'Không thể tạo học kỳ',
+            (res && res.message) || 'Không nhận được phản hồi hợp lệ từ máy chủ.');
         }
       });
 
