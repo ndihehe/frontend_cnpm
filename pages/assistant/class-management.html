@@ -330,13 +330,16 @@
           </div>
           <div class="form-group">
             <label class="form-label">Mã học phần *</label>
-            <input type="text" id="create-maHP" class="form-control" placeholder="VD: INT1405" required />
+            <select id="create-maHP" class="form-control" required>
+              <option value="">-- Chọn học phần --</option>
+            </select>
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Tên môn học *</label>
-          <input type="text" id="create-tenHP" class="form-control" placeholder="VD: Kỹ nghệ phần mềm" required />
+          <input type="text" id="create-tenHP" class="form-control" readonly
+            title="Tên môn học được lấy từ danh mục học phần" required />
         </div>
 
         <div
@@ -427,7 +430,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Số tín chỉ *</label>
-            <input type="number" id="edit-soTinChi" class="form-control" min="1" max="10" required />
+            <input type="number" id="edit-soTinChi" class="form-control" readonly title="Số tín chỉ được lấy từ danh mục học phần" />
           </div>
           <div class="form-group">
             <label class="form-label">Sĩ số tối đa *</label>
@@ -474,15 +477,17 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Giảng viên giảng dạy</label>
-            <input type="text" id="edit-tenGV" class="form-control" />
+            <input type="text" id="edit-tenGV" class="form-control" readonly title="Giảng viên được thay đổi bằng chức năng Phân công giảng viên" />
           </div>
           <div class="form-group">
             <label class="form-label">Trạng thái lớp *</label>
             <select id="edit-trangThai" class="form-control">
               <option value="CHO_MO">Chờ mở</option>
               <option value="DANG_MO">Đang mở</option>
-              <option value="DA_KHOA">Đã khóa</option>
+              <option value="DANGHOC" disabled>Đang học</option>
+              <option value="DA_KHOA" id="edit-status-locked">Đã khóa</option>
             </select>
+            <small id="edit-status-note" style="display:none; color:#B45309; margin-top:6px;"></small>
           </div>
         </div>
       </div>
@@ -593,6 +598,21 @@
       let currentEditLHP = null;
       let currentLoadedClasses = [];
       let loadedLecturers = [];
+      let loadedSemesters = [];
+      let loadedCourses = [];
+
+      function isSemesterInProgress(semester) {
+        if (!semester || !semester.thoiGianBD || !semester.thoiGianKT) return false;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const toDate = value => Array.isArray(value)
+          ? new Date(value[0], value[1] - 1, value[2])
+          : new Date(value);
+        const start = toDate(semester.thoiGianBD);
+        const end = toDate(semester.thoiGianKT);
+        return !Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime())
+          && start <= today && today <= end;
+      }
 
       async function loadLecturers() {
         const select = document.getElementById('assign-select-gv');
@@ -609,12 +629,45 @@
                 const degree = gv.hocVi ? `${gv.hocVi}. ` : '';
                 return `<option value="${code}">${degree}${name} (${faculty} - ${code})</option>`;
               }).join('');
+          } else if (res && !res.success) {
+            select.innerHTML = `<option value="">${res.message || 'Lỗi tải danh mục giảng viên'}</option>`;
           } else {
             select.innerHTML = '<option value="">Không tìm thấy giảng viên</option>';
           }
         } catch (err) {
           console.error('Lỗi nạp danh sách giảng viên:', err);
           select.innerHTML = '<option value="">Lỗi tải danh mục giảng viên</option>';
+        }
+      }
+
+      function fillCourseName() {
+        const courseSelect = document.getElementById('create-maHP');
+        const courseName = document.getElementById('create-tenHP');
+        const course = loadedCourses.find(item => item.maHP === courseSelect.value);
+        courseName.value = course ? course.tenHP : '';
+      }
+
+      async function loadCourses() {
+        const courseSelect = document.getElementById('create-maHP');
+        if (!courseSelect) return;
+        try {
+          const res = await HeadOfficeApi.getCourses('', 'all', 1, 200);
+          if (res && res.success && Array.isArray(res.data)) {
+            loadedCourses = res.data;
+            const prefilledCourse = new URLSearchParams(window.location.search).get('createMaHP');
+            courseSelect.innerHTML = '<option value="">-- Chọn học phần --</option>' +
+              loadedCourses.map(course =>
+                `<option value="${course.maHP}">${course.maHP} - ${course.tenHP}</option>`).join('');
+            if (prefilledCourse && loadedCourses.some(course => course.maHP === prefilledCourse)) {
+              courseSelect.value = prefilledCourse;
+            }
+            fillCourseName();
+          } else {
+            courseSelect.innerHTML = '<option value="">Không thể tải danh mục học phần</option>';
+          }
+        } catch (error) {
+          console.error('Lỗi nạp danh mục học phần:', error);
+          courseSelect.innerHTML = '<option value="">Không thể tải danh mục học phần</option>';
         }
       }
 
@@ -633,6 +686,7 @@
           try {
             const res = await CommonApi.getAllSemesters();
             if (res && res.success && res.data && res.data.length > 0) {
+              loadedSemesters = res.data;
               const currentVal = semesterSelect.value;
               semesterSelect.innerHTML = res.data.map(formatSemesterOption).join('');
               if (currentVal && res.data.some(s => s.maHocKy === currentVal)) {
@@ -774,10 +828,26 @@
               document.getElementById('edit-thu').value = cls.thu;
               document.getElementById('edit-tietBD').value = cls.tietBatDau || cls.tietBD || 1;
               document.getElementById('edit-soTiet').value = cls.soTiet || 3;
-              document.getElementById('edit-phongHoc').value = cls.phongHoc || '';
-              document.getElementById('edit-tenGV').value = cls.tenGiangVien || '';
-              document.getElementById('edit-trangThai').value = cls.trangThai || 'DANG_MO';
-              openModal('modal-edit');
+              const roomField = document.getElementById('edit-phongHoc');
+              if (roomField.tagName === 'SELECT') {
+                roomField.innerHTML = `<option value="${cls.phongHoc || ''}">${cls.phongHoc || '-- Chọn phòng học --'}</option>`;
+              }
+              roomField.value = cls.phongHoc || '';
+               document.getElementById('edit-tenGV').value = cls.tenGiangVien || '';
+               document.getElementById('edit-trangThai').value = cls.trangThai || 'DANG_MO';
+               const selectedSemester = loadedSemesters.find(s => s.maHocKy === semesterSelect.value);
+               const lockedOption = document.getElementById('edit-status-locked');
+               const statusNote = document.getElementById('edit-status-note');
+               const semesterInProgress = isSemesterInProgress(selectedSemester);
+               lockedOption.disabled = semesterInProgress;
+               lockedOption.title = semesterInProgress
+                 ? 'Không thể khóa lớp khi học kỳ đang diễn ra'
+                 : '';
+               statusNote.style.display = semesterInProgress ? 'block' : 'none';
+               statusNote.textContent = semesterInProgress
+                 ? 'Không thể khóa lớp khi học kỳ đang diễn ra. Hệ thống sẽ tự khóa khi học kỳ kết thúc.'
+                 : '';
+               openModal('modal-edit');
             });
           });
 
@@ -888,6 +958,8 @@
         openModal('modal-create');
       });
 
+      document.getElementById('create-maHP').addEventListener('change', fillCourseName);
+
       document.getElementById('btn-submit-create').addEventListener('click', async () => {
         const payload = {
           maLHP: document.getElementById('create-maLHP').value.trim(),
@@ -908,11 +980,11 @@
 
         const res = await AssistantApi.createClass(payload);
         if (res && res.success) {
-          showToast(res.message || 'Tạo lớp thành công!', 'success');
+          ApiClient.showToast('success', 'Tạo lớp học phần', res.message || 'Tạo lớp thành công!');
           closeModal('modal-create');
           await initSemesters().then(() => loadClasses());
         } else {
-          showToast(res.message || 'Tạo lớp thất bại!', 'error');
+          ApiClient.showToast('error', 'Không thể tạo lớp học phần', res.message || 'Tạo lớp thất bại!');
         }
       });
 
@@ -921,13 +993,11 @@
       document.getElementById('btn-submit-edit').addEventListener('click', async () => {
         if (!currentEditLHP) return;
         const payload = {
-          soTinChi: Number(document.getElementById('edit-soTinChi').value),
           siSoToiDa: Number(document.getElementById('edit-siSoToiDa').value),
           thu: Number(document.getElementById('edit-thu').value),
           tietBatDau: Number(document.getElementById('edit-tietBD').value),
           soTiet: Number(document.getElementById('edit-soTiet').value),
           phongHoc: document.getElementById('edit-phongHoc').value.trim(),
-          tenGiangVien: document.getElementById('edit-tenGV').value.trim(),
           trangThai: document.getElementById('edit-trangThai').value
         };
 
@@ -937,6 +1007,18 @@
           closeModal('modal-edit');
           await initSemesters().then(() => loadClasses());
         } else {
+          if (res && res.status === 409 && Array.isArray(res.errors) && res.errors.length > 0) {
+            const roomInput = document.getElementById('edit-phongHoc');
+            const roomSelect = document.createElement('select');
+            roomSelect.id = 'edit-phongHoc';
+            roomSelect.className = roomInput.className;
+            roomSelect.required = true;
+            roomSelect.innerHTML = '<option value="">-- Chọn phòng còn trống --</option>'
+              + res.errors.map(room => `<option value="${room}">${room}</option>`).join('');
+            roomInput.replaceWith(roomSelect);
+            showToast((res.message || 'Phòng học bị trùng lịch.') + ' Hãy chọn lại phòng còn trống.', 'error');
+            return;
+          }
           showToast((res && res.message) || 'Cập nhật thất bại!', 'error');
         }
       });
@@ -993,8 +1075,19 @@
         setTimeout(() => toast.remove(), 3500);
       }
 
-      initSemesters().then(() => loadClasses());
+      function openCreateModalFromCourseRequest() {
+        const maHP = new URLSearchParams(window.location.search).get('createMaHP');
+        if (!maHP) return;
+        document.getElementById('create-maHP').value = maHP;
+        openModal('modal-create');
+      }
+
+      initSemesters().then(() => {
+        loadClasses();
+        openCreateModalFromCourseRequest();
+      });
       loadLecturers();
+      loadCourses();
     });
   </script>
   <script src="../../js/user-menu.js"></script>

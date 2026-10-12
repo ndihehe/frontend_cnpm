@@ -653,6 +653,11 @@ const AssistantApi = {
     if (payload.thu != null) body.thu = Number(payload.thu);
     if (tietBD != null && !isNaN(tietBD)) body.tietBD = tietBD;
     if (payload.soTiet != null) body.soTiet = Number(payload.soTiet);
+    if (payload.phongHoc != null) body.phongHoc = payload.phongHoc.trim();
+    // Chỉ gửi ý định khóa để backend áp dụng đúng quy tắc vòng đời học kỳ.
+    if (payload.trangThai === 'DA_KHOA' || payload.trangThai === 'KETTHUC') {
+      body.trangThai = payload.trangThai;
+    }
     return ApiClient.put(`/assistant/classes/${maLHP}`, body);
   },
 
@@ -697,8 +702,11 @@ const AssistantApi = {
   },
 
   async updateClassRequestStatus(maYeuCau, trangThai) {
+    const status = trangThai === 'DUYET' ? 'DADUYET'
+      : trangThai === 'TUCHOI' ? 'DATUCHOI'
+        : trangThai;
     return ApiClient.patch(`/assistant/class-requests/${maYeuCau}/status`, {
-      trangThai: trangThai
+      trangThai: status
     });
   },
 
