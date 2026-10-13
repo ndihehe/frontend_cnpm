@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tổng hợp Bảng điểm & Xét học vụ toàn trường - Phòng Đào tạo</title>
+  <title>Thống kê học lực theo học kỳ - Phòng Đào tạo</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
   <link rel="stylesheet" href="../../css/variables.css">
@@ -112,7 +112,7 @@
           <li class="nav-item">
             <a href="grade-summary.html" class="nav-link active">
               <span class="material-symbols-outlined">analytics</span>
-              <span>Tổng hợp bảng điểm</span>
+              <span>Thống kê học lực</span>
             </a>
           </li>
 
@@ -124,7 +124,7 @@
       <header class="app-topbar">
         <div class="topbar-title">
           <span class="material-symbols-outlined" style="font-size: 19px; color: #0D9488;">analytics</span>
-          TỔNG HỢP BẢNG ĐIỂM & XÉT HỌC VỤ TOÀN TRƯỜNG
+          THỐNG KÊ HỌC LỰC SINH VIÊN THEO HỌC KỲ
         </div>
         <div class="topbar-actions">
           <button class="btn btn-outline btn-sm" onclick="window.print()" style="display: flex; align-items: center; gap: 5px;">
@@ -140,131 +140,69 @@
       </header>
 
       <main class="content-body">
-        <div class="print-only-header">
-          <div style="text-align: center; margin-bottom: 12px;">
-            <div style="font-size: 12pt; font-weight: 700; text-transform: uppercase;">HỆ THỐNG QUẢN LÝ HỌC VỤ</div>
-            <div style="font-size: 11pt; font-weight: 700;">PHÒNG ĐÀO TẠO ĐẠI HỌC</div>
-            <div style="font-size: 13pt; font-weight: 700; margin-top: 6px; color: #002D4F;">BÁO CÁO TỔNG HỢP BẢNG ĐIỂM & DANH SÁCH XÉT HỌC VỤ TOÀN TRƯỜNG</div>
-          </div>
-        </div>
-
         <div class="page-banner">
           <span class="material-symbols-outlined" style="font-size: 18px;">analytics</span>
-          <span>TỔNG HỢP KẾT QUẢ ĐÀO TẠO & XÉT CẢNH BÁO HỌC VỤ CẤP TRƯỜNG</span>
+          <span>THỐNG KÊ HỌC LỰC SINH VIÊN THEO HỌC KỲ</span>
         </div>
 
-        <!-- THẺ KPI TÓM TẮT -->
-        <div class="kpi-stat-grid">
-          <div class="kpi-card">
-            <div class="kpi-icon-wrap" style="background: #E0F2FE; color: #0284C7;">
-              <span class="material-symbols-outlined">groups</span>
-            </div>
-            <div>
-              <div class="kpi-val" id="kpi-total">...</div>
-              <div class="kpi-lbl">Tổng sinh viên theo dõi</div>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon-wrap" style="background: #DCFCE7; color: #16A34A;">
-              <span class="material-symbols-outlined">verified</span>
-            </div>
-            <div>
-              <div class="kpi-val" id="kpi-pass-rate">...</div>
-              <div class="kpi-lbl">Tỉ lệ đạt chuẩn học vụ</div>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon-wrap" style="background: #FEF3C7; color: #D97706;">
-              <span class="material-symbols-outlined">warning</span>
-            </div>
-            <div>
-              <div class="kpi-val" id="kpi-warning">...</div>
-              <div class="kpi-lbl">Cảnh báo học vụ</div>
-            </div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon-wrap" style="background: #F3E8FF; color: #9333EA;">
-              <span class="material-symbols-outlined">workspace_premium</span>
-            </div>
-            <div>
-              <div class="kpi-val" id="kpi-excellent">...</div>
-              <div class="kpi-lbl">Học lực Giỏi & Xuất sắc</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- BỘ LỌC TỔNG HỢP -->
-        <div class="filter-bar">
-          <div class="filter-group">
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khóa đào tạo:</label>
-            <select id="select-nienkhoa" class="form-control" style="width: 150px; font-size: 12px; height: 32px;">
+        <div class="filter-bar" style="margin-bottom: 16px;">
+          <div class="filter-group" style="flex-wrap: wrap;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khóa:</label>
+            <select id="select-nienkhoa" class="form-control" style="width: 145px; font-size: 12px; height: 32px;">
               <option value="all">Tất cả khóa</option>
+              <option value="2020-2024">Khóa 2020-2024</option>
+              <option value="2021-2025">Khóa 2021-2025</option>
+              <option value="2022-2026">Khóa 2022-2026</option>
+              <option value="2023-2027">Khóa 2023-2027</option>
+              <option value="2024-2028">Khóa 2024-2028</option>
+              <option value="2025-2029">Khóa 2025-2029</option>
+              <option value="2026-2030">Khóa 2026-2030</option>
             </select>
 
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khoa / Viện:</label>
-            <select id="select-khoa" class="form-control" style="width: 180px; font-size: 12px; height: 32px;">
-              <option value="all">Tất cả khoa / viện</option>
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Học kỳ:</label>
+            <select id="select-semester" class="form-control" style="width: 220px; font-size: 12px; height: 32px;">
+              <option value="">Đang tải học kỳ...</option>
             </select>
 
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Trạng thái HV:</label>
-            <select id="select-status" class="form-control" style="width: 170px; font-size: 12px; height: 32px;">
-              <option value="all">Tất cả trạng thái</option>
-            </select>
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khoa:</label>
+            <select id="select-khoa" class="form-control" style="width: 180px; font-size: 12px; height: 32px;"></select>
 
-            <!-- Search box chuẩn không out icon -->
-            <div class="search-input-wrap" style="width: 230px;">
-              <span class="material-symbols-outlined">search</span>
-              <input type="text" id="input-search" class="search-input" placeholder="Tìm MSSV, họ tên, lớp..." />
-            </div>
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Học lực:</label>
+            <select id="select-hoc-luc" class="form-control" style="width: 160px; font-size: 12px; height: 32px;">
+              <option value="all">Tất cả học lực</option>
+              <option value="XUAT_SAC">Xuất sắc</option>
+              <option value="GIOI">Giỏi</option>
+              <option value="KHA">Khá</option>
+              <option value="TRUNG_BINH">Trung bình</option>
+              <option value="YEU">Yếu</option>
+              <option value="CHUA_XEP_LOAI">Chưa xếp loại</option>
+            </select>
           </div>
-
-          <button id="btn-export-excel" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 6px;" onclick="window.print()">
-            <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
-            <span>Xuất báo cáo</span>
-          </button>
         </div>
 
-        <!-- BẢNG ĐẶT TRONG KHUNG .HOCVU-CARD CHUẨN DESIGN STUDENT -->
+        <div class="kpi-stat-grid" id="kpi-grid">
+          <div class="kpi-card"><div class="kpi-val">Đang tải...</div></div>
+        </div>
+
         <div class="hocvu-card" style="margin-bottom: 20px;">
           <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
             <div class="hocvu-card-title">
               <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">table_chart</span>
-              <span>BẢNG TỔNG HỢP ĐIỂM TÍCH LŨY & XÉT HỌC VỤ TOÀN TRƯỜNG</span>
+              <span>CHI TIẾT PHÂN BỐ HỌC LỰC</span>
             </div>
-            <div style="font-size: 12px; color: var(--text-muted);" id="table-info">Đang tải...</div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="summary-info">Đang tải...</div>
           </div>
-
           <div class="hocvu-card-body" style="padding: 0;">
             <div class="hocvu-table-responsive" style="border: none;">
               <table class="hocvu-table">
-                <thead>
-                  <tr>
-                    <th style="width: 45px; text-align: center;">STT</th>
-                    <th style="width: 100px;">MSSV</th>
-                    <th>Họ và tên</th>
-                    <th style="width: 160px;">Khoa quản lý</th>
-                    <th style="width: 100px; text-align: center;">Niên khóa</th>
-                    <th style="width: 75px; text-align: center;">TC tích lũy</th>
-                    <th style="width: 100px; text-align: center;">GPA (10 / 4)</th>
-                    <th style="width: 100px; text-align: center;">Xếp loại</th>
-                    <th style="width: 160px; text-align: center;">Trạng thái học vụ</th>
-                  </tr>
-                </thead>
-                <tbody id="grade-summary-tbody">
-                  <tr><td colspan="9" style="text-align: center; padding: 25px;">Đang tải dữ liệu tổng hợp...</td></tr>
+                <thead><tr><th>Học lực</th><th style="text-align:center;">Số sinh viên</th><th style="text-align:center;">Tỉ lệ</th></tr></thead>
+                <tbody id="academic-standing-tbody">
+                  <tr><td colspan="3" style="text-align:center; padding:25px;">Đang tải dữ liệu thống kê...</td></tr>
                 </tbody>
               </table>
             </div>
-
-            <!-- PHÂN TRANG GÓI META -->
-            <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-top: 1px solid var(--border-subtle); font-size: 12px; background: #F8FAFC;">
-              <div id="pagination-info" style="color: var(--text-muted);">
-                Đang hiển thị trang 1 / 1
-              </div>
-              <div style="display: flex; gap: 4px;" id="pagination-controls">
-                <button class="btn btn-outline-primary btn-sm" id="btn-prev-page" disabled>Trước</button>
-                <button class="btn btn-outline-primary btn-sm" id="btn-next-page" disabled>Sau</button>
-              </div>
+            <div style="padding: 12px 16px; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 12px; line-height: 1.6;">
+              Điểm trung bình học kỳ dùng thang 10, tính theo trọng số tín chỉ. Ngưỡng: Xuất sắc ≥ 9,0; Giỏi ≥ 8,0; Khá ≥ 6,5; Trung bình ≥ 5,0; dưới 5,0 là Yếu. Sinh viên chưa có điểm trong học kỳ được tính vào tổng và xếp nhóm Chưa xếp loại.
             </div>
           </div>
         </div>
@@ -276,157 +214,77 @@
   <script src="../../js/faculties.js"></script>
   <script src="../../js/api.js"></script>
   <script>
-    let currentPage = 1;
-    const pageSize = 20;
-
-    function debounce(fn, wait) {
-      let t;
-      return function(...args) {
-        clearTimeout(t);
-        t = setTimeout(() => fn.apply(this, args), wait);
-      };
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const tbody = document.getElementById('grade-summary-tbody');
-      const searchInput = document.getElementById('input-search');
+    document.addEventListener('DOMContentLoaded', async () => {
+      const selectSemester = document.getElementById('select-semester');
       const selectNienKhoa = document.getElementById('select-nienkhoa');
       const selectKhoa = document.getElementById('select-khoa');
-      const selectStatus = document.getElementById('select-status');
-      const tableInfo = document.getElementById('table-info');
-      const paginationInfo = document.getElementById('pagination-info');
-      const btnPrev = document.getElementById('btn-prev-page');
-      const btnNext = document.getElementById('btn-next-page');
+      const selectHocLuc = document.getElementById('select-hoc-luc');
+      const kpiGrid = document.getElementById('kpi-grid');
+      const tbody = document.getElementById('academic-standing-tbody');
+      const summaryInfo = document.getElementById('summary-info');
+      const definitions = [
+        ['XUAT_SAC', 'Xuất sắc', 'workspace_premium', '#9333EA', '#F3E8FF'],
+        ['GIOI', 'Giỏi', 'verified', '#0D9488', '#CCFBF1'],
+        ['KHA', 'Khá', 'trending_up', '#0284C7', '#E0F2FE'],
+        ['TRUNG_BINH', 'Trung bình', 'horizontal_rule', '#D97706', '#FEF3C7'],
+        ['YEU', 'Yếu', 'warning', '#DC2626', '#FEE2E2'],
+        ['CHUA_XEP_LOAI', 'Chưa xếp loại', 'help', '#64748B', '#F1F5F9']
+      ];
 
-      populateFacultySelect(selectKhoa, 'Tất cả khoa / viện');
+      populateFacultySelect(selectKhoa, 'Tất cả khoa');
 
-      async function loadSummary(page = 1) {
+      function render(data) {
+        const standings = data.academicStandings || {};
+        kpiGrid.innerHTML = `
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:#E0F2FE;color:#0284C7"><span class="material-symbols-outlined">groups</span></div>
+            <div><div class="kpi-val">${data.totalStudents}</div><div class="kpi-lbl">Tổng sinh viên</div></div>
+          </div>` + definitions.map(([key, label, icon, color, background]) => {
+            const item = standings[key] || { count: 0, rate: 0 };
+            return `<div class="kpi-card"><div class="kpi-icon-wrap" style="background:${background};color:${color}"><span class="material-symbols-outlined">${icon}</span></div><div><div class="kpi-val">${item.count} <span style="font-size:13px;color:${color}">(${Number(item.rate).toFixed(1)}%)</span></div><div class="kpi-lbl">${label}</div></div></div>`;
+          }).join('');
+
+        tbody.innerHTML = definitions.map(([key, label, , color]) => {
+          const item = standings[key] || { count: 0, rate: 0 };
+          return `<tr><td><strong style="color:${color}">${label}</strong></td><td style="text-align:center;font-weight:700">${item.count}</td><td style="text-align:center;font-weight:700">${Number(item.rate).toFixed(1)}%</td></tr>`;
+        }).join('');
+        summaryInfo.textContent = `Tổng số ${data.totalStudents} sinh viên thỏa điều kiện`;
+      }
+
+      async function loadStatistics() {
+        if (!selectSemester.value) return;
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:25px">Đang tải dữ liệu thống kê...</td></tr>';
         try {
-          currentPage = page;
-          const nk = selectNienKhoa.value;
-          const kh = selectKhoa.value;
-          const st = selectStatus.value;
-          const kw = searchInput.value;
-
-          const res = await HeadOfficeApi.getGradeSummary(nk, kh, st, kw, currentPage, pageSize);
-          if (!res || !res.success || !res.data) {
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:red; padding:20px;">Lỗi tải dữ liệu</td></tr>';
-            return;
-          }
-
-          // Render KPI
-          if (res.kpi) {
-            document.getElementById('kpi-total').textContent = res.kpi.tongSV;
-            document.getElementById('kpi-pass-rate').textContent = res.kpi.tiLeDat;
-            document.getElementById('kpi-warning').textContent = res.kpi.svCanhBao;
-            document.getElementById('kpi-excellent').textContent = res.kpi.svXuatSacGioi;
-          }
-
-          const list = res.data;
-          const meta = res.meta || { page: 1, totalPages: 1, totalItems: list.length };
-          tableInfo.textContent = `Hiển thị ${list.length} / ${meta.totalItems} sinh viên`;
-
-          if (list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:25px; color:var(--text-muted);">Không tìm thấy bản ghi phù hợp</td></tr>';
-            paginationInfo.textContent = 'Đang hiển thị 0 / 0';
-            btnPrev.disabled = true;
-            btnNext.disabled = true;
-            return;
-          }
-
-          let html = '';
-          list.forEach((s, idx) => {
-            const stt = (currentPage - 1) * pageSize + idx + 1;
-            
-            // Xếp loại color
-            let xepLoaiColor = '#0284C7';
-            if (s.xepLoai === 'Xuất sắc') xepLoaiColor = '#9333EA';
-            else if (s.xepLoai === 'Giỏi') xepLoaiColor = '#0D9488';
-            else if (s.xepLoai === 'Khá') xepLoaiColor = '#0284C7';
-            else xepLoaiColor = '#D97706';
-
-            // Trạng thái học vụ
-            let hvHtml = '';
-            if (s.trangThaiHocVu === 'Đủ điều kiện tốt nghiệp') {
-              hvHtml = '<span style="color: #107C41; font-weight: 700;">Đủ ĐK tốt nghiệp</span>';
-            } else if (s.trangThaiHocVu === 'Bình thường') {
-              hvHtml = '<span style="color: #0F766E; font-weight: 600;">Bình thường</span>';
-            } else if (s.trangThaiHocVu.includes('mức 2')) {
-              hvHtml = '<span style="color: #DC2626; font-weight: 700;">Cảnh báo HV mức 2</span>';
-            } else {
-              hvHtml = '<span style="color: #D97706; font-weight: 700;">Cảnh báo HV mức 1</span>';
-            }
-
-            html += `
-              <tr>
-                <td style="text-align: center; color: var(--text-muted);">${stt}</td>
-                <td><strong style="color: #0284C7;">${s.maSV}</strong></td>
-                <td><div style="font-weight: 600; color: #002D4F;">${s.hoTen}</div></td>
-                <td><span style="font-size: 12px;">${s.tenKhoa}</span></td>
-                <td style="text-align: center; font-size: 12px; color: var(--text-muted);">${s.nienKhoa}</td>
-                <td style="text-align: center; font-weight: 700;">${s.soTCDat}</td>
-                <td style="text-align: center; font-weight: 700;">${s.gpa10} / <span style="color: #0D9488;">${s.gpa4}</span></td>
-                <td style="text-align: center;"><strong style="color: ${xepLoaiColor}; font-size: 12px;">${s.xepLoai}</strong></td>
-                <td style="text-align: center; font-size: 12px;">${hvHtml}</td>
-              </tr>
-            `;
-          });
-
-          tbody.innerHTML = html;
-          paginationInfo.textContent = `Đang hiển thị trang ${meta.page} / ${meta.totalPages} (Tổng số ${meta.totalItems} sinh viên)`;
-          btnPrev.disabled = meta.page <= 1;
-          btnNext.disabled = meta.page >= meta.totalPages;
-
-        } catch (e) {
-          console.error(e);
-          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:red; padding:20px;">Lỗi kết nối máy chủ</td></tr>';
+          const res = await HeadOfficeApi.getAcademicStandingStatistics(
+            selectSemester.value, selectNienKhoa.value, selectKhoa.value, selectHocLuc.value);
+          if (!res || !res.success || !res.data) throw new Error(res && res.message ? res.message : 'Không thể tải thống kê');
+          render(res.data);
+        } catch (error) {
+          console.error(error);
+          kpiGrid.innerHTML = '';
+          summaryInfo.textContent = 'Không thể tải dữ liệu';
+          tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:#DC2626;padding:25px">${error.message || 'Không thể tải thống kê học lực'}</td></tr>`;
         }
       }
 
-      searchInput.addEventListener('input', debounce(() => loadSummary(1), 250));
-      selectNienKhoa.addEventListener('change', () => loadSummary(1));
-      selectKhoa.addEventListener('change', () => loadSummary(1));
-      selectStatus.addEventListener('change', () => loadSummary(1));
-
-      btnPrev.addEventListener('click', () => {
-        if (currentPage > 1) loadSummary(currentPage - 1);
-      });
-      btnNext.addEventListener('click', () => {
-        loadSummary(currentPage + 1);
-      });
-
-      async function initDynamicFilters() {
-        try {
-          const stdRes = await HeadOfficeApi.getStudents('all', 'all', '', 1, 250);
-          if (stdRes && stdRes.success && Array.isArray(stdRes.data)) {
-            const cohorts = Array.from(new Set(stdRes.data.map(s => s.nienKhoa).filter(Boolean))).sort();
-            cohorts.forEach(coh => {
-              const opt = document.createElement('option');
-              opt.value = coh;
-              opt.textContent = `Khóa ${coh}`;
-              selectNienKhoa.appendChild(opt);
-            });
-
-            const standardStatuses = [
-              'Bình thường',
-              'Cảnh báo HV mức 1',
-              'Cảnh báo HV mức 2',
-              'Đủ điều kiện tốt nghiệp'
-            ];
-            const liveStatuses = Array.from(new Set(stdRes.data.map(s => s.trangThaiHocVu || s.trangThai).filter(Boolean)));
-            const allStatuses = Array.from(new Set([...standardStatuses, ...liveStatuses]));
-            const curStatus = selectStatus.value;
-            selectStatus.innerHTML = '<option value="all">Tất cả trạng thái</option>' +
-              allStatuses.map(st => `<option value="${st}">${st}</option>`).join('');
-            if (allStatuses.includes(curStatus)) selectStatus.value = curStatus;
-          }
-        } catch (e) {
-          console.warn('Lỗi nạp bộ lọc động:', e);
-        }
+      try {
+        const res = await HeadOfficeApi.getSemesters();
+        const semesters = res && res.success ? (Array.isArray(res.data) ? res.data : (res.data && res.data.items) || []) : [];
+        if (!semesters.length) throw new Error(res && res.message ? res.message : 'Không có dữ liệu học kỳ');
+        selectSemester.innerHTML = semesters.map(semester =>
+          `<option value="${semester.maHocKy}">${semester.tenHocKy || semester.maHocKy} (${semester.maHocKy})</option>`
+        ).join('');
+        const current = semesters.find(semester => semester.dangMo) || semesters.find(semester => semester.maHocKy === '2026_2027_HK1');
+        if (current) selectSemester.value = current.maHocKy;
+      } catch (error) {
+        selectSemester.innerHTML = '<option value="">Không thể tải học kỳ</option>';
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:#DC2626;padding:25px">${error.message}</td></tr>`;
+        return;
       }
 
-      initDynamicFilters();
-      loadSummary(1);
+      [selectSemester, selectNienKhoa, selectKhoa, selectHocLuc].forEach(select =>
+        select.addEventListener('change', loadStatistics));
+      loadStatistics();
     });
   </script>
   <script src="../../js/user-menu.js"></script>

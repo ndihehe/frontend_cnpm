@@ -417,6 +417,11 @@ const HeadOfficeApi = {
     return ApiClient.get(`/head-office/statistics?maHocKy=${encodeURIComponent(maHocKy)}`);
   },
 
+  async getAcademicStandingStatistics(maHocKy, nienKhoa = 'all', khoa = 'all', hocLuc = 'all') {
+    const params = new URLSearchParams({ maHocKy, nienKhoa, khoa, hocLuc });
+    return ApiClient.get(`/head-office/statistics/academic-standing?${params.toString()}`);
+  },
+
   async getCourses(keyword = '', khoa = 'all', page = 1, limit = 20) {
     const kw = (keyword || '').trim().toLowerCase();
     if (kw) {
