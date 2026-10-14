@@ -425,10 +425,11 @@
           <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
         </button>
       </div>
-      <form id="form-create-notif">
+      <form id="form-create-notif" novalidate>
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label">Tiêu đề thông báo *</label>
+            <div class="field-error-text" id="create-notif-title-error" style="display: none;"></div>
             <input type="text" id="create-notif-title" class="form-control"
               placeholder="VD: Thông báo kế hoạch đăng ký học phần học kỳ mới" required maxlength="255" />
           </div>
@@ -440,6 +441,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Nội dung thông báo *</label>
+            <div class="field-error-text" id="create-notif-content-error" style="display: none;"></div>
             <textarea id="create-notif-content" class="form-control" rows="5"
               placeholder="Nhập chi tiết thông báo gửi đến toàn thể sinh viên và cán bộ giảng viên..."
               required></textarea>
@@ -469,15 +471,17 @@
           <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
         </button>
       </div>
-      <form id="form-edit-notif">
+      <form id="form-edit-notif" novalidate>
         <input type="hidden" id="edit-notif-id" />
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label">Tiêu đề thông báo *</label>
+            <div class="field-error-text" id="edit-notif-title-error" style="display: none;"></div>
             <input type="text" id="edit-notif-title" class="form-control" required maxlength="255" />
           </div>
           <div class="form-group">
             <label class="form-label">Nội dung thông báo *</label>
+            <div class="field-error-text" id="edit-notif-content-error" style="display: none;"></div>
             <textarea id="edit-notif-content" class="form-control" rows="5" required></textarea>
           </div>
         </div>
@@ -494,11 +498,13 @@
   <script src="../../js/api.js"></script>
   <script>
     function openNotifModal(id) {
+      if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors(id);
       const el = document.getElementById(id);
       if (el) el.style.display = 'flex';
     }
 
     function closeNotifModal(id) {
+      if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors(id);
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     }
@@ -671,9 +677,21 @@
       if (formCreateNotif) {
         formCreateNotif.addEventListener('submit', async (e) => {
           e.preventDefault();
+          ApiClient.clearAllFieldErrors('modal-create-notif');
           const tieuDe = document.getElementById('create-notif-title').value.trim();
           const noiDung = document.getElementById('create-notif-content').value.trim();
           const phamVi = 'TOAN_TRUONG';
+
+          let hasError = false;
+          if (!tieuDe) {
+            ApiClient.showFieldError('create-notif-title', 'Vui lòng nhập tiêu đề thông báo.');
+            hasError = true;
+          }
+          if (!noiDung) {
+            ApiClient.showFieldError('create-notif-content', 'Vui lòng nhập nội dung thông báo.');
+            hasError = true;
+          }
+          if (hasError) return;
 
           const btnSubmit = document.getElementById('btn-submit-create-notif');
           btnSubmit.disabled = true;
@@ -687,17 +705,17 @@
             });
 
             if (res && res.success) {
-              alert('Phát hành thông báo cấp trường thành công!');
               closeNotifModal('modal-create-notif');
+              ApiClient.showToast('success', 'Thành công', 'Phát hành thông báo cấp trường thành công!');
               formCreateNotif.reset();
               notifPage = 1;
               loadNotifications();
             } else {
-              alert(res && res.message ? res.message : 'Phát hành thông báo thất bại');
+              ApiClient.showFieldError('create-notif-title', res && res.message ? res.message : 'Phát hành thông báo thất bại');
             }
           } catch (err) {
             console.error(err);
-            alert(err.message || 'Lỗi khi gửi yêu cầu phát hành');
+            ApiClient.showFieldError('create-notif-title', err.message || 'Lỗi khi gửi yêu cầu phát hành');
           } finally {
             btnSubmit.disabled = false;
             btnSubmit.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Phát hành ngay</span>';
@@ -709,6 +727,7 @@
       window.openEditNotif = function (id) {
         const item = notifList.find(n => n.maThongBao == id);
         if (!item) return;
+        ApiClient.clearAllFieldErrors('modal-edit-notif');
         document.getElementById('edit-notif-id').value = item.maThongBao;
         document.getElementById('edit-notif-title').value = item.tieuDe || '';
         document.getElementById('edit-notif-content').value = item.noiDung || '';
@@ -719,9 +738,21 @@
       if (formEditNotif) {
         formEditNotif.addEventListener('submit', async (e) => {
           e.preventDefault();
+          ApiClient.clearAllFieldErrors('modal-edit-notif');
           const id = document.getElementById('edit-notif-id').value;
           const tieuDe = document.getElementById('edit-notif-title').value.trim();
           const noiDung = document.getElementById('edit-notif-content').value.trim();
+
+          let hasError = false;
+          if (!tieuDe) {
+            ApiClient.showFieldError('edit-notif-title', 'Vui lòng nhập tiêu đề thông báo.');
+            hasError = true;
+          }
+          if (!noiDung) {
+            ApiClient.showFieldError('edit-notif-content', 'Vui lòng nhập nội dung thông báo.');
+            hasError = true;
+          }
+          if (hasError) return;
 
           const btnSubmit = document.getElementById('btn-submit-edit-notif');
           btnSubmit.disabled = true;
@@ -730,15 +761,15 @@
           try {
             const res = await NotificationApi.updateNotification(id, { tieuDe, noiDung });
             if (res && res.success) {
-              alert('Cập nhật thông báo thành công!');
               closeNotifModal('modal-edit-notif');
+              ApiClient.showToast('success', 'Thành công', 'Cập nhật thông báo thành công!');
               loadNotifications();
             } else {
-              alert(res && res.message ? res.message : 'Cập nhật thất bại');
+              ApiClient.showFieldError('edit-notif-title', res && res.message ? res.message : 'Cập nhật thất bại');
             }
           } catch (err) {
             console.error(err);
-            alert(err.message || 'Lỗi cập nhật');
+            ApiClient.showFieldError('edit-notif-title', err.message || 'Lỗi cập nhật');
           } finally {
             btnSubmit.disabled = false;
             btnSubmit.textContent = 'Lưu thay đổi';
@@ -747,20 +778,28 @@
       }
 
       // Xử lý xóa thông báo
-      window.deleteNotif = async function (id) {
-        if (!confirm('Bạn có chắc chắn muốn xóa bản tin thông báo này?')) return;
-        try {
-          const res = await NotificationApi.deleteNotification(id);
-          if (res && res.success) {
-            alert('Đã xóa thông báo thành công!');
-            loadNotifications();
-          } else {
-            alert(res && res.message ? res.message : 'Xóa thông báo thất bại');
+      window.deleteNotif = function (id) {
+        ApiClient.showConfirmModal({
+          title: 'Xóa thông báo',
+          message: 'Bạn có chắc chắn muốn xóa bản tin thông báo này? Hành động này không thể hoàn tác.',
+          confirmText: 'Xóa ngay',
+          cancelText: 'Hủy bỏ',
+          isDanger: true,
+          onConfirm: async () => {
+            try {
+              const res = await NotificationApi.deleteNotification(id);
+              if (res && res.success) {
+                ApiClient.showToast('success', 'Thành công', 'Đã xóa thông báo thành công!');
+                loadNotifications();
+              } else {
+                ApiClient.showToast('error', 'Thất bại', res && res.message ? res.message : 'Xóa thông báo thất bại');
+              }
+            } catch (err) {
+              console.error(err);
+              ApiClient.showToast('error', 'Lỗi', err.message || 'Lỗi xóa thông báo');
+            }
           }
-        } catch (err) {
-          console.error(err);
-          alert(err.message || 'Lỗi xóa thông báo');
-        }
+        });
       };
 
       // Phân trang thông báo

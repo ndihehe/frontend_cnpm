@@ -563,44 +563,10 @@
       }
 
       function showToast(message, type = 'success') {
-        let toastContainer = document.getElementById('toast-container');
-        if (!toastContainer) {
-          toastContainer = document.createElement('div');
-          toastContainer.id = 'toast-container';
-          toastContainer.style.position = 'fixed';
-          toastContainer.style.bottom = '24px';
-          toastContainer.style.right = '24px';
-          toastContainer.style.zIndex = '9999';
-          toastContainer.style.display = 'flex';
-          toastContainer.style.flexDirection = 'column';
-          toastContainer.style.gap = '8px';
-          document.body.appendChild(toastContainer);
+        if (window.ApiClient && ApiClient.showToast) {
+          const title = type === 'success' ? 'Thành công' : (type === 'error' ? 'Thất bại' : 'Thông báo');
+          ApiClient.showToast(type, title, message);
         }
-
-        const toast = document.createElement('div');
-        const bg = type === 'success' ? '#059669' : '#E11D48';
-        const icon = type === 'success' ? 'check_circle' : 'cancel';
-        toast.style.cssText = `
-          background: ${bg};
-          color: white;
-          padding: 10px 18px;
-          border-radius: 6px;
-          box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-          font-size: 13px;
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          animation: slideInToast 0.25s ease-out;
-        `;
-        toast.innerHTML = `<span class="material-symbols-outlined" style="font-size: 19px;">${icon}</span><span>${message}</span>`;
-        toastContainer.appendChild(toast);
-
-        setTimeout(() => {
-          toast.style.opacity = '0';
-          toast.style.transition = 'opacity 0.3s ease';
-          setTimeout(() => toast.remove(), 300);
-        }, 3000);
       }
 
       async function handleUpdateStatus(maYeuCau, newStatus) {

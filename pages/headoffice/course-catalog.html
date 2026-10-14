@@ -190,21 +190,24 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <form id="form-create-course">
+      <form id="form-create-course" novalidate>
         <div class="modal-body">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div>
               <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Mã học phần *</label>
+              <div class="field-error-text" id="course-maHP-error" style="display: none;"></div>
               <input type="text" id="course-maHP" class="form-control" placeholder="VD: INT1501" required />
             </div>
             <div>
-              <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Số tín chỉ *</label>
-              <input type="number" id="course-soTinChi" class="form-control" value="3" min="1" max="10" required />
+              <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Số tín chỉ (1 - 4 TC) *</label>
+              <div class="field-error-text" id="course-soTinChi-error" style="display: none;"></div>
+              <input type="number" id="course-soTinChi" class="form-control" value="3" min="1" max="4" required />
             </div>
           </div>
 
           <div>
             <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Tên học phần *</label>
+            <div class="field-error-text" id="course-tenHP-error" style="display: none;"></div>
             <input type="text" id="course-tenHP" class="form-control" placeholder="VD: Trí tuệ nhân tạo nâng cao" required />
           </div>
         </div>
@@ -228,7 +231,7 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <form id="form-edit-course">
+      <form id="form-edit-course" novalidate>
         <div class="modal-body">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div>
@@ -236,13 +239,15 @@
               <input type="text" id="edit-course-maHP" class="form-control" readonly style="background: #F1F5F9; color: #64748B; cursor: not-allowed;" />
             </div>
             <div>
-              <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Số tín chỉ *</label>
-              <input type="number" id="edit-course-soTinChi" class="form-control" value="3" min="1" max="10" required />
+              <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Số tín chỉ (1 - 4 TC) *</label>
+              <div class="field-error-text" id="edit-course-soTinChi-error" style="display: none;"></div>
+              <input type="number" id="edit-course-soTinChi" class="form-control" value="3" min="1" max="4" required />
             </div>
           </div>
 
           <div>
             <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Tên học phần *</label>
+            <div class="field-error-text" id="edit-course-tenHP-error" style="display: none;"></div>
             <input type="text" id="edit-course-tenHP" class="form-control" placeholder="VD: Trí tuệ nhân tạo nâng cao" required />
           </div>
         </div>
@@ -344,17 +349,47 @@
       // FORM LƯU THAY ĐỔI SỬA HỌC PHẦN
       document.getElementById('form-edit-course').addEventListener('submit', async (e) => {
         e.preventDefault();
+        ApiClient.clearAllFieldErrors('modal-edit-course');
         const maHP = document.getElementById('edit-course-maHP').value.trim();
         const tenHP = document.getElementById('edit-course-tenHP').value.trim();
         const soTinChi = Number(document.getElementById('edit-course-soTinChi').value);
+
+        let hasError = false;
+        if (!tenHP) {
+          ApiClient.showFieldError('edit-course-tenHP', 'Vui lòng nhập tên học phần.');
+          hasError = true;
+        }
+        if (!soTinChi || isNaN(soTinChi) || soTinChi < 1 || soTinChi > 4) {
+          ApiClient.showFieldError('edit-course-soTinChi', 'Số tín chỉ chỉ được từ 1 đến 4 tín chỉ.');
+          hasError = true;
+        }
+        if (hasError) return;
 
         const payload = { tenHP, soTinChi };
         const res = await HeadOfficeApi.updateCourse(maHP, payload);
         if (res && res.success) {
           closeModal('modal-edit-course');
+          ApiClient.showToast('success', 'Thành công', 'Cập nhật học phần thành công!');
           await loadCourses(currentPage);
         } else {
-          alert((res && res.message) ? res.message : 'Lỗi cập nhật học phần');
+          ApiClient.showFieldError('edit-course-tenHP', (res && res.message) ? res.message : 'Lỗi cập nhật học phần');
+        }
+      });
+
+      // LẮNG NGHE SỰ KIỆN NHẬP SỐ TÍN CHỈ REAL-TIME (GIỚI HẠN 1 - 4 TC)
+      ['course-soTinChi', 'edit-course-soTinChi'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.addEventListener('input', function() {
+            const val = Number(this.value);
+            if (val > 4) {
+              ApiClient.showFieldError(this, 'Số tín chỉ tối đa là 4 tín chỉ.');
+            } else if (val < 1 && this.value !== '') {
+              ApiClient.showFieldError(this, 'Số tín chỉ tối thiểu là 1 tín chỉ.');
+            } else {
+              ApiClient.clearFieldError(this);
+            }
+          });
         }
       });
 
@@ -374,23 +409,46 @@
 
       document.getElementById('form-create-course').addEventListener('submit', async (e) => {
         e.preventDefault();
+        ApiClient.clearAllFieldErrors('modal-create-course');
         const maHP = document.getElementById('course-maHP').value.trim();
         const tenHP = document.getElementById('course-tenHP').value.trim();
         const soTinChi = Number(document.getElementById('course-soTinChi').value);
+
+        let hasError = false;
+        if (!maHP) {
+          ApiClient.showFieldError('course-maHP', 'Vui lòng nhập mã học phần.');
+          hasError = true;
+        }
+        if (!soTinChi || isNaN(soTinChi) || soTinChi < 1 || soTinChi > 4) {
+          ApiClient.showFieldError('course-soTinChi', 'Số tín chỉ chỉ được từ 1 đến 4 tín chỉ.');
+          hasError = true;
+        }
+        if (!tenHP) {
+          ApiClient.showFieldError('course-tenHP', 'Vui lòng nhập tên học phần.');
+          hasError = true;
+        }
+        if (hasError) return;
 
         const payload = { maHP, tenHP, soTinChi };
         const res = await HeadOfficeApi.createCourse(payload);
         if (res && res.success) {
           closeModal('modal-create-course');
           document.getElementById('form-create-course').reset();
+          ApiClient.showToast('success', 'Thành công', 'Tạo học phần mới thành công!');
           await loadCourses(1);
         } else {
-          alert((res && res.message) ? res.message : 'Lỗi tạo học phần mới');
+          ApiClient.showFieldError('course-maHP', (res && res.message) ? res.message : 'Lỗi tạo học phần mới');
         }
       });
 
-      window.openModal = id => document.getElementById(id).style.display = 'flex';
-      window.closeModal = id => document.getElementById(id).style.display = 'none';
+      window.openModal = id => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors(id);
+        document.getElementById(id).style.display = 'flex';
+      };
+      window.closeModal = id => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors(id);
+        document.getElementById(id).style.display = 'none';
+      };
 
       loadCourses(1);
     });

@@ -304,8 +304,7 @@
     container.querySelector('#menu-btn-logout').addEventListener('click', (e) => {
       e.preventDefault();
       dropdownMenu.classList.remove('show');
-      triggerBtn.classList.remove('active');
-      if (confirm('Bạn có chắc chắn muốn đăng xuất khỏi hệ thống Quản lý Học vụ?')) {
+      const doLogout = () => {
         if (window.AuthApi && window.AuthApi.logout) {
           try { window.AuthApi.logout(); } catch(err) {}
         }
@@ -315,6 +314,19 @@
         localStorage.removeItem('currentUser');
         localStorage.removeItem('auth_user_role');
         window.location.href = getLoginUrl();
+      };
+
+      if (window.ApiClient && ApiClient.showConfirmModal) {
+        ApiClient.showConfirmModal({
+          title: 'Đăng xuất tài khoản',
+          message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống Quản lý Học vụ?',
+          confirmText: 'Đăng xuất',
+          cancelText: 'Ở lại',
+          isDanger: true,
+          onConfirm: doLogout
+        });
+      } else {
+        doLogout();
       }
     });
 
@@ -343,22 +355,25 @@
               <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
             </button>
           </div>
-          <form onsubmit="handleUserSubmitChangePassword(event)" style="padding: 18px 20px;">
+          <form id="form-user-change-pwd" novalidate onsubmit="handleUserSubmitChangePassword(event)" style="padding: 18px 20px;">
             <div style="margin-bottom: 12px;">
               <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Mật khẩu hiện tại *</label>
+              <div class="field-error-text" id="user-old-pwd-error" style="display: none;"></div>
               <input type="password" id="user-old-pwd" required placeholder="Nhập mật khẩu hiện tại" style="width: 100%; height: 36px; padding: 6px 10px; border: 1px solid #CBD5E1; border-radius: 4px; font-size: 13px; box-sizing: border-box;" />
             </div>
             <div style="margin-bottom: 12px;">
               <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Mật khẩu mới *</label>
+              <div class="field-error-text" id="user-new-pwd-error" style="display: none;"></div>
               <input type="password" id="user-new-pwd" required placeholder="Tối thiểu 6 ký tự" minlength="6" style="width: 100%; height: 36px; padding: 6px 10px; border: 1px solid #CBD5E1; border-radius: 4px; font-size: 13px; box-sizing: border-box;" />
             </div>
             <div style="margin-bottom: 16px;">
               <label style="font-size: 12px; font-weight: 600; color: #334155; display: block; margin-bottom: 4px;">Xác nhận mật khẩu mới *</label>
+              <div class="field-error-text" id="user-confirm-pwd-error" style="display: none;"></div>
               <input type="password" id="user-confirm-pwd" required placeholder="Nhập lại mật khẩu mới" minlength="6" style="width: 100%; height: 36px; padding: 6px 10px; border: 1px solid #CBD5E1; border-radius: 4px; font-size: 13px; box-sizing: border-box;" />
             </div>
             <div style="display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid #E2E8F0; padding-top: 14px;">
-              <button type="button" style="height: 32px; padding: 0 14px; font-size: 12px; border: 1px solid #CBD5E1; border-radius: 4px; background: white; cursor: pointer;" onclick="closeUserChangePasswordModal()">Hủy</button>
-              <button type="submit" style="height: 32px; padding: 0 16px; font-size: 12px; background: #0284C7; color: white; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Cập nhật</button>
+              <button type="button" id="btn-cancel-change-pwd" style="height: 32px; padding: 0 14px; font-size: 12px; border: 1px solid #CBD5E1; border-radius: 4px; background: white; cursor: pointer;" onclick="closeUserChangePasswordModal()">Hủy</button>
+              <button type="submit" id="btn-submit-change-pwd" style="height: 32px; padding: 0 16px; font-size: 12px; background: #0284C7; color: white; border: none; border-radius: 4px; font-weight: 600; cursor: pointer;">Cập nhật</button>
             </div>
           </form>
         </div>
@@ -370,6 +385,9 @@
   function openChangePasswordModal() {
     const modal = document.getElementById('modal-user-change-password');
     if (modal) {
+      if (window.ApiClient && ApiClient.clearAllFieldErrors) {
+        ApiClient.clearAllFieldErrors('modal-user-change-password');
+      }
       document.getElementById('user-old-pwd').value = '';
       document.getElementById('user-new-pwd').value = '';
       document.getElementById('user-confirm-pwd').value = '';
@@ -384,17 +402,39 @@
 
   window.handleUserSubmitChangePassword = async function(e) {
     e.preventDefault();
-    const oldP = document.getElementById('user-old-pwd').value;
+    if (window.ApiClient && ApiClient.clearAllFieldErrors) {
+      ApiClient.clearAllFieldErrors('modal-user-change-password');
+    }
+    const oldP = document.getElementById('user-old-pwd').value.trim();
     const newP = document.getElementById('user-new-pwd').value;
     const confirmP = document.getElementById('user-confirm-pwd').value;
-    if (newP !== confirmP) {
-      if (window.ApiClient && ApiClient.showToast) {
-        ApiClient.showToast('error', 'Lỗi đổi mật khẩu', 'Mật khẩu xác nhận không khớp!');
-      } else {
-        alert('Mật khẩu xác nhận không khớp!');
+
+    let hasError = false;
+    if (!oldP) {
+      if (window.ApiClient && ApiClient.showFieldError) {
+        ApiClient.showFieldError('user-old-pwd', 'Vui lòng nhập mật khẩu hiện tại.');
       }
-      return;
+      hasError = true;
     }
+    if (!newP) {
+      if (window.ApiClient && ApiClient.showFieldError) {
+        ApiClient.showFieldError('user-new-pwd', 'Vui lòng nhập mật khẩu mới.');
+      }
+      hasError = true;
+    } else if (newP.length < 6) {
+      if (window.ApiClient && ApiClient.showFieldError) {
+        ApiClient.showFieldError('user-new-pwd', 'Mật khẩu mới phải có tối thiểu 6 ký tự.');
+      }
+      hasError = true;
+    }
+    if (newP !== confirmP) {
+      if (window.ApiClient && ApiClient.showFieldError) {
+        ApiClient.showFieldError('user-confirm-pwd', 'Mật khẩu xác nhận không khớp!');
+      }
+      hasError = true;
+    }
+    if (hasError) return;
+
     const submitBtn = e.target.querySelector('button[type="submit"]');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Đang xử lý...'; }
     try {
@@ -402,24 +442,43 @@
         const res = await ProfileApi.changePassword(oldP, newP);
         if (res && (res.success || res.status === 200)) {
           if (window.ApiClient && ApiClient.showToast) {
-            ApiClient.showToast('success', 'Thành công', res.message || 'Đổi mật khẩu thành công!');
-          } else {
-            alert('Đổi mật khẩu thành công!');
+            ApiClient.showToast('success', 'Đổi mật khẩu thành công', 'Mật khẩu đã được thay đổi thành công. Hệ thống đang chuyển hướng về trang đăng nhập...');
           }
           closeUserChangePasswordModal();
+
+          // Thu hồi refresh token / phiên làm việc và bắt buộc đăng nhập lại
+          if (window.AuthApi && window.AuthApi.logout) {
+            try { window.AuthApi.logout(); } catch(err) {}
+          }
+          localStorage.removeItem('auth_access_token');
+          localStorage.removeItem('token');
+          localStorage.removeItem('auth_refresh_token');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('auth_current_user');
+          localStorage.removeItem('currentUser');
+          localStorage.removeItem('auth_user_role');
+          try { sessionStorage.clear(); } catch(err) {}
+
+          setTimeout(() => {
+            window.location.href = getLoginUrl();
+          }, 1200);
+          return;
         } else {
           const msg = (res && res.message) ? res.message : 'Đổi mật khẩu không thành công!';
-          if (window.ApiClient && ApiClient.showToast) {
-            ApiClient.showToast('error', 'Thất bại', msg);
-          } else {
-            alert(msg);
+          if (window.ApiClient && ApiClient.showFieldError) {
+            ApiClient.showFieldError('user-old-pwd', msg);
           }
         }
       } else {
-        alert('Chức năng đổi mật khẩu chưa sẵn sàng');
+        if (window.ApiClient && ApiClient.showFieldError) {
+          ApiClient.showFieldError('user-old-pwd', 'Chức năng đổi mật khẩu chưa sẵn sàng');
+        }
       }
     } catch (err) {
-      alert('Đã xảy ra lỗi: ' + (err.message || 'Không thể đổi mật khẩu'));
+      const errMsg = 'Đã xảy ra lỗi: ' + (err.message || 'Không thể đổi mật khẩu');
+      if (window.ApiClient && ApiClient.showFieldError) {
+        ApiClient.showFieldError('user-old-pwd', errMsg);
+      }
     } finally {
       if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Cập nhật'; }
     }

@@ -142,14 +142,16 @@
                 <thead>
                   <tr>
                     <th style="width: 50px; text-align: center;">STT</th>
-                    <th style="width: 160px;">Mã học kỳ</th>
+                    <th style="width: 150px;">Mã học kỳ</th>
                     <th>Tên học kỳ đào tạo</th>
-                    <th style="width: 180px; text-align: center;">Trạng thái vận hành</th>
-                    <th style="width: 180px; text-align: center;">Cổng ĐKHP</th>
+                    <th style="width: 130px; text-align: center;">Ngày bắt đầu</th>
+                    <th style="width: 130px; text-align: center;">Ngày kết thúc</th>
+                    <th style="width: 210px; text-align: center;">Trạng thái vận hành</th>
+                    <th style="width: 110px; text-align: center;">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody id="sem-tbody">
-                  <tr><td colspan="5" style="text-align: center; padding: 25px;">Đang tải dữ liệu...</td></tr>
+                  <tr><td colspan="7" style="text-align: center; padding: 25px;">Đang tải dữ liệu...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -178,6 +180,45 @@
           <span class="material-symbols-outlined">add_circle</span>
           <span>KHỞI TẠO HỌC KỲ ĐÀO TẠO MỚI</span>
         </div>
+        <button type="button" onclick="closeModal('modal-create-sem')" style="background:none; border:none; cursor:pointer;">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-create-sem" novalidate>
+        <div class="modal-body">
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Mã học kỳ (Định danh hệ thống) *</label>
+            <div class="field-error-text" id="sem-maHocKy-error" style="display: none;"></div>
+            <input type="text" id="sem-maHocKy" class="form-control" placeholder="VD: 2026_2027_HK1" required />
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Tên học kỳ *</label>
+            <div class="field-error-text" id="sem-tenHocKy-error" style="display: none;"></div>
+            <select id="sem-tenHocKy" class="form-control" required>
+              <option value="" selected disabled>Chọn tên học kỳ</option>
+              <option value="HOCKY1">Học kỳ 1</option>
+              <option value="HOCKY2">Học kỳ 2</option>
+              <option value="HOCKYHE">Học kỳ hè</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Thời gian bắt đầu *</label>
+            <div class="field-error-text" id="sem-thoiGianBD-error" style="display: none;"></div>
+            <input type="date" id="sem-thoiGianBD" class="form-control" required />
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Thời gian kết thúc *</label>
+            <div class="field-error-text" id="sem-thoiGianKT-error" style="display: none;"></div>
+            <input type="date" id="sem-thoiGianKT" class="form-control" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-create-sem')">Hủy</button>
+          <button type="submit" class="btn btn-primary" style="background: #0D9488; border-color: #0D9488;">Lưu học kỳ</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- MODAL: XEM LẠI TRƯỚC KHI SUBMIT HOÀN TOÀN (CHỐNG TẠO NHẦM HỌC KỲ) -->
   <div id="modal-confirm-sem" class="modal-overlay" style="z-index: 1050;">
@@ -205,15 +246,23 @@
             <span style="color: var(--text-muted); font-weight: 500;">Tên hiển thị học kỳ:</span>
             <strong id="review-tenHocKy" style="color: #002D4F; font-size: 13px;">...</strong>
           </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px;">
+            <span style="color: var(--text-muted); font-weight: 500;">Thời gian bắt đầu:</span>
+            <strong id="review-thoiGianBD" style="color: #002D4F; font-size: 12.5px;">...</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px;">
+            <span style="color: var(--text-muted); font-weight: 500;">Thời gian kết thúc:</span>
+            <strong id="review-thoiGianKT" style="color: #002D4F; font-size: 12.5px;">...</strong>
+          </div>
           <div style="display: flex; justify-content: space-between; font-size: 12px;">
-            <span style="color: var(--text-muted); font-weight: 500;">Trạng thái vận hành:</span>
-            <span style="color: #107C41; font-weight: 600;">Sẵn sàng mở đợt ĐKHP</span>
+            <span style="color: var(--text-muted); font-weight: 500;">Trạng thái dự kiến:</span>
+            <span style="color: #1D4ED8; font-weight: 600;">Sắp diễn ra</span>
           </div>
         </div>
 
         <div style="font-size: 11.5px; color: #D97706; display: flex; gap: 6px; align-items: flex-start; line-height: 1.4;">
           <span class="material-symbols-outlined" style="font-size: 16px; flex-shrink: 0; color: #D97706;">warning</span>
-          <span>Lưu ý: Học kỳ sau khi tạo sẽ được liên kết với toàn bộ lớp học phần và không thể xóa qua hệ thống.</span>
+          <span>Lưu ý: Học kỳ sau khi tạo sẽ được liên kết với các đợt mở lớp học phần toàn trường.</span>
         </div>
       </div>
       <div class="modal-footer" style="padding: 10px 18px;">
@@ -225,20 +274,30 @@
       </div>
     </div>
   </div>
-        <button type="button" onclick="closeModal('modal-create-sem')" style="background:none; border:none; cursor:pointer;">
+
+  <!-- MODAL: CHỈNH SỬA HỌC KỲ SẮP DIỄN RA -->
+  <div id="modal-edit-sem" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div style="font-size: 14px; font-weight: 700; color: #0F766E; display: flex; align-items: center; gap: 6px;">
+          <span class="material-symbols-outlined">edit_calendar</span>
+          <span>CHỈNH SỬA THÔNG TIN HỌC KỲ SẮP DIỄN RA</span>
+        </div>
+        <button type="button" onclick="closeModal('modal-edit-sem')" style="background:none; border:none; cursor:pointer;">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <form id="form-create-sem">
+      <form id="form-edit-sem" novalidate>
         <div class="modal-body">
           <div style="margin-bottom: 12px;">
-            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Mã học kỳ (Định danh hệ thống) *</label>
-            <input type="text" id="sem-maHocKy" class="form-control" placeholder="VD: 2026_2027_HK1" required />
+            <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Mã học kỳ (Cố định hệ thống)</label>
+            <input type="text" id="edit-sem-maHocKy" class="form-control" readonly style="background: #F1F5F9; color: #64748B; cursor: not-allowed;" />
           </div>
           <div style="margin-bottom: 12px;">
             <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Tên học kỳ *</label>
-            <select id="sem-tenHocKy" class="form-control" required>
-              <option value="" selected disabled>Chọn tên học kỳ</option>
+            <div class="field-error-text" id="edit-sem-tenHocKy-error" style="display: none;"></div>
+            <select id="edit-sem-tenHocKy" class="form-control" required>
+              <option value="" disabled>Chọn tên học kỳ</option>
               <option value="HOCKY1">Học kỳ 1</option>
               <option value="HOCKY2">Học kỳ 2</option>
               <option value="HOCKYHE">Học kỳ hè</option>
@@ -246,16 +305,18 @@
           </div>
           <div style="margin-bottom: 12px;">
             <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Thời gian bắt đầu *</label>
-            <input type="date" id="sem-thoiGianBD" class="form-control" required />
+            <div class="field-error-text" id="edit-sem-thoiGianBD-error" style="display: none;"></div>
+            <input type="date" id="edit-sem-thoiGianBD" class="form-control" required />
           </div>
           <div style="margin-bottom: 12px;">
             <label style="font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 4px;">Thời gian kết thúc *</label>
-            <input type="date" id="sem-thoiGianKT" class="form-control" required />
+            <div class="field-error-text" id="edit-sem-thoiGianKT-error" style="display: none;"></div>
+            <input type="date" id="edit-sem-thoiGianKT" class="form-control" required />
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline" onclick="closeModal('modal-create-sem')">Hủy</button>
-          <button type="submit" class="btn btn-primary" style="background: #0D9488; border-color: #0D9488;">Lưu học kỳ</button>
+          <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit-sem')">Hủy</button>
+          <button type="submit" class="btn btn-primary" style="background: #0D9488; border-color: #0D9488;">Cập nhật học kỳ</button>
         </div>
       </form>
     </div>
@@ -266,6 +327,45 @@
   <script>
     let currentPage = 1;
     const pageSize = 20;
+    let allSemesters = [];
+    let currentEditingMaHK = null;
+
+    function normalizeDate(val) {
+      if (!val) return '';
+      if (Array.isArray(val)) {
+        if (val.length >= 3 && typeof val[0] === 'number') {
+          const y = String(val[0]).padStart(4, '0');
+          const m = String(val[1]).padStart(2, '0');
+          const d = String(val[2]).padStart(2, '0');
+          return `${y}-${m}-${d}`;
+        }
+        return val.join('-');
+      }
+      let s = String(val).trim();
+      if (s.includes(',')) {
+        const parts = s.split(',').map(p => p.trim());
+        if (parts.length >= 3) {
+          const y = String(parts[0]).padStart(4, '0');
+          const m = String(parts[1]).padStart(2, '0');
+          const d = String(parts[2]).padStart(2, '0');
+          return `${y}-${m}-${d}`;
+        }
+      }
+      return s.split('T')[0];
+    }
+
+    function formatDateDisplay(dStr) {
+      if (!dStr) return '--';
+      const iso = normalizeDate(dStr);
+      const parts = iso.split('-');
+      if (parts.length === 3) {
+        const d = String(parts[2]).padStart(2, '0');
+        const m = String(parts[1]).padStart(2, '0');
+        const y = parts[0];
+        return `${d}/${m}/${y}`;
+      }
+      return iso;
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       const tbody = document.getElementById('sem-tbody');
@@ -274,43 +374,120 @@
       const btnPrev = document.getElementById('btn-prev-page');
       const btnNext = document.getElementById('btn-next-page');
 
+      // Lấy ngày hiện tại chuẩn ISO (YYYY-MM-DD)
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      // Đặt giá trị min cho các ô input ngày bắt đầu và kết thúc
+      const inputBd = document.getElementById('sem-thoiGianBD');
+      const inputKt = document.getElementById('sem-thoiGianKT');
+      const editBd = document.getElementById('edit-sem-thoiGianBD');
+      const editKt = document.getElementById('edit-sem-thoiGianKT');
+
+      if (inputBd) inputBd.min = todayStr;
+      if (inputKt) inputKt.min = todayStr;
+      if (editBd) editBd.min = todayStr;
+      if (editKt) editKt.min = todayStr;
+
       async function loadSemesters(page = 1) {
         try {
           currentPage = page;
           const res = await HeadOfficeApi.getSemesters();
           if (res && res.success && res.data) {
-            const list = res.data;
+            allSemesters = res.data;
             const meta = res.meta || {};
-            const total = meta.tongSoHocKy || meta.totalItems || list.length;
+            const total = meta.tongSoHocKy || meta.totalItems || allSemesters.length;
             const curPage = meta.page || currentPage || 1;
             const totalPages = meta.totalPages || 1;
             tableInfo.textContent = `Tổng số: ${total} học kỳ`;
 
             let html = '';
-            list.forEach((sem, idx) => {
+            allSemesters.forEach((sem, idx) => {
               const stt = (currentPage - 1) * pageSize + idx + 1;
-              const isCurrent = sem.dangMo || sem.maHocKy === '2026_2027_HK1';
-              const statusText = isCurrent ? 'Đang diễn ra (Học kỳ hiện hành)' : 'Đã kết thúc';
-              const statusColor = isCurrent ? '#107C41' : '#6B7280';
-              const regText = isCurrent ? 'Đang mở đăng ký' : 'Đã khóa';
-              const regColor = isCurrent ? '#0284C7' : '#9CA3AF';
+              const semBd = normalizeDate(sem.thoiGianBD);
+              const semKt = normalizeDate(sem.thoiGianKT);
 
-              // ĐÃ XÓA HOÀN TOÀN CỘT THAO TÁC / NÚT CẤU HÌNH THỪA
+              // 1. Kiểm tra trạng thái is_current
+              const isCurrent = sem.isCurrent || sem.is_current || sem.dangMo || sem.hienHanh || sem.maHocKy === '2026_2027_HK1';
+
+              // 2. Xác định trạng thái vận hành và quyền chỉnh sửa
+              let statusBadge = '';
+              let canEdit = false;
+
+              if (isCurrent) {
+                statusBadge = `
+                  <span style="color: #047857; background: #ECFDF5; border: 1px solid #A7F3D0; font-weight: 600; font-size: 11.5px; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+                    Đang diễn ra (Học kỳ hiện hành)
+                  </span>
+                `;
+                canEdit = false;
+              } else if (semKt && semKt < todayStr) {
+                statusBadge = `
+                  <span style="color: #64748B; background: #F1F5F9; border: 1px solid #E2E8F0; font-weight: 600; font-size: 11.5px; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #94A3B8; display: inline-block;"></span>
+                    Đã kết thúc
+                  </span>
+                `;
+                canEdit = false;
+              } else if (semBd && semBd > todayStr) {
+                statusBadge = `
+                  <span style="color: #1D4ED8; background: #EFF6FF; border: 1px solid #BFDBFE; font-weight: 600; font-size: 11.5px; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #3B82F6; display: inline-block;"></span>
+                    Sắp diễn ra
+                  </span>
+                `;
+                canEdit = true;
+              } else {
+                // Rơi vào khoảng hiện tại nhưng không có cờ isCurrent
+                statusBadge = `
+                  <span style="color: #047857; background: #ECFDF5; border: 1px solid #A7F3D0; font-weight: 600; font-size: 11.5px; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+                    Đang diễn ra
+                  </span>
+                `;
+                canEdit = false;
+              }
+
+              // 3. Cột Thao tác: Chỉ cho phép chỉnh sửa học kỳ SẮP DIỄN RA
+              let actionHtml = '';
+              if (canEdit) {
+                actionHtml = `
+                  <button class="btn btn-sm btn-outline btn-edit-sem" data-ma="${sem.maHocKy}" title="Chỉnh sửa thông tin học kỳ sắp diễn ra" style="padding: 3px 10px; font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px; border-color: #0D9488; color: #0D9488; background: #F0FDFA; cursor: pointer;">
+                    <span class="material-symbols-outlined" style="font-size: 15px;">edit</span>
+                    <span>Sửa</span>
+                  </button>
+                `;
+              } else {
+                const lockReason = isCurrent ? "Học kỳ đang diễn ra không được phép chỉnh sửa" : "Học kỳ đã kết thúc không được phép chỉnh sửa";
+                actionHtml = `
+                  <button class="btn btn-sm" disabled title="${lockReason}" style="padding: 3px 8px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; background: #F8FAFC; color: #94A3B8; border: 1px solid #E2E8F0; cursor: not-allowed; opacity: 0.75;">
+                    <span class="material-symbols-outlined" style="font-size: 14px;">lock</span>
+                    <span>Khóa sửa</span>
+                  </button>
+                `;
+              }
+
               html += `
                 <tr>
                   <td style="text-align: center; color: var(--text-muted);">${stt}</td>
                   <td><strong style="color: #0D9488;">${sem.maHocKy}</strong></td>
                   <td><strong style="color: #002D4F;">${sem.tenHocKy}</strong></td>
-                  <td style="text-align: center;">
-                    <span style="color: ${statusColor}; font-weight: 600; font-size: 12px;">${statusText}</span>
-                  </td>
-                  <td style="text-align: center;">
-                    <span style="font-size: 12px; font-weight: 600; color: ${regColor};">${regText}</span>
-                  </td>
+                  <td style="text-align: center; color: var(--text-main); font-weight: 500;">${formatDateDisplay(semBd)}</td>
+                  <td style="text-align: center; color: var(--text-main); font-weight: 500;">${formatDateDisplay(semKt)}</td>
+                  <td style="text-align: center;">${statusBadge}</td>
+                  <td style="text-align: center;">${actionHtml}</td>
                 </tr>
               `;
             });
             tbody.innerHTML = html;
+
+            // Gán sự kiện click nút Sửa
+            document.querySelectorAll('.btn-edit-sem').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                const maHK = btn.getAttribute('data-ma');
+                openEditModal(maHK);
+              });
+            });
 
             paginationInfo.textContent = `Đang hiển thị trang ${curPage} / ${totalPages} (Tổng số ${total} học kỳ)`;
             btnPrev.disabled = curPage <= 1;
@@ -321,7 +498,97 @@
         }
       }
 
+      function openEditModal(maHK) {
+        const sem = allSemesters.find(s => s.maHocKy === maHK);
+        if (!sem) return;
+
+        currentEditingMaHK = maHK;
+        ApiClient.clearAllFieldErrors('modal-edit-sem');
+
+        document.getElementById('edit-sem-maHocKy').value = sem.maHocKy;
+
+        // Điền tên học kỳ
+        const tenSelect = document.getElementById('edit-sem-tenHocKy');
+        let rawVal = sem.tenHocKyRaw || '';
+        if (!rawVal) {
+          if (sem.tenHocKy && sem.tenHocKy.includes('1')) rawVal = 'HOCKY1';
+          else if (sem.tenHocKy && sem.tenHocKy.includes('2')) rawVal = 'HOCKY2';
+          else if (sem.tenHocKy && sem.tenHocKy.toLowerCase().includes('hè')) rawVal = 'HOCKYHE';
+          else rawVal = 'HOCKY1';
+        }
+        tenSelect.value = rawVal;
+
+        const bdVal = normalizeDate(sem.thoiGianBD);
+        const ktVal = normalizeDate(sem.thoiGianKT);
+        document.getElementById('edit-sem-thoiGianBD').value = bdVal;
+        document.getElementById('edit-sem-thoiGianKT').value = ktVal;
+
+        openModal('modal-edit-sem');
+      }
+
+      // Xử lý submit form Sửa học kỳ
+      document.getElementById('form-edit-sem').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        ApiClient.clearAllFieldErrors('modal-edit-sem');
+
+        const maHocKy = currentEditingMaHK;
+        const tenHocKy = document.getElementById('edit-sem-tenHocKy').value;
+        const thoiGianBD = document.getElementById('edit-sem-thoiGianBD').value;
+        const thoiGianKT = document.getElementById('edit-sem-thoiGianKT').value;
+
+        let hasError = false;
+        if (!tenHocKy) {
+          ApiClient.showFieldError('edit-sem-tenHocKy', 'Vui lòng chọn tên học kỳ.');
+          hasError = true;
+        }
+        if (!thoiGianBD) {
+          ApiClient.showFieldError('edit-sem-thoiGianBD', 'Vui lòng chọn thời gian bắt đầu.');
+          hasError = true;
+        } else if (thoiGianBD < todayStr) {
+          ApiClient.showFieldError('edit-sem-thoiGianBD', `Thời gian bắt đầu học kỳ không được trước thời điểm hiện tại (${formatDateDisplay(todayStr)}).`);
+          hasError = true;
+        }
+
+        if (!thoiGianKT) {
+          ApiClient.showFieldError('edit-sem-thoiGianKT', 'Vui lòng chọn thời gian kết thúc.');
+          hasError = true;
+        } else if (thoiGianBD && thoiGianKT <= thoiGianBD) {
+          ApiClient.showFieldError('edit-sem-thoiGianKT', 'Thời gian kết thúc phải sau thời gian bắt đầu.');
+          hasError = true;
+        }
+
+        // Kiểm tra chồng chéo với các học kỳ khác
+        if (!hasError && thoiGianBD && thoiGianKT) {
+          const overlapped = allSemesters.find(s => {
+            if (s.maHocKy === maHocKy) return false;
+            const sBd = normalizeDate(s.thoiGianBD);
+            const sKt = normalizeDate(s.thoiGianKT);
+            if (!sBd || !sKt) return false;
+            return (thoiGianBD <= sKt && thoiGianKT >= sBd);
+          });
+          if (overlapped) {
+            const sBd = normalizeDate(overlapped.thoiGianBD);
+            const sKt = normalizeDate(overlapped.thoiGianKT);
+            ApiClient.showFieldError('edit-sem-thoiGianKT', `Thời gian học kỳ bị chồng chéo với học kỳ ${overlapped.maHocKy} (${formatDateDisplay(sBd)} - ${formatDateDisplay(sKt)}).`);
+            hasError = true;
+          }
+        }
+
+        if (hasError) return;
+
+        const payload = { tenHocKy, thoiGianBD, thoiGianKT };
+        const res = await HeadOfficeApi.updateSemester(maHocKy, payload);
+        if (res && res.success) {
+          closeModal('modal-edit-sem');
+          ApiClient.showToast('success', 'Cập nhật thành công', `Học kỳ ${maHocKy} đã được cập nhật thông tin.`);
+          await loadSemesters(currentPage);
+        } else {
+          ApiClient.showFieldError('edit-sem-thoiGianKT', (res && res.message) || 'Không thể cập nhật học kỳ. Vui lòng kiểm tra lại.');
+        }
+      });
+
       document.getElementById('btn-create-sem').addEventListener('click', () => {
+        ApiClient.clearAllFieldErrors('modal-create-sem');
         openModal('modal-create-sem');
       });
 
@@ -330,11 +597,61 @@
       // KHI BẤM NÚT LƯU TRÊN FORM KHỞI TẠO -> HIỆN THẺ XEM LẠI TRƯỚC KHI SUBMIT HOÀN TOÀN
       document.getElementById('form-create-sem').addEventListener('submit', (e) => {
         e.preventDefault();
+        ApiClient.clearAllFieldErrors('modal-create-sem');
         const maHocKy = document.getElementById('sem-maHocKy').value.trim();
         const tenHocKySelect = document.getElementById('sem-tenHocKy');
         const tenHocKy = tenHocKySelect.value;
         const thoiGianBD = document.getElementById('sem-thoiGianBD').value;
         const thoiGianKT = document.getElementById('sem-thoiGianKT').value;
+
+        let hasError = false;
+        if (!maHocKy) {
+          ApiClient.showFieldError('sem-maHocKy', 'Vui lòng nhập mã học kỳ.');
+          hasError = true;
+        } else if (allSemesters.some(s => s.maHocKy.toLowerCase() === maHocKy.toLowerCase())) {
+          ApiClient.showFieldError('sem-maHocKy', 'Mã học kỳ đã tồn tại trong hệ thống.');
+          hasError = true;
+        }
+
+        if (!tenHocKy) {
+          ApiClient.showFieldError('sem-tenHocKy', 'Vui lòng chọn tên học kỳ.');
+          hasError = true;
+        }
+
+        // Không cho phép tạo học kỳ có thời gian bắt đầu trước thời điểm hiện tại
+        if (!thoiGianBD) {
+          ApiClient.showFieldError('sem-thoiGianBD', 'Vui lòng chọn thời gian bắt đầu.');
+          hasError = true;
+        } else if (thoiGianBD < todayStr) {
+          ApiClient.showFieldError('sem-thoiGianBD', `Thời gian bắt đầu học kỳ không được trước thời điểm hiện tại (${formatDateDisplay(todayStr)}).`);
+          hasError = true;
+        }
+
+        if (!thoiGianKT) {
+          ApiClient.showFieldError('sem-thoiGianKT', 'Vui lòng chọn thời gian kết thúc.');
+          hasError = true;
+        } else if (thoiGianBD && thoiGianKT <= thoiGianBD) {
+          ApiClient.showFieldError('sem-thoiGianKT', 'Thời gian kết thúc phải sau thời gian bắt đầu.');
+          hasError = true;
+        }
+
+        // Kiểm tra nghiêm ngặt không cho phép các học kỳ chồng chéo lên nhau
+        if (!hasError && thoiGianBD && thoiGianKT) {
+          const overlapped = allSemesters.find(s => {
+            const sBd = normalizeDate(s.thoiGianBD);
+            const sKt = normalizeDate(s.thoiGianKT);
+            if (!sBd || !sKt) return false;
+            return (thoiGianBD <= sKt && thoiGianKT >= sBd);
+          });
+          if (overlapped) {
+            const sBd = normalizeDate(overlapped.thoiGianBD);
+            const sKt = normalizeDate(overlapped.thoiGianKT);
+            ApiClient.showFieldError('sem-thoiGianKT', `Thời gian học kỳ bị chồng chéo với học kỳ ${overlapped.maHocKy} (${formatDateDisplay(sBd)} - ${formatDateDisplay(sKt)}).`);
+            hasError = true;
+          }
+        }
+
+        if (hasError) return;
 
         pendingSemesterPayload = {
           maHocKy,
@@ -346,6 +663,8 @@
         // Điền dữ liệu vào thẻ xem lại để người dùng rà soát
         document.getElementById('review-maHocKy').textContent = maHocKy;
         document.getElementById('review-tenHocKy').textContent = tenHocKySelect.selectedOptions[0].text;
+        document.getElementById('review-thoiGianBD').textContent = formatDateDisplay(thoiGianBD);
+        document.getElementById('review-thoiGianKT').textContent = formatDateDisplay(thoiGianKT);
 
         // Mở thẻ xem lại & xác nhận
         openModal('modal-confirm-sem');
@@ -364,13 +683,19 @@
           await loadSemesters(1);
           ApiClient.showToast('success', 'Tạo học kỳ thành công', 'Học kỳ mới đã được thêm vào danh sách.');
         } else {
-          ApiClient.showToast('error', 'Không thể tạo học kỳ',
-            (res && res.message) || 'Không nhận được phản hồi hợp lệ từ máy chủ.');
+          closeModal('modal-confirm-sem');
+          ApiClient.showFieldError('sem-thoiGianKT', (res && res.message) || 'Không thể tạo học kỳ. Vui lòng kiểm tra lại.');
         }
       });
 
-      window.openModal = id => document.getElementById(id).style.display = 'flex';
-      window.closeModal = id => document.getElementById(id).style.display = 'none';
+      window.openModal = id => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors(id);
+        document.getElementById(id).style.display = 'flex';
+      };
+      window.closeModal = id => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors(id);
+        document.getElementById(id).style.display = 'none';
+      };
 
       loadSemesters(1);
     });

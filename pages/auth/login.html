@@ -249,6 +249,24 @@
       align-items: center;
       justify-content: space-between;
     }
+
+    /* THÔNG BÁO LỖI TEXT MÀU ĐỎ NẰM PHÍA TRÊN Ô INPUT */
+    .field-error-text {
+      color: #DC2626;
+      font-size: 11.5px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      display: block;
+      animation: fieldErrorFadeIn 0.15s ease-in-out;
+    }
+    @keyframes fieldErrorFadeIn {
+      from { opacity: 0; transform: translateY(-2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .form-control.is-invalid {
+      border-color: #DC2626 !important;
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15) !important;
+    }
   </style>
 </head>
 <body>
@@ -266,15 +284,15 @@
     <div class="login-title">ĐĂNG NHẬP</div>
     <div class="login-subtitle">Cổng thông tin đào tạo</div>
 
-    <form id="login-form" onsubmit="handleLogin(event)">
+    <form id="login-form" novalidate onsubmit="handleLogin(event)">
       <!-- Tên đăng nhập -->
       <div class="form-group">
+        <div class="field-error-text" id="username-error" style="display: none;"></div>
         <input 
           type="text" 
           id="username" 
           class="form-control" 
           placeholder="Email hoặc Tên đăng nhập" 
-          
           required 
           autocomplete="username"
         />
@@ -282,13 +300,13 @@
 
       <!-- Mật khẩu -->
       <div class="form-group">
+        <div class="field-error-text" id="password-error" style="display: none;"></div>
         <div class="password-wrap">
           <input 
             type="password" 
             id="password" 
             class="form-control" 
             placeholder="Mật khẩu" 
-            
             required 
             autocomplete="current-password"
           />
@@ -327,30 +345,11 @@
 
       <!-- Quên mật khẩu -->
       <div class="card-footer-row">
-        <a href="javascript:void(0)" onclick="alert('Vui lòng liên hệ Phòng Đào tạo (P.A102) hoặc gửi email tới phongdaotao@quanlyhocvu.edu.vn để được hỗ trợ cấp lại mật khẩu.')" class="forgot-link">
+        <a href="javascript:void(0)" onclick="ApiClient.showToast('info', 'Cấp lại mật khẩu', 'Vui lòng liên hệ Phòng Đào tạo (P.A102) hoặc gửi email tới phongdaotao@quanlyhocvu.edu.vn để được hỗ trợ cấp lại mật khẩu.')" class="forgot-link">
           Quên mật khẩu
         </a>
       </div>
     </form>
-
-    <!-- Hướng dẫn tài khoản demo đa vai trò -->
-    <div style="margin-top: 14px; background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 6px; padding: 10px 12px; font-size: 11.5px;">
-      <div style="font-weight: 700; color: #002D4F; margin-bottom: 6px;">Chọn nhanh tài khoản CSDL thật (Neon DB):</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-        <button type="button" class="btn btn-outline btn-sm" onclick="fillDemo('an.nguyen@example.com', '123456', 'SINHVIEN')" style="font-size: 11px; padding: 4px 6px; text-align: left; background: #FFFFFF; cursor: pointer;">
-          🎓 Sinh viên (An)
-        </button>
-        <button type="button" class="btn btn-outline btn-sm" onclick="fillDemo('binh.tran@example.com', '123456', 'GIANGVIEN')" style="font-size: 11px; padding: 4px 6px; text-align: left; background: #FFFFFF; cursor: pointer;">
-          👨‍🏫 Giảng viên (Bình)
-        </button>
-        <button type="button" class="btn btn-outline btn-sm" onclick="fillDemo('cuong.le@example.com', '123456', 'TROLY')" style="font-size: 11px; padding: 4px 6px; text-align: left; background: #FFFFFF; cursor: pointer;">
-          📋 Trợ lý ĐT (Cường)
-        </button>
-        <button type="button" class="btn btn-outline btn-sm" onclick="fillDemo('dung.pham@example.com', '123456', 'TRUONGPHONG')" style="font-size: 11px; padding: 4px 6px; text-align: left; background: #FFFFFF; cursor: pointer;">
-          🏛️ Trưởng phòng ĐT (Dung)
-        </button>
-      </div>
-    </div>
   </div>
 
   <!-- BẢN QUYỀN HỆ THỐNG -->
@@ -373,21 +372,23 @@
       }
     }
 
-    function fillDemo(email, password, role) {
-      document.getElementById('username').value = email;
-      document.getElementById('password').value = password;
-    }
-
     async function handleLogin(e) {
       e.preventDefault();
+      ApiClient.clearAllFieldErrors('login-form');
       const inputUser = document.getElementById('username').value.trim();
       const inputPass = document.getElementById('password').value;
       const btnSubmit = document.getElementById('btn-submit');
 
-      if (!inputUser || !inputPass) {
-        alert('Vui lòng nhập đầy đủ email và mật khẩu.');
-        return;
+      let hasError = false;
+      if (!inputUser) {
+        ApiClient.showFieldError('username', 'Vui lòng nhập email hoặc tên đăng nhập.');
+        hasError = true;
       }
+      if (!inputPass) {
+        ApiClient.showFieldError('password', 'Vui lòng nhập mật khẩu.');
+        hasError = true;
+      }
+      if (hasError) return;
 
       btnSubmit.disabled = true;
       btnSubmit.textContent = 'Đang xác thực với máy chủ...';
@@ -424,7 +425,9 @@
         }
 
         if (!res || !res.success || !res.data) {
-          alert(res?.message || 'Đăng nhập không thành công. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.');
+          const errMsg = res?.message || 'Đăng nhập không thành công. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu.';
+          ApiClient.showFieldError('username', errMsg);
+          ApiClient.showFieldError('password', 'Vui lòng kiểm tra lại mật khẩu.');
           btnSubmit.disabled = false;
           btnSubmit.textContent = 'Đăng nhập';
           return;
@@ -449,7 +452,7 @@
 
         window.location.href = redirectUrl;
       } catch (err) {
-        alert('Lỗi kết nối máy chủ: ' + err.message);
+        ApiClient.showFieldError('username', 'Lỗi kết nối máy chủ: ' + err.message);
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'Đăng nhập';
       }

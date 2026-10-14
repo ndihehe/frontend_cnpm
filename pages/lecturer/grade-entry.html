@@ -186,7 +186,7 @@
         </div>
 
         <!-- BẢNG NHẬP ĐIỂM TRONG KHUNG .HOCVU-CARD CHUẨN DESIGN STUDENT -->
-        <form id="form-grades">
+        <form id="form-grades" novalidate>
           <div class="hocvu-card" style="margin-bottom: 20px;">
             <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center;">
               <div class="hocvu-card-title">
@@ -377,9 +377,11 @@
                        value="${vangVal}" data-field="soBuoiVang" title="Số buổi vắng được tự động đồng bộ từ chức năng Điểm danh theo quy chế (Readonly). Vắng > 3 buổi sẽ tự động cấm thi." />
               </td>
               <td style="text-align: center;">
+                <div class="field-error-text" style="display:none; font-size:10px; margin-bottom:2px;"></div>
                 <input type="number" step="0.1" min="0" max="10" required class="grade-input input-qt" style="width: 75px;" value="${s.diemQuaTrinh != null ? s.diemQuaTrinh : ''}" data-field="diemQuaTrinh" title="Điểm quá trình (Hệ số 0.4)" />
               </td>
               <td style="text-align: center;">
+                <div class="field-error-text" style="display:none; font-size:10px; margin-bottom:2px;"></div>
                 <input type="number" step="0.1" min="0" max="10" required class="grade-input input-ck" style="width: 75px;" value="${s.diemCuoiKy != null ? s.diemCuoiKy : ''}" data-field="diemCuoiKy" title="Điểm cuối kỳ (Hệ số 0.6)" />
               </td>
               <td style="text-align: center;">
@@ -406,7 +408,21 @@
             const vang = Math.max(0, parseInt(vangInp.value) || 0);
             const qt = tr.querySelector('.input-qt').value;
             const ck = tr.querySelector('.input-ck').value;
-            const noteInp = tr.querySelector('.input-note');
+
+            // Kiểm tra tính hợp lệ của điểm khi gõ và hiển thị thông báo đỏ phía trên ô input nếu không hợp lệ
+            if (inp.classList.contains('input-qt') || inp.classList.contains('input-ck')) {
+              const val = inp.value.trim();
+              if (val !== '') {
+                const num = Number(val);
+                if (isNaN(num) || num < 0 || num > 10) {
+                  ApiClient.showFieldError(inp, 'Điểm 0-10');
+                } else {
+                  ApiClient.clearFieldError(inp);
+                }
+              } else {
+                ApiClient.clearFieldError(inp);
+              }
+            }
 
             const res = calculateGrade(qt, ck, vang);
             tr.querySelector('.grade-tk').textContent = res.tk;
@@ -462,7 +478,7 @@
       if (exportBtn) {
         exportBtn.addEventListener('click', () => {
           if (!currentStudents || currentStudents.length === 0) {
-            alert('Không có dữ liệu sinh viên để xuất file!');
+            ApiClient.showToast('warning', 'Không có dữ liệu', 'Không có dữ liệu sinh viên để xuất file!');
             return;
           }
 
@@ -486,7 +502,6 @@
           if (window.ApiClient && ApiClient.showToast) {
             ApiClient.showToast('success', 'Xuất file thành công', `Đã xuất và tải về bảng điểm lớp ${currentLHP}.`);
           } else {
-            alert(`Đã xuất và tải về bảng điểm lớp ${currentLHP} thành công!`);
           }
         });
       }
@@ -498,7 +513,7 @@
           const selectClass = document.getElementById('select-class');
           const options = Array.from(selectClass.options).filter(opt => opt.value);
           if (options.length === 0) {
-            alert('Không có lớp học phần nào để xuất bảng điểm.');
+            ApiClient.showToast('warning', 'Không có lớp', 'Không có lớp học phần nào để xuất bảng điểm.');
             return;
           }
 
@@ -537,11 +552,10 @@
             if (window.ApiClient && ApiClient.showToast) {
               ApiClient.showToast('success', 'Xuất toàn bộ bảng điểm thành công', `Đã tổng hợp và tải về dữ liệu của ${options.length} lớp học phần.`);
             } else {
-              alert(`Đã xuất toàn bộ bảng điểm của ${options.length} lớp thành công!`);
             }
           } catch (err) {
             console.error('Lỗi xuất toàn bộ bảng điểm:', err);
-            alert('Có lỗi xảy ra khi tổng hợp bảng điểm tất cả các lớp.');
+            ApiClient.showToast('error', 'Lỗi xuất file', 'Có lỗi xảy ra khi tổng hợp bảng điểm tất cả các lớp.');
           } finally {
             btnExportAll.disabled = false;
             btnExportAll.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">folder_zip</span><span>Xuất toàn bộ bảng điểm</span>';
@@ -552,14 +566,40 @@
       // Lưu bảng điểm lớp
       document.getElementById('form-grades').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors('form-grades');
 
+        let hasError = false;
+        let firstInvalidInput = null;
+
+        const inputs = tbody.querySelectorAll('input.grade-input:not([readonly])');
+        inputs.forEach(inp => {
+          const val = inp.value.trim();
+          if (val === '') {
+            ApiClient.showFieldError(inp, 'Nhập điểm');
+            hasError = true;
+            if (!firstInvalidInput) firstInvalidInput = inp;
+          } else {
+            const num = Number(val);
+            if (isNaN(num) || num < 0 || num > 10) {
+              ApiClient.showFieldError(inp, 'Điểm 0-10');
+              hasError = true;
+              if (!firstInvalidInput) firstInvalidInput = inp;
+            }
+          }
+        });
+
+        if (hasError) {
+          if (firstInvalidInput) firstInvalidInput.focus();
+          return;
+        }
 
         const payload = currentStudents.map(s => ({ maSV: s.maSV, diemQuaTrinh: s.diemQuaTrinh != null ? Number(s.diemQuaTrinh) : null, diemCuoiKy: s.diemCuoiKy != null ? Number(s.diemCuoiKy) : null }));
         const res = await LecturerApi.saveClassGrades(currentLHP, payload);
         if (res && res.success) {
           ApiClient.showToast('success', 'Lưu thành công', `Đã lưu và cập nhật điểm lớp ${currentLHP} vào hệ thống.`);
           await loadGradeSheet(currentLHP);
+        } else {
+          ApiClient.showToast('error', 'Lưu thất bại', (res && res.message) || 'Có lỗi xảy ra khi lưu bảng điểm.');
         }
       });
     });

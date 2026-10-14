@@ -194,15 +194,17 @@
       </header>
 
       <main class="content-body">
-        <div class="page-banner" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="page-banner" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div style="display: flex; align-items: center; gap: 8px;">
             <span class="material-symbols-outlined" style="font-size: 18px;">app_registration</span>
             <span>CỔNG ĐĂNG KÝ HỌC PHẦN TRỰC TUYẾN</span>
           </div>
-          <button id="btn-open-request-modal" class="btn btn-outline-primary btn-sm" style="background:#fff; font-weight:700;">
-            <span class="material-symbols-outlined" style="font-size: 15px;">add_circle</span>
-            Kiến nghị mở lớp mới
-          </button>
+          <div>
+            <button id="btn-open-request-modal" class="btn btn-outline-primary btn-sm" style="background:#fff; font-weight:700;">
+              <span class="material-symbols-outlined" style="font-size: 15px;">add_circle</span>
+              Kiến nghị mở lớp mới
+            </button>
+          </div>
         </div>
 
         <!-- THANH META THÔNG TIN TÍN CHỈ VÀ HẠN MỨC -->
@@ -215,19 +217,19 @@
             <div style="height: 24px; width: 1px; background: #E2E8F0;"></div>
             <div>
               <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700; display:block;">Số lớp đã ghi danh:</span>
-              <strong id="meta-total-classes" style="color: #0284C7; font-size: 14px;">3 lớp</strong>
+              <strong id="meta-total-classes" style="color: #0284C7; font-size: 14px;">0 lớp</strong>
             </div>
             <div style="height: 24px; width: 1px; background: #E2E8F0;"></div>
             <div>
               <span style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700; display:block;">Tín chỉ đăng ký / Hạn mức:</span>
               <span style="font-size: 14px;">
-                <strong id="meta-total-credits" style="color: #107C41;">9</strong> / <strong id="meta-max-credits">24</strong> TC
+                <strong id="meta-total-credits" style="color: #107C41;">0</strong> / <strong id="meta-max-credits">24</strong> TC
               </span>
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <span class="badge-closed" id="reg-status-badge" style="background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; font-size: 12px; padding: 5px 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; border-radius: 4px;">
-              <span class="material-symbols-outlined" style="font-size: 15px;">lock</span> Cổng đăng ký đã đóng (Đã vào kỳ học từ 01/09/2026)
+              <span class="material-symbols-outlined" style="font-size: 15px;">hourglass_top</span> Đang kiểm tra cổng đăng ký...
             </span>
           </div>
         </div>
@@ -237,7 +239,7 @@
           <div class="hocvu-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <div class="hocvu-card-title">
               <span class="material-symbols-outlined" style="font-size: 18px; color: #0284C7;">list_alt</span>
-              LỚP HỌC PHẦN ĐANG MỞ ĐĂNG KÝ
+              <span id="open-card-title">LỚP HỌC PHẦN ĐANG MỞ ĐĂNG KÝ</span>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
               <input type="text" id="open-search" class="filter-select" placeholder="Tìm tên môn, mã HP, mã lớp..." style="width: 250px; font-size: 12px;" />
@@ -287,7 +289,7 @@
           <div class="hocvu-card-header" style="background: #EBF5FB;">
             <div class="hocvu-card-title" style="color: #00365D;">
               <span class="material-symbols-outlined" style="font-size: 18px; color: #107C41;">task_alt</span>
-              KẾT QUẢ ĐĂNG KÝ: CÁC LỚP HỌC PHẦN ĐÃ GHI DANH THÀNH CÔNG
+              <span id="reg-card-title">KẾT QUẢ ĐĂNG KÝ: CÁC LỚP HỌC PHẦN ĐÃ GHI DANH THÀNH CÔNG</span>
             </div>
           </div>
           <div class="hocvu-card-body" style="padding: 0;">
@@ -351,10 +353,12 @@
       <div style="padding: 20px;">
         <div style="margin-bottom: 12px;">
           <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">MÃ HỌC PHẦN (*)</label>
+          <div class="field-error-text" id="req-maHP-error" style="display: none;"></div>
           <input type="text" id="req-maHP" class="filter-select" placeholder="Ví dụ: INT1405" style="width: 100%; box-sizing: border-box;" />
         </div>
         <div style="margin-bottom: 12px;">
           <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">LÝ DO KIẾN NGHỊ (*)</label>
+          <div class="field-error-text" id="req-lyDo-error" style="display: none;"></div>
           <textarea id="req-lyDo" class="filter-select" rows="3" placeholder="Nhập lý do cần mở thêm lớp (ví dụ: cần học để kịp tiến độ tốt nghiệp...)" style="width: 100%; box-sizing: border-box; resize: vertical;"></textarea>
         </div>
         <div style="margin-bottom: 8px;">
@@ -375,10 +379,12 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      let activeUpcomingSemester = null; // Đúng 1 học kỳ sắp diễn ra gần nhất
       let currentPage = 1;
       let totalPages = 1;
       let targetHoSoToCancel = null;
       let registeredClassCodes = new Set();
+      let registeredClassesList = [];
 
       const openSearchInput = document.getElementById('open-search');
       const btnSearch = document.getElementById('btn-search');
@@ -389,9 +395,11 @@
       const openTbody = document.getElementById('open-classes-tbody');
       const regTbody = document.getElementById('registered-classes-tbody');
 
+      const metaSemesterName = document.getElementById('meta-semester-name');
       const metaTotalClasses = document.getElementById('meta-total-classes');
       const metaTotalCredits = document.getElementById('meta-total-credits');
       const metaMaxCredits = document.getElementById('meta-max-credits');
+      const regStatusBadge = document.getElementById('reg-status-badge');
 
       // Modals
       const confirmModal = document.getElementById('confirm-modal');
@@ -407,61 +415,182 @@
 
       // Toast Notification Helper
       function showToast(msg, type = 'success') {
-        const c = document.getElementById('toast-container');
-        if (!c) return;
-        const t = document.createElement('div');
-        t.className = `toast-msg toast-${type}`;
-        const iconName = type === 'success' ? 'check_circle' : type === 'error' ? 'error' : 'info';
-        t.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">${iconName}</span><span>${msg}</span>`;
-        c.appendChild(t);
-        setTimeout(() => {
-          t.style.opacity = '0';
-          t.style.transition = 'opacity 0.3s';
-          setTimeout(() => t.remove(), 300);
-        }, 4000);
+        if (window.ApiClient && ApiClient.showToast) {
+          const title = type === 'success' ? 'Thành công' : (type === 'error' ? 'Thất bại' : 'Thông báo');
+          ApiClient.showToast(type, title, msg);
+        }
       }
 
-      // 1. TẢI DANH SÁCH LỚP ĐÃ GHI DANH (ROUTE 14)
+      /**
+       * ĐỊNH DẠNG TÊN HIỂN THỊ HỌC KỲ
+       * Ví dụ: 2026_2027_HK2 -> Học kỳ 2 (2026 - 2027)
+       */
+      function formatSemesterTitle(sem) {
+        if (!sem) return '';
+        if (sem.tenHocKy && sem.tenHocKy.includes('(')) return sem.tenHocKy;
+        const ma = sem.maHocKy || '';
+        const parts = ma.split('_');
+        if (parts.length >= 3) {
+          const y1 = parts[0];
+          const y2 = parts[1];
+          let hkText = parts[2];
+          if (hkText === 'HK1') hkText = 'Học kỳ 1';
+          else if (hkText === 'HK2') hkText = 'Học kỳ 2';
+          else if (hkText === 'HK3' || hkText === 'HKHE') hkText = 'Học kỳ hè';
+          return `${hkText} (${y1} - ${y2})`;
+        }
+        return sem.tenHocKy || sem.maHocKy;
+      }
+
+      /**
+       * TÌM ĐÚNG 1 HỌC KỲ SẮP DIỄN RA GẦN NHẤT
+       * - Không phải học kỳ hiện hành (isCurrent !== true và hienHanh !== true)
+       * - Có thời gian bắt đầu trong tương lai (thoiGianBD > ngày hiện tại)
+       * - Phòng trường hợp tạo nhiều học kỳ mới trong DB: Sắp xếp tăng dần theo thoiGianBD và lấy phần tử đầu tiên
+       */
+      function findUpcomingSemester(semesters) {
+        if (!Array.isArray(semesters) || semesters.length === 0) return null;
+
+        const now = new Date();
+        const todayStr = now.toISOString().split('T')[0];
+
+        // Lọc các học kỳ chưa diễn ra
+        const upcomingList = semesters.filter(s => {
+          const isCurrent = (s.isCurrent === true || s.hienHanh === true);
+          if (isCurrent) return false;
+          const bd = (window.ApiClient && ApiClient.normalizeDate) ? ApiClient.normalizeDate(s.thoiGianBD) : (s.thoiGianBD ? String(s.thoiGianBD).split('T')[0] : '');
+          if (bd) {
+            return bd > todayStr;
+          }
+          return false;
+        });
+
+        if (upcomingList.length === 0) {
+          return null;
+        }
+
+        // Sắp xếp tăng dần theo thời gian bắt đầu thoiGianBD (gần nhất đến xa nhất)
+        upcomingList.sort((a, b) => {
+          const bdA = (window.ApiClient && ApiClient.normalizeDate) ? ApiClient.normalizeDate(a.thoiGianBD) : (a.thoiGianBD || '');
+          const bdB = (window.ApiClient && ApiClient.normalizeDate) ? ApiClient.normalizeDate(b.thoiGianBD) : (b.thoiGianBD || '');
+          if (bdA && bdB) {
+            return bdA.localeCompare(bdB);
+          }
+          return (a.maHocKy || '').localeCompare(b.maHocKy || '');
+        });
+
+        // Chỉ lấy lên ĐÚNG 1 học kỳ sắp diễn ra gần nhất
+        return upcomingList[0];
+      }
+
+      /**
+       * CẬP NHẬT GIAO DIỆN KHI ĐỢT ĐĂNG KÝ ĐÓNG
+       */
+      function setRegistrationClosedUI(reasonMsg = 'Đợt đăng ký học kỳ hiện tại đã đóng') {
+        if (metaSemesterName) {
+          if (activeUpcomingSemester) {
+            metaSemesterName.textContent = `${formatSemesterTitle(activeUpcomingSemester)} (Đã đóng)`;
+          } else {
+            metaSemesterName.textContent = 'Đợt đăng ký học kỳ hiện tại đã đóng';
+          }
+        }
+
+        if (regStatusBadge) {
+          regStatusBadge.className = 'badge-closed';
+          regStatusBadge.style.background = '#FEF2F2';
+          regStatusBadge.style.border = '1px solid #FECACA';
+          regStatusBadge.style.color = '#DC2626';
+          regStatusBadge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 15px;">lock</span> Đợt đăng ký học kỳ hiện tại đã đóng`;
+        }
+
+        openTbody.innerHTML = `
+          <tr>
+            <td colspan="10" style="text-align: center; padding: 36px 20px; color: #DC2626; font-size: 13px; font-weight: 500;">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="font-size: 32px; color: #DC2626;">event_busy</span>
+                <div style="font-weight: 700; font-size: 14px;">Đợt đăng ký học kỳ hiện tại đã đóng</div>
+                <div style="color: #64748B; font-size: 12px; max-width: 520px;">${reasonMsg}</div>
+              </div>
+            </td>
+          </tr>
+        `;
+
+        paginationInfo.textContent = 'Đang hiển thị trang 0 / 0 (Tổng 0 lớp mở)';
+        btnPrevPage.disabled = true;
+        btnNextPage.disabled = true;
+      }
+
+      /**
+       * CẬP NHẬT GIAO DIỆN KHI CỔNG ĐĂNG KÝ ĐANG MỞ
+       */
+      function setRegistrationOpenUI(semesterTitle) {
+        if (metaSemesterName) {
+          metaSemesterName.textContent = semesterTitle;
+        }
+
+        if (regStatusBadge) {
+          regStatusBadge.className = 'badge-open';
+          regStatusBadge.style.background = '#ECFDF5';
+          regStatusBadge.style.border = '1px solid #A7F3D0';
+          regStatusBadge.style.color = '#059669';
+          regStatusBadge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 15px;">how_to_reg</span> Cổng đăng ký đang mở cho ${semesterTitle}`;
+        }
+      }
+
+      // 1. TẢI DANH SÁCH LỚP ĐÃ GHI DANH CỦA ĐÚNG HỌC KỲ SẮP DIỄN RA (ROUTE 14)
       async function loadRegisteredClasses() {
         regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 20px; color: var(--text-muted);">Đang tải lớp đã đăng ký...</td></tr>`;
+
+        if (!activeUpcomingSemester) {
+          metaTotalClasses.textContent = '0 lớp';
+          metaTotalCredits.textContent = '0';
+          regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 25px; color: var(--text-muted); font-size: 13px;">Chưa có lớp học phần nào được đăng ký.</td></tr>`;
+          return;
+        }
+
         try {
-          const res = await StudentApi.getRegisteredClasses();
+          // Gửi maHocKy để backend/mock trả về danh sách lớp học phần trong kỳ đó
+          const res = await StudentApi.getRegisteredClasses(activeUpcomingSemester.maHocKy);
           if (!res || !res.success || !res.data) {
             regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #EF4444;">Không thể tải lớp đã ghi danh</td></tr>`;
             return;
           }
 
-          // Cập nhật Meta
-          if (res.meta) {
-            if (res.meta.tenHocKy) {
-              const semEl = document.getElementById('meta-semester-name');
-              if (semEl) semEl.textContent = res.meta.tenHocKy;
-            }
-            metaTotalClasses.textContent = (res.meta.tongSoLopDaDangKy != null ? res.meta.tongSoLopDaDangKy : res.data.length) + ' lớp';
-            const totCredits = res.meta.tongSoTinChiDaDangKy != null ? res.meta.tongSoTinChiDaDangKy : 0;
-            const maxCredits = res.meta.hanMucTinChiToiDa || 24;
-            const creditsEl = document.getElementById('meta-total-credits');
-            const maxEl = document.getElementById('meta-max-credits');
-            if (creditsEl) creditsEl.textContent = totCredits;
-            if (maxEl) maxEl.textContent = maxCredits;
-            const ratioEl = document.getElementById('meta-credits-ratio');
-            if (ratioEl && (!creditsEl || !maxEl)) ratioEl.textContent = `${totCredits} / ${maxCredits} TC`;
+          const rawList = Array.isArray(res.data) ? res.data : [];
+
+          // YÊU CẦU: danh sách ở dưới hiển thị các lớp học phần trong kỳ đó của sinh viên đã đăng ký (không bị hủy)
+          registeredClassesList = rawList.filter(item => {
+            const matchSem = !item.maHocKy || item.maHocKy === activeUpcomingSemester.maHocKy;
+            const isNotCanceled = item.trangThai !== 'DAHUY' && !item.daHuy;
+            return matchSem && isNotCanceled;
+          });
+
+          // Cập nhật tập hợp mã lớp đã ghi danh
+          registeredClassCodes.clear();
+          registeredClassesList.forEach(item => registeredClassCodes.add(item.maLHP));
+
+          // Cập nhật thẻ Meta số lớp và số tín chỉ CHỈ tính trên các lớp của học kỳ này
+          metaTotalClasses.textContent = `${registeredClassesList.length} lớp`;
+          const totCredits = registeredClassesList.reduce((sum, item) => sum + (Number(item.soTinChi) || 0), 0);
+          metaTotalCredits.textContent = totCredits;
+          if (metaMaxCredits) metaMaxCredits.textContent = res.meta?.hanMucTinChiToiDa || 24;
+
+          const regCardTitle = document.getElementById('reg-card-title');
+          if (regCardTitle) {
+            regCardTitle.textContent = `KẾT QUẢ ĐĂNG KÝ: CÁC LỚP HỌC PHẦN ĐÃ GHI DANH THÀNH CÔNG - ${formatSemesterTitle(activeUpcomingSemester)}`;
           }
 
-          registeredClassCodes.clear();
-          const list = res.data;
-          if (list.length === 0) {
-            regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 25px; color: var(--text-muted);">Chưa có lớp học phần nào được ghi danh.</td></tr>`;
+          if (registeredClassesList.length === 0) {
+            regTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 25px; color: var(--text-muted); font-size: 13px;">Chưa có lớp học phần nào được đăng ký trong học kỳ này.</td></tr>`;
             return;
           }
 
           let html = '';
-          list.forEach((item, idx) => {
-            registeredClassCodes.add(item.maLHP);
+          registeredClassesList.forEach((item, idx) => {
             html += `
               <tr>
                 <td style="text-align: center; color: var(--text-muted);">${idx + 1}</td>
-                <td style="text-align: center; font-family: monospace; font-weight: 600;">#${item.maHoSo}</td>
+                <td style="text-align: center; font-family: monospace; font-weight: 600;">#${item.maHoSo || (idx + 1000)}</td>
                 <td><strong>${item.maLHP}</strong></td>
                 <td>${item.tenHP}</td>
                 <td style="text-align: center; font-weight: 700;">${item.soTinChi}</td>
@@ -470,29 +599,26 @@
                 <td style="text-align: center;">${item.phongHoc || '-'}</td>
                 <td>${item.tenGiangVien || '-'}</td>
                 <td style="text-align: center;">
-                  ${(item.canCancel === true) ? `
-                  <button class="btn btn-sm btn-outline-danger btn-cancel-enroll" data-hoso="${item.maHoSo}" data-name="${item.tenHP} (${item.maLHP})" style="padding: 3px 8px; font-size: 11px; border: 1px solid #FCA5A5; color: #DC2626; background: #FEF2F2; border-radius: 4px; cursor: pointer;">
+                  <button class="btn btn-sm btn-outline-danger btn-cancel-enroll"
+                          data-hoso="${item.maHoSo || (idx + 1000)}"
+                          data-name="${item.tenHP} (${item.maLHP})"
+                          style="padding: 3px 8px; font-size: 11px; border: 1px solid #FCA5A5; color: #DC2626; background: #FEF2F2; border-radius: 4px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 3px;">
                     <span class="material-symbols-outlined" style="font-size: 13px; vertical-align: middle;">cancel</span> Hủy
                   </button>
-                  ` : `
-                  <button class="btn btn-sm btn-secondary" disabled title="Học kỳ đã bắt đầu từ 01/09/2026. Không thể hủy học phần theo quy chế đào tạo." style="padding: 4px 8px; font-size: 11px; border-radius: 4px; opacity: 0.75; cursor: not-allowed; background: #E2E8F0; color: #64748B; border: 1px solid #CBD5E1; font-weight: 600; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;">
-                    <span class="material-symbols-outlined" style="font-size: 13px; vertical-align: middle;">event_busy</span> Hết hạn hủy
-                  </button>
-                  `}
                 </td>
               </tr>
             `;
           });
           regTbody.innerHTML = html;
 
-          // Lắng nghe nút Hủy
+          // Lắng nghe sự kiện click nút Hủy
           document.querySelectorAll('.btn-cancel-enroll').forEach(btn => {
             btn.addEventListener('click', function() {
               targetHoSoToCancel = {
                 maHoSo: this.getAttribute('data-hoso'),
                 name: this.getAttribute('data-name')
               };
-              confirmModalText.innerHTML = `Bạn có chắc chắn muốn hủy đăng ký lớp học phần <strong>${targetHoSoToCancel.name}</strong> không?<br><span style="font-size:11.5px; color:#EF4444;">Hành động này sẽ giải phóng sĩ số lớp.</span>`;
+              confirmModalText.innerHTML = `Bạn có chắc chắn muốn hủy đăng ký lớp học phần <strong>${targetHoSoToCancel.name}</strong> không?<br><span style="font-size:11.5px; color:#EF4444;">Hành động này sẽ giải phóng sĩ số lớp trong ${formatSemesterTitle(activeUpcomingSemester)}.</span>`;
               confirmModal.classList.add('open');
             });
           });
@@ -503,35 +629,58 @@
         }
       }
 
-      // 2. TẢI DANH SÁCH LỚP ĐANG MỞ (ROUTE 13)
+      // 2. TẢI DANH SÁCH LỚP ĐANG MỞ CỦA ĐÚNG HỌC KỲ SẮP DIỄN RA (ROUTE 13)
       async function loadOpenClasses() {
+        if (!activeUpcomingSemester) {
+          setRegistrationClosedUI('Chưa tồn tại học kỳ nào chưa diễn ra trong cơ sở dữ liệu. Đợt đăng ký học kỳ hiện tại đã đóng.');
+          return;
+        }
+
         openTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 25px; color: var(--text-muted);">Đang tải lớp học phần mở...</td></tr>`;
+
         try {
           const kw = openSearchInput.value.trim();
-          const res = await StudentApi.getOpenClasses(kw, currentPage, 10);
+          // Chỉ lấy lên các lớp của đúng 1 học kỳ sắp diễn ra
+          const res = await StudentApi.getOpenClasses(kw, currentPage, 10, activeUpcomingSemester.maHocKy);
 
           if (!res || !res.success || !res.data) {
-            openTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #EF4444;">Không thể tải danh sách lớp mở.</td></tr>`;
+            setRegistrationClosedUI(res?.message || 'Không thể tải danh sách lớp mở.');
             return;
+          }
+
+          const rawList = Array.isArray(res.data) ? res.data : [];
+
+          // YÊU CẦU: Lấy lên đúng các lớp học phần đang có trạng thái MỞ ĐĂNG KÝ (MODANGKY / DANG_MO) của đúng 1 học kỳ sắp diễn ra
+          const openClasses = rawList.filter(item => {
+            const matchSem = !item.maHocKy || item.maHocKy === activeUpcomingSemester.maHocKy;
+            const isOpen = (item.trangThai === 'MODANGKY' || item.trangThai === 'DANG_MO');
+            return matchSem && isOpen;
+          });
+
+          // YÊU CẦU: nếu danh sách lớp học phần trả về ko có gì thì hiện thông báo đợt đăng ký học kỳ hiện tại đã đóng
+          if (openClasses.length === 0) {
+            setRegistrationClosedUI(`Hiện không có lớp học phần nào đang có trạng thái mở đăng ký trong ${formatSemesterTitle(activeUpcomingSemester)}.`);
+            return;
+          }
+
+          // Cập nhật trạng thái mở thành công
+          const semTitle = formatSemesterTitle(activeUpcomingSemester);
+          setRegistrationOpenUI(semTitle);
+
+          const openCardTitle = document.getElementById('open-card-title');
+          if (openCardTitle) {
+            openCardTitle.textContent = `LỚP HỌC PHẦN ĐANG MỞ ĐĂNG KÝ - ${semTitle}`;
           }
 
           // Cập nhật Pagination Meta
-          if (res.meta) {
-            currentPage = res.meta.page;
-            totalPages = res.meta.totalPages || 1;
-            paginationInfo.textContent = `Đang hiển thị trang ${res.meta.page} / ${res.meta.totalPages} (Tổng số ${res.meta.totalItems} lớp mở)`;
-            btnPrevPage.disabled = (currentPage <= 1);
-            btnNextPage.disabled = (currentPage >= totalPages);
-          }
-
-          const list = res.data;
-          if (list.length === 0) {
-            openTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px;"><span class="material-symbols-outlined" style="font-size: 24px; vertical-align: middle; color: #94A3B8; margin-right: 6px;">event_busy</span> Cổng đăng ký học phần cho Học kỳ 1 (2026 - 2027) đã đóng. Theo quy chế đào tạo, việc đăng ký/hủy học phần chỉ thực hiện trước khi học kỳ bắt đầu (trước 01/09/2026).</td></tr>`;
-            return;
-          }
+          const totalItems = res.meta?.totalItems || openClasses.length;
+          totalPages = res.meta?.totalPages || Math.ceil(totalItems / 10) || 1;
+          paginationInfo.textContent = `Đang hiển thị trang ${currentPage} / ${totalPages} (Tổng số ${openClasses.length} lớp mở)`;
+          btnPrevPage.disabled = (currentPage <= 1);
+          btnNextPage.disabled = (currentPage >= totalPages);
 
           let html = '';
-          list.forEach((item, idx) => {
+          openClasses.forEach((item, idx) => {
             const isRegistered = registeredClassCodes.has(item.maLHP);
             const isFull = (item.siSoHienTai >= item.siSoToiDa);
 
@@ -541,7 +690,7 @@
                 <td><strong style="color: #0284C7;">${item.maLHP}</strong></td>
                 <td>
                   <div style="font-weight: 600; color: #002D4F;">${item.tenHP}</div>
-                  <div style="font-size: 11px; color: var(--text-muted);">${item.tenLHP}</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">${item.tenLHP || (item.maLHP + ' - Lớp 01')}</div>
                 </td>
                 <td style="text-align: center; font-weight: 700;">${item.soTinChi}</td>
                 <td style="text-align: center;">Thứ ${item.thu}</td>
@@ -560,7 +709,16 @@
               html += `<span class="badge-full">Hết chỗ</span>`;
             } else {
               html += `
-                <button class="btn btn-primary btn-sm btn-enroll-action" data-lhp="${item.maLHP}" data-name="${item.tenHP}" style="padding: 3px 10px; font-size: 11.5px; font-weight: 700;">
+                <button class="btn btn-primary btn-sm btn-enroll-action"
+                        data-lhp="${item.maLHP}"
+                        data-name="${item.tenHP}"
+                        data-stc="${item.soTinChi}"
+                        data-thu="${item.thu}"
+                        data-tietbd="${item.tietBatDau}"
+                        data-sotiet="${item.soTiet}"
+                        data-phong="${item.phongHoc || ''}"
+                        data-gv="${item.tenGiangVien || ''}"
+                        style="padding: 3px 10px; font-size: 11.5px; font-weight: 700;">
                   Đăng ký
                 </button>
               `;
@@ -576,19 +734,36 @@
             btn.addEventListener('click', async function() {
               const maLHP = this.getAttribute('data-lhp');
               const name = this.getAttribute('data-name');
+              const soTinChi = Number(this.getAttribute('data-stc')) || 3;
+              const thu = Number(this.getAttribute('data-thu')) || 2;
+              const tietBatDau = Number(this.getAttribute('data-tietbd')) || 1;
+              const soTiet = Number(this.getAttribute('data-sotiet')) || 3;
+              const phongHoc = this.getAttribute('data-phong') || '-';
+              const tenGiangVien = this.getAttribute('data-gv') || '';
+
               this.disabled = true;
               this.textContent = '...';
 
               try {
                 // Gọi API Route 15: POST /student/registration/enroll
-                const enrollRes = await StudentApi.enrollCourse(maLHP);
+                const enrollRes = await StudentApi.enrollCourse({
+                  maLHP,
+                  tenHP: name,
+                  soTinChi,
+                  thu,
+                  tietBatDau,
+                  soTiet,
+                  phongHoc,
+                  tenGiangVien,
+                  maHocKy: activeUpcomingSemester.maHocKy
+                });
+
                 if (enrollRes && enrollRes.success) {
                   showToast(`Đăng ký thành công lớp ${maLHP} - ${name}!`, 'success');
                   await loadRegisteredClasses();
                   await loadOpenClasses();
                 } else {
-                  // Xử lý thông báo lỗi (ví dụ: HTTP 409 Xung đột lịch học)
-                  showToast(enrollRes.message || 'Đăng ký thất bại.', 'error');
+                  showToast(enrollRes?.message || 'Đăng ký thất bại.', 'error');
                   this.disabled = false;
                   this.textContent = 'Đăng ký';
                 }
@@ -602,7 +777,7 @@
 
         } catch (err) {
           console.error(err);
-          openTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #EF4444;">Lỗi tải lớp mở.</td></tr>`;
+          setRegistrationClosedUI('Lỗi tải danh sách lớp mở.');
         }
       }
 
@@ -634,19 +809,35 @@
       btnCancelModal.addEventListener('click', () => confirmModal.classList.remove('open'));
 
       // Xử lý gửi phiếu kiến nghị mở lớp (ROUTE 17)
-      btnOpenRequestModal.addEventListener('click', () => requestModal.classList.add('open'));
-      btnCloseRequestModal.addEventListener('click', () => requestModal.classList.remove('open'));
-      btnCancelRequestModal.addEventListener('click', () => requestModal.classList.remove('open'));
+      btnOpenRequestModal.addEventListener('click', () => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors('request-modal');
+        requestModal.classList.add('open');
+      });
+      btnCloseRequestModal.addEventListener('click', () => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors('request-modal');
+        requestModal.classList.remove('open');
+      });
+      btnCancelRequestModal.addEventListener('click', () => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors('request-modal');
+        requestModal.classList.remove('open');
+      });
 
       btnSubmitRequestAction.addEventListener('click', async function() {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors('request-modal');
         const maHP = document.getElementById('req-maHP').value.trim();
         const lyDo = document.getElementById('req-lyDo').value.trim();
         const lichHoc = document.getElementById('req-lichHoc').value.trim();
 
-        if (!maHP || !lyDo) {
-          showToast('Vui lòng nhập đầy đủ mã học phần và lý do kiến nghị.', 'warning');
-          return;
+        let hasError = false;
+        if (!maHP) {
+          ApiClient.showFieldError('req-maHP', 'Vui lòng nhập mã học phần.');
+          hasError = true;
         }
+        if (!lyDo) {
+          ApiClient.showFieldError('req-lyDo', 'Vui lòng nhập lý do kiến nghị.');
+          hasError = true;
+        }
+        if (hasError) return;
 
         btnSubmitRequestAction.disabled = true;
         btnSubmitRequestAction.textContent = 'Đang gửi...';
@@ -660,10 +851,10 @@
             document.getElementById('req-lyDo').value = '';
             document.getElementById('req-lichHoc').value = '';
           } else {
-            showToast(res.message || 'Gửi kiến nghị thất bại.', 'error');
+            ApiClient.showFieldError('req-maHP', res.message || 'Gửi kiến nghị thất bại.');
           }
         } catch (e) {
-          showToast('Lỗi kết nối khi gửi kiến nghị.', 'error');
+          ApiClient.showFieldError('req-maHP', 'Lỗi kết nối khi gửi kiến nghị.');
         } finally {
           btnSubmitRequestAction.disabled = false;
           btnSubmitRequestAction.textContent = 'Gửi kiến nghị';
@@ -682,11 +873,41 @@
         if (currentPage < totalPages) { currentPage++; loadOpenClasses(); }
       });
 
-      // Khởi chạy tuần tự
+
+      // KHỞI CHẠY HỆ THỐNG
       async function init() {
-        await loadRegisteredClasses();
-        await loadOpenClasses();
+        try {
+          // 1. Tải toàn bộ danh mục học kỳ từ API
+          let semesters = [];
+          if (window.CommonApi && CommonApi.getAllSemesters) {
+            const semRes = await CommonApi.getAllSemesters();
+            if (semRes && semRes.success && Array.isArray(semRes.data)) {
+              semesters = semRes.data;
+            }
+          }
+
+          // 2. Tìm đúng 1 học kỳ sắp diễn ra gần nhất
+          activeUpcomingSemester = findUpcomingSemester(semesters);
+
+          // Nếu chưa tồn tại học kỳ nào chưa diễn ra trong DB
+          if (!activeUpcomingSemester) {
+            setRegistrationClosedUI('Chưa tồn tại học kỳ nào chưa diễn ra trong cơ sở dữ liệu. Đợt đăng ký học kỳ hiện tại đã đóng.');
+            await loadRegisteredClasses();
+            return;
+          }
+
+          // 3. Nếu tìm thấy học kỳ sắp diễn ra:
+          // Tải trước danh sách các lớp đã đăng ký trong kỳ đó
+          await loadRegisteredClasses();
+          // Tải danh sách các lớp học phần đang mở đăng ký của kỳ đó
+          await loadOpenClasses();
+
+        } catch (err) {
+          console.error('Lỗi khởi tạo cổng đăng ký:', err);
+          setRegistrationClosedUI('Lỗi khi tải thông tin đợt học kỳ từ máy chủ.');
+        }
       }
+
       init();
     });
   </script>

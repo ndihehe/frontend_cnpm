@@ -278,7 +278,6 @@
                     <th>Môn học / Lớp</th>
                     <th style="width: 50px; text-align: center;">TC</th>
                     <th style="width: 110px;">Thứ - Tiết</th>
-                    <th style="width: 80px; text-align: center;">Phòng</th>
                     <th>Giảng viên phụ trách</th>
                     <th style="width: 100px; text-align: center;">Sĩ số</th>
                     <th style="width: 95px; text-align: center;">Trạng thái</th>
@@ -287,7 +286,7 @@
                 </thead>
                 <tbody id="class-tbody">
                   <tr>
-                    <td colspan="10" style="text-align: center; padding: 25px;">Đang tải dữ liệu...</td>
+                    <td colspan="9" style="text-align: center; padding: 25px;">Đang tải dữ liệu...</td>
                   </tr>
                 </tbody>
               </table>
@@ -347,7 +346,7 @@
           <span class="material-symbols-outlined"
             style="font-size: 18px; color: #0284C7; flex-shrink: 0; margin-top: 1px;">info</span>
           <div>
-            <strong>Lưu ý nghiệp vụ:</strong> Số tín chỉ và phòng học được hệ thống tự động gán theo danh mục học phần.
+            <strong>Lưu ý nghiệp vụ:</strong> Số tín chỉ được hệ thống tự động gán theo danh mục học phần.
             Sau khi tạo lớp thành công, vui lòng nhấp vào biểu tượng <strong>Phân công GV</strong> trên từng dòng để
             kiểm tra xung đột lịch dạy (Conflict 2) trước khi mở cổng đăng ký.
           </div>
@@ -469,17 +468,6 @@
             <input type="number" id="edit-soTiet" class="form-control" min="1" max="5" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Phòng học *</label>
-            <input type="text" id="edit-phongHoc" class="form-control" required />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Giảng viên giảng dạy</label>
-            <input type="text" id="edit-tenGV" class="form-control" readonly title="Giảng viên được thay đổi bằng chức năng Phân công giảng viên" />
-          </div>
-          <div class="form-group">
             <label class="form-label">Trạng thái lớp *</label>
             <select id="edit-trangThai" class="form-control">
               <option value="CHUA_MO">Chưa mở</option>
@@ -489,6 +477,11 @@
             </select>
             <small id="edit-status-note" style="display:none; color:#B45309; margin-top:6px;"></small>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Giảng viên giảng dạy</label>
+          <input type="text" id="edit-tenGV" class="form-control" readonly title="Giảng viên được thay đổi bằng chức năng Phân công giảng viên" />
         </div>
       </div>
       <div class="modal-footer">
@@ -614,6 +607,21 @@
           && start <= today && today <= end;
       }
 
+      function isPastSemesterCheck(semester) {
+        if (!semester) return false;
+        if (semester.isCurrent || semester.hienHanh) return false;
+        if (semester.thoiGianKT) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const toDate = value => Array.isArray(value) ? new Date(value[0], value[1] - 1, value[2]) : new Date(value);
+          const end = toDate(semester.thoiGianKT);
+          if (!Number.isNaN(end.getTime()) && end < today) return true;
+        }
+        const parts = (semester.maHocKy || '').split('_');
+        if (parts.length >= 2 && Number(parts[0]) < 2026) return true;
+        return false;
+      }
+
       async function loadLecturers() {
         const select = document.getElementById('assign-select-gv');
         if (!select) return;
@@ -713,7 +721,7 @@
           const res = await AssistantApi.getClasses(sem, kw, currentPage, pageSize);
 
           if (!res || !res.success || !res.data) {
-            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:red; padding: 20px;">Lỗi tải dữ liệu</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red; padding: 20px;">Lỗi tải dữ liệu</td></tr>`;
             return;
           }
 
@@ -731,7 +739,7 @@
           }
 
           if (classes.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:#6B7280; padding: 30px;">Không tìm thấy lớp học phần phù hợp</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#6B7280; padding: 30px;">Không tìm thấy lớp học phần phù hợp</td></tr>`;
             return;
           }
 
@@ -740,10 +748,35 @@
             const stt = (currentPage - 1) * pageSize + idx + 1;
             const isFull = c.siSoHienTai >= c.siSoToiDa;
 
-            // Xác định học kỳ kết thúc / quá khứ
+            // Xác định học kỳ kết thúc / quá khứ / hiện hành
             const selectSemEl = document.getElementById('select-semester');
             const currentSelectedSem = selectSemEl ? selectSemEl.value : '2026_2027_HK1';
-            const isPastSemester = (currentSelectedSem !== '2026_2027_HK1' && !currentSelectedSem.startsWith('2026_2027')) || c.trangThai === 'KETTHUC' || c.isEditable === false;
+            const selectedSemObj = loadedSemesters.find(s => s.maHocKy === currentSelectedSem);
+
+            const isCurrentSemester = (currentSelectedSem === '2026_2027_HK1')
+              || (selectedSemObj && (selectedSemObj.isCurrent || selectedSemObj.hienHanh))
+              || isSemesterInProgress(selectedSemObj);
+
+            const isPastSemester = isPastSemesterCheck(selectedSemObj) || c.trangThai === 'KETTHUC' || c.isEditable === false;
+
+            // Nghiệp vụ: Kể cả học kỳ hiện hành cũng không được phép đổi thông tin lớp
+            let canEditClass = false;
+            let editDisabledReason = '';
+            if (isPastSemester) {
+              canEditClass = false;
+              editDisabledReason = 'Học kỳ đã kết thúc, không thể chỉnh sửa thông tin lớp';
+            } else if (isCurrentSemester) {
+              canEditClass = false;
+              editDisabledReason = 'Học kỳ hiện hành: Không được phép đổi thông tin lớp học phần';
+            } else if (c.siSoHienTai > 0) {
+              canEditClass = false;
+              editDisabledReason = `Lớp đã có ${c.siSoHienTai} sinh viên ghi danh, không thể chỉnh sửa`;
+            } else if (c.trangThai === 'KETTHUC' || c.isEditable === false) {
+              canEditClass = false;
+              editDisabledReason = 'Lớp học phần đã bị khóa hoặc kết thúc, không thể chỉnh sửa';
+            } else {
+              canEditClass = true;
+            }
 
             let statusText = '';
             if (isPastSemester) {
@@ -768,25 +801,27 @@
                 </td>
                 <td style="text-align: center; font-weight: 700;">${c.soTinChi}</td>
                 <td>Thứ ${c.thu} (${c.tietBatDau || c.tietBD}-${(c.tietBatDau || c.tietBD) + c.soTiet - 1})</td>
-                <td style="text-align: center;">${c.phongHoc}</td>
-                <td>${c.tenGiangVien}</td>
+                <td>${c.tenGiangVien || '--'}</td>
                 <td style="text-align: center;">
                   <strong style="color: ${isFull ? '#DC2626' : '#107C41'};">${c.siSoHienTai}</strong> / ${c.siSoToiDa}
                 </td>
                 <td style="text-align: center;">${statusText}</td>
                 <td style="text-align: center;">
                   <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-                    ${isPastSemester ? `
-                    <button class="btn-action-icon" disabled style="opacity: 0.4; cursor: not-allowed;" title="Học kỳ đã kết thúc, không thể chỉnh sửa">
-                      <span class="material-symbols-outlined" style="font-size: 17px; color: #94A3B8;">edit</span>
-                    </button>
-                    <button class="btn-action-icon" disabled style="opacity: 0.4; cursor: not-allowed;" title="Học kỳ đã kết thúc, không thể phân công GV">
-                      <span class="material-symbols-outlined" style="font-size: 17px; color: #94A3B8;">person_add</span>
-                    </button>
-                    ` : `
+                    ${canEditClass ? `
                     <button class="btn-action-icon btn-edit" data-lhp="${c.maLHP}" title="Chỉnh sửa lớp học phần (UC-04)">
                       <span class="material-symbols-outlined" style="font-size: 17px; color: #0284C7;">edit</span>
                     </button>
+                    ` : `
+                    <button class="btn-action-icon" disabled style="opacity: 0.35; cursor: not-allowed;" title="${editDisabledReason}">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #94A3B8;">edit</span>
+                    </button>
+                    `}
+                    ${isPastSemester ? `
+                    <button class="btn-action-icon" disabled style="opacity: 0.35; cursor: not-allowed;" title="Học kỳ đã kết thúc, không thể phân công GV">
+                      <span class="material-symbols-outlined" style="font-size: 17px; color: #94A3B8;">person_add</span>
+                    </button>
+                    ` : `
                     <button class="btn-action-icon btn-assign" data-lhp="${c.maLHP}" data-name="${c.tenHP}" data-gv="${c.tenGiangVien}" title="Phân công giảng viên">
                       <span class="material-symbols-outlined" style="font-size: 17px; color: #0284C7;">person_add</span>
                     </button>
@@ -828,26 +863,21 @@
               document.getElementById('edit-thu').value = cls.thu;
               document.getElementById('edit-tietBD').value = cls.tietBatDau || cls.tietBD || 1;
               document.getElementById('edit-soTiet').value = cls.soTiet || 3;
-              const roomField = document.getElementById('edit-phongHoc');
-              if (roomField.tagName === 'SELECT') {
-                roomField.innerHTML = `<option value="${cls.phongHoc || ''}">${cls.phongHoc || '-- Chọn phòng học --'}</option>`;
-              }
-              roomField.value = cls.phongHoc || '';
-               document.getElementById('edit-tenGV').value = cls.tenGiangVien || '';
-               document.getElementById('edit-trangThai').value = cls.trangThai || 'DANG_MO';
-               const selectedSemester = loadedSemesters.find(s => s.maHocKy === semesterSelect.value);
-               const lockedOption = document.getElementById('edit-status-locked');
-               const statusNote = document.getElementById('edit-status-note');
-               const semesterInProgress = isSemesterInProgress(selectedSemester);
-               lockedOption.disabled = semesterInProgress;
-               lockedOption.title = semesterInProgress
-                 ? 'Không thể khóa lớp khi học kỳ đang diễn ra'
-                 : '';
-               statusNote.style.display = semesterInProgress ? 'block' : 'none';
-               statusNote.textContent = semesterInProgress
-                 ? 'Không thể khóa lớp khi học kỳ đang diễn ra. Hệ thống sẽ tự khóa khi học kỳ kết thúc.'
-                 : '';
-               openModal('modal-edit');
+              document.getElementById('edit-tenGV').value = cls.tenGiangVien || '';
+              document.getElementById('edit-trangThai').value = cls.trangThai || 'DANG_MO';
+              const selectedSemester = loadedSemesters.find(s => s.maHocKy === semesterSelect.value);
+              const lockedOption = document.getElementById('edit-status-locked');
+              const statusNote = document.getElementById('edit-status-note');
+              const semesterInProgress = isSemesterInProgress(selectedSemester);
+              lockedOption.disabled = semesterInProgress;
+              lockedOption.title = semesterInProgress
+                ? 'Không thể khóa lớp khi học kỳ đang diễn ra'
+                : '';
+              statusNote.style.display = semesterInProgress ? 'block' : 'none';
+              statusNote.textContent = semesterInProgress
+                ? 'Không thể khóa lớp khi học kỳ đang diễn ra. Hệ thống sẽ tự khóa khi học kỳ kết thúc.'
+                : '';
+              openModal('modal-edit');
             });
           });
 
@@ -908,17 +938,24 @@
                   schedTbody.innerHTML = sHtml;
 
                   schedTbody.querySelectorAll('.btn-delete-sched').forEach(dBtn => {
-                    dBtn.addEventListener('click', async () => {
+                    dBtn.addEventListener('click', () => {
                       const malh = dBtn.dataset.malh;
-                      if (confirm(`Bạn có chắc muốn xóa buổi học [${malh}] của lớp này?`)) {
-                        const delRes = await AssistantApi.deleteClassSchedule(malh);
-                        if (delRes && delRes.success) {
-                          showToast(delRes.message || 'Đã xóa buổi học thành công!', 'success');
-                          btn.click();
-                        } else {
-                          showToast(delRes?.message || 'Xóa buổi học thất bại!', 'error');
+                      ApiClient.showConfirmModal({
+                        title: 'Xóa buổi học',
+                        message: `Bạn có chắc muốn xóa buổi học [${malh}] của lớp này?`,
+                        confirmText: 'Xóa buổi học',
+                        cancelText: 'Hủy bỏ',
+                        isDanger: true,
+                        onConfirm: async () => {
+                          const delRes = await AssistantApi.deleteClassSchedule(malh);
+                          if (delRes && delRes.success) {
+                            showToast(delRes.message || 'Đã xóa buổi học thành công!', 'success');
+                            btn.click();
+                          } else {
+                            showToast(delRes?.message || 'Xóa buổi học thất bại!', 'error');
+                          }
                         }
-                      }
+                      });
                     });
                   });
                 } else {
@@ -932,24 +969,31 @@
 
           // Sự kiện nút xóa
           document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', () => {
               const lhp = btn.dataset.lhp;
               const name = btn.dataset.name;
-              if (confirm(`Bạn có chắc chắn muốn xóa lớp học phần [${lhp}] - ${name}?`)) {
-                const delRes = await AssistantApi.deleteClass(lhp);
-                if (delRes && delRes.success) {
-                  showToast(delRes.message || 'Đã xóa lớp thành công!', 'success');
-                  await initSemesters().then(() => loadClasses());
-                } else {
-                  showToast(delRes.message || 'Xóa lớp thất bại!', 'error');
+              ApiClient.showConfirmModal({
+                title: 'Xóa lớp học phần',
+                message: `Bạn có chắc chắn muốn xóa lớp học phần [${lhp}] - ${name}? Hành động này sẽ hủy toàn bộ thời khóa biểu và danh sách của lớp.`,
+                confirmText: 'Xóa lớp',
+                cancelText: 'Hủy bỏ',
+                isDanger: true,
+                onConfirm: async () => {
+                  const delRes = await AssistantApi.deleteClass(lhp);
+                  if (delRes && delRes.success) {
+                    showToast(delRes.message || 'Đã xóa lớp thành công!', 'success');
+                    await initSemesters().then(() => loadClasses());
+                  } else {
+                    showToast(delRes.message || 'Xóa lớp thất bại!', 'error');
+                  }
                 }
-              }
+              });
             });
           });
 
         } catch (e) {
           console.error(e);
-          tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:red; padding: 20px;">Lỗi kết nối API</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red; padding: 20px;">Lỗi kết nối API</td></tr>`;
         }
       }
 
@@ -961,22 +1005,45 @@
       document.getElementById('create-maHP').addEventListener('change', fillCourseName);
 
       document.getElementById('btn-submit-create').addEventListener('click', async () => {
-        const payload = {
-          maLHP: document.getElementById('create-maLHP').value.trim(),
-          maHP: document.getElementById('create-maHP').value.trim(),
-          tenLHP: document.getElementById('create-tenHP').value.trim(),
-          tenHP: document.getElementById('create-tenHP').value.trim(),
-          siSoToiDa: Number(document.getElementById('create-siSoToiDa').value) || 60,
-          thu: Number(document.getElementById('create-thu').value) || 2,
-          tietBD: Number(document.getElementById('create-tietBD').value) || 1,
-          tietBatDau: Number(document.getElementById('create-tietBD').value) || 1,
-          soTiet: Number(document.getElementById('create-soTiet').value) || 3
-        };
+        ApiClient.clearAllFieldErrors('modal-create');
+        const maLHP = document.getElementById('create-maLHP').value.trim();
+        const maHP = document.getElementById('create-maHP').value.trim();
+        const tenHP = document.getElementById('create-tenHP').value.trim();
+        const siSoToiDa = Number(document.getElementById('create-siSoToiDa').value);
+        const soTiet = Number(document.getElementById('create-soTiet').value);
+        const thu = Number(document.getElementById('create-thu').value) || 2;
+        const tietBD = Number(document.getElementById('create-tietBD').value) || 1;
 
-        if (!payload.maLHP || !payload.maHP || !payload.tenHP) {
-          alert('Vui lòng điền đầy đủ các trường bắt buộc (*)');
-          return;
+        let hasError = false;
+        if (!maLHP) {
+          ApiClient.showFieldError('create-maLHP', 'Vui lòng nhập mã lớp học phần.');
+          hasError = true;
         }
+        if (!maHP) {
+          ApiClient.showFieldError('create-maHP', 'Vui lòng chọn học phần.');
+          hasError = true;
+        }
+        if (!siSoToiDa || siSoToiDa < 10 || siSoToiDa > 150) {
+          ApiClient.showFieldError('create-siSoToiDa', 'Sĩ số tối đa từ 10 đến 150.');
+          hasError = true;
+        }
+        if (!soTiet || soTiet < 1 || soTiet > 5) {
+          ApiClient.showFieldError('create-soTiet', 'Số tiết học mỗi buổi từ 1 đến 5.');
+          hasError = true;
+        }
+        if (hasError) return;
+
+        const payload = {
+          maLHP,
+          maHP,
+          tenLHP: tenHP,
+          tenHP,
+          siSoToiDa: siSoToiDa || 60,
+          thu,
+          tietBD,
+          tietBatDau: tietBD,
+          soTiet: soTiet || 3
+        };
 
         const res = await AssistantApi.createClass(payload);
         if (res && res.success) {
@@ -984,7 +1051,7 @@
           closeModal('modal-create');
           await initSemesters().then(() => loadClasses());
         } else {
-          ApiClient.showToast('error', 'Không thể tạo lớp học phần', res.message || 'Tạo lớp thất bại!');
+          ApiClient.showFieldError('create-maLHP', (res && res.message) || 'Tạo lớp thất bại!');
         }
       });
 
@@ -992,13 +1059,46 @@
       // Xử lý lưu chỉnh sửa lớp (UC-04)
       document.getElementById('btn-submit-edit').addEventListener('click', async () => {
         if (!currentEditLHP) return;
+        ApiClient.clearAllFieldErrors('modal-edit');
+
+        // Nghiệp vụ: Kể cả học kỳ hiện hành cũng không được phép đổi thông tin lớp
+        const currentSelectedSem = semesterSelect ? semesterSelect.value : '';
+        const selectedSemObj = loadedSemesters.find(s => s.maHocKy === currentSelectedSem);
+        const isCurrentSemester = (currentSelectedSem === '2026_2027_HK1')
+          || (selectedSemObj && (selectedSemObj.isCurrent || selectedSemObj.hienHanh))
+          || isSemesterInProgress(selectedSemObj);
+        const isPastSemester = isPastSemesterCheck(selectedSemObj);
+
+        if (isCurrentSemester || isPastSemester) {
+          showToast('Không được phép đổi thông tin lớp học phần trong học kỳ hiện hành hoặc đã kết thúc!', 'error');
+          closeModal('modal-edit');
+          return;
+        }
+
+        const siSoToiDa = Number(document.getElementById('edit-siSoToiDa').value);
+        const thu = Number(document.getElementById('edit-thu').value);
+        const tietBatDau = Number(document.getElementById('edit-tietBD').value);
+        const soTiet = Number(document.getElementById('edit-soTiet').value);
+        const trangThai = document.getElementById('edit-trangThai').value;
+
+        let hasError = false;
+        if (!siSoToiDa || siSoToiDa < 10 || siSoToiDa > 150) {
+          ApiClient.showFieldError('edit-siSoToiDa', 'Sĩ số tối đa từ 10 đến 150.');
+          hasError = true;
+        }
+        if (!soTiet || soTiet < 1 || soTiet > 5) {
+          ApiClient.showFieldError('edit-soTiet', 'Số tiết từ 1 đến 5.');
+          hasError = true;
+        }
+        if (hasError) return;
+
         const payload = {
-          siSoToiDa: Number(document.getElementById('edit-siSoToiDa').value),
-          thu: Number(document.getElementById('edit-thu').value),
-          tietBatDau: Number(document.getElementById('edit-tietBD').value),
-          soTiet: Number(document.getElementById('edit-soTiet').value),
-          phongHoc: document.getElementById('edit-phongHoc').value.trim(),
-          trangThai: document.getElementById('edit-trangThai').value
+          siSoToiDa,
+          thu,
+          tietBatDau,
+          tietBD: tietBatDau,
+          soTiet,
+          trangThai
         };
 
         const res = await AssistantApi.updateClass(currentEditLHP, payload);
@@ -1007,32 +1107,25 @@
           closeModal('modal-edit');
           await initSemesters().then(() => loadClasses());
         } else {
-          if (res && res.status === 409 && Array.isArray(res.errors) && res.errors.length > 0) {
-            const roomInput = document.getElementById('edit-phongHoc');
-            const roomSelect = document.createElement('select');
-            roomSelect.id = 'edit-phongHoc';
-            roomSelect.className = roomInput.className;
-            roomSelect.required = true;
-            roomSelect.innerHTML = '<option value="">-- Chọn phòng còn trống --</option>'
-              + res.errors.map(room => `<option value="${room}">${room}</option>`).join('');
-            roomInput.replaceWith(roomSelect);
-            showToast((res.message || 'Phòng học bị trùng lịch.') + ' Hãy chọn lại phòng còn trống.', 'error');
-            return;
-          }
           showToast((res && res.message) || 'Cập nhật thất bại!', 'error');
         }
       });
 
       document.getElementById('btn-submit-assign').addEventListener('click', async () => {
         if (!currentAssignLHP) return;
+        ApiClient.clearAllFieldErrors('modal-assign');
         const selectedGv = document.getElementById('assign-select-gv').value;
+        if (!selectedGv) {
+          ApiClient.showFieldError('assign-select-gv', 'Vui lòng chọn giảng viên phụ trách.');
+          return;
+        }
         const res = await AssistantApi.assignLecturer(currentAssignLHP, selectedGv);
         if (res && res.success) {
           showToast(res.message || 'Phân công giảng viên thành công!', 'success');
           closeModal('modal-assign');
           await initSemesters().then(() => loadClasses());
         } else {
-          showToast(res.message || 'Phân công thất bại!', 'error');
+          ApiClient.showFieldError('assign-select-gv', (res && res.message) || 'Phân công thất bại!');
         }
       });
 
@@ -1060,19 +1153,24 @@
         loadClasses();
       });
 
-      window.openModal = id => document.getElementById(id).style.display = 'flex';
-      window.closeModal = id => document.getElementById(id).style.display = 'none';
+      window.openModal = id => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors(id);
+        document.getElementById(id).style.display = 'flex';
+      };
+      window.closeModal = id => {
+        if (window.ApiClient && ApiClient.clearAllFieldErrors) ApiClient.clearAllFieldErrors(id);
+        document.getElementById(id).style.display = 'none';
+      };
 
       function debounce(fn, wait) {
         let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
       }
 
       function showToast(msg, type = 'info') {
-        const toast = document.createElement('div');
-        toast.className = 'toast-msg ' + (type === 'error' ? 'toast-error' : 'toast-success');
-        toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">${type === 'error' ? 'error' : 'check_circle'}</span><span>${msg}</span>`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3500);
+        if (window.ApiClient && ApiClient.showToast) {
+          const title = type === 'success' ? 'Thành công' : (type === 'error' ? 'Thất bại' : 'Thông báo');
+          ApiClient.showToast(type, title, msg);
+        }
       }
 
       function openCreateModalFromCourseRequest() {

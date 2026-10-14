@@ -420,7 +420,7 @@
           : allRegisteredClasses;
 
         // 2. Cập nhật số lượng trên các tab theo học kỳ đang chọn
-        const countDanghoc = semClasses.filter(c => c.trangThai === 'DANGHOC' || !c.trangThai).length;
+        const countDanghoc = semClasses.filter(c => c.trangThai === 'DANGHOC' || c.trangThai === 'MODANGKY' || c.trangThai === 'DADANGKY' || !c.trangThai).length;
         const countHocxong = semClasses.filter(c => c.trangThai === 'KETTHUC' || c.trangThai === 'HOCXONG').length;
 
         if (cntTabAll) cntTabAll.textContent = semClasses.length;
@@ -431,7 +431,7 @@
         // 3. Lọc tiếp theo tab trạng thái và từ khóa tìm kiếm
         const filtered = semClasses.filter(item => {
           let matchTab = true;
-          if (currentTab === 'DANGHOC') matchTab = (item.trangThai === 'DANGHOC' || !item.trangThai);
+          if (currentTab === 'DANGHOC') matchTab = (item.trangThai === 'DANGHOC' || item.trangThai === 'MODANGKY' || item.trangThai === 'DADANGKY' || !item.trangThai);
           else if (currentTab === 'HOCXONG') matchTab = (item.trangThai === 'KETTHUC' || item.trangThai === 'HOCXONG');
           else if (currentTab === 'WARNING') matchTab = false;
 
