@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: quanlydaotao-frontend
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm run build
+    startCommand: node server.js
+    envVars:
+      - key: API_BASE_URL
+        sync: false
+      - key: PORT
+        value: 3000

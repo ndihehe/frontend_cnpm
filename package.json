@@ -4,6 +4,7 @@
   "description": "Cổng thông tin đào tạo & Quản lý học vụ",
   "main": "server.js",
   "scripts": {
+    "build": "node build-config.js",
     "start": "node server.js"
   }
 }

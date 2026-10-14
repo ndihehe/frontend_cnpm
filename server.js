@@ -2,8 +2,35 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
+
+// Tự động nạp biến môi trường từ file .env (nếu có)
+function loadEnv() {
+  const envFile = path.join(ROOT, '.env');
+  if (fs.existsSync(envFile)) {
+    try {
+      const lines = fs.readFileSync(envFile, 'utf8').split('\n');
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx > 0) {
+          const key = trimmed.slice(0, eqIdx).trim();
+          const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+          if (!process.env[key]) {
+            process.env[key] = val;
+          }
+        }
+      }
+      console.log('[server] Loaded environment variables from .env');
+    } catch (e) {
+      console.warn('[server] Error reading .env:', e.message);
+    }
+  }
+}
+loadEnv();
+
+const PORT = process.env.PORT || 3000;
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -23,6 +50,44 @@ const MIME_TYPES = {
 
 const server = http.createServer((req, res) => {
   let reqUrl = decodeURI(req.url.split('?')[0]);
+
+  // Nạp cấu hình API_BASE_URL động từ .env hoặc Render Environment Variables
+  if (reqUrl === '/js/config.js' || reqUrl === '/config.js') {
+    const apiBaseUrl = process.env.API_BASE_URL || process.env.BACKEND_URL || 'http://localhost:8080/api';
+    const body = `/* APP CONFIGURATION (LOADED DYNAMICALLY FROM ENVIRONMENT .env) */
+const APP_CONFIG = {
+  API_BASE_URL: ${JSON.stringify(apiBaseUrl)},
+  STORAGE_TOKEN_KEY: 'auth_access_token',
+  STORAGE_USER_KEY: 'auth_current_user',
+  STORAGE_ROLE_KEY: 'auth_user_role'
+};
+window.APP_CONFIG = APP_CONFIG;
+`;
+    res.writeHead(200, {
+      'Content-Type': 'application/javascript; charset=utf-8',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.end(body);
+    return;
+  }
+
+  // API endpoint kiểm tra config hiện tại
+  if (reqUrl === '/api/config') {
+    const apiBaseUrl = process.env.API_BASE_URL || process.env.BACKEND_URL || 'http://localhost:8080/api';
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-cache',
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.end(JSON.stringify({
+      success: true,
+      apiBaseUrl: apiBaseUrl,
+      port: PORT
+    }));
+    return;
+  }
+
   if (reqUrl === '/' || reqUrl === '/login' || reqUrl === '/login.html' || 
       reqUrl === '/admin' || reqUrl === '/admin/' || reqUrl === '/admin/login' || reqUrl === '/admin/login.html' ||
       reqUrl === '/pages/auth/admin-login.html') {
