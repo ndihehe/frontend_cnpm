@@ -105,10 +105,6 @@
             <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Khoa / Viện:</label>
             <select id="select-faculty" class="form-control" style="width: 200px; font-size: 12px; height: 32px;">
               <option value="all">Tất cả khoa / viện</option>
-              <option value="CNTT">Công nghệ Thông tin</option>
-              <option value="KT">Kinh tế</option>
-              <option value="DDT">Điện - Điện tử</option>
-              <option value="CKOT">Cơ khí Ô tô</option>
             </select>
 
             <!-- Search input wrap chuẩn CSS không bị out khung icon -->
@@ -192,6 +188,7 @@
   </div>
 
   <script src="../../js/config.js"></script>
+  <script src="../../js/faculties.js"></script>
   <script src="../../js/api.js"></script>
   <script>
     let currentPage = 1;
@@ -223,10 +220,12 @@
       const btnPrev = document.getElementById('btn-prev-page');
       const btnNext = document.getElementById('btn-next-page');
 
+      populateFacultySelect(facultySelect, 'Tất cả khoa / viện');
+
       async function loadLecturers(page = 1) {
         try {
           currentPage = page;
-          const kw = searchInput.value;
+          const kw = (searchInput.value || '').trim();
           const fac = facultySelect.value;
           const res = await HeadOfficeApi.getLecturers(fac, kw, currentPage, pageSize);
 

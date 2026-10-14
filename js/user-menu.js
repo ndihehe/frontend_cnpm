@@ -486,6 +486,18 @@
 
   /* TÍCH HỢP CHUÔNG THÔNG BÁO VỚI API NOTIFICATIONS THẬT */
   function setupNotificationBell(topbarActions) {
+    // Không hiển thị chuông thông báo trong trang giảng viên (không cần xem thông báo)
+    const path = (window.location.pathname || '').replace(/\\/g, '/').toLowerCase();
+    const isLecturerPage = path.includes('/lecturer/') || path.includes('/pages/lecturer') || path.endsWith('/lecturer');
+    const user = getStoredUser();
+    const isLecturerUser = user && (user.role === 'GIANGVIEN' || localStorage.getItem('auth_user_role') === 'GIANGVIEN');
+
+    if (isLecturerPage || (isLecturerUser && isLecturerPage)) {
+      const existing = document.getElementById('topbar-notif-root');
+      if (existing) existing.remove();
+      return;
+    }
+
     if (!topbarActions || document.getElementById('topbar-notif-root')) return;
 
     const notifContainer = document.createElement('div');

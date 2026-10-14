@@ -386,6 +386,62 @@ class ApiClient {
       };
     }
 
+    // 3.1 Danh sách giảng viên Trưởng phòng
+    if (ep.includes('/head-office/lecturers')) {
+      const urlQuery = endpoint.includes('?') ? endpoint.split('?')[1] : '';
+      const params = new URLSearchParams(urlQuery);
+      const reqKhoa = (params.get('khoa') || '').trim();
+      const kw = (params.get('keyword') || '').toLowerCase().trim();
+      const page = parseInt(params.get('page') || '1', 10);
+      const limit = parseInt(params.get('limit') || '20', 10);
+
+      const mockLecturers = [
+        { maNV: 'GV001', maGV: 'GV001', hoTen: 'TS. Trần Thị Bình', hocVi: 'Tiến sĩ', khoa: 'Công nghệ thông tin', email: 'binh.tran@example.com', soDienThoai: '0903123456', sdt: '0903123456', soLopPhuTrach: 4, soLopDamNhiem: 4 },
+        { maNV: 'GV002', maGV: 'GV002', hoTen: 'ThS. Nguyễn Văn Quản', hocVi: 'Thạc sĩ', khoa: 'Công nghệ thông tin', email: 'quan.nguyen@example.com', soDienThoai: '0903234567', sdt: '0903234567', soLopPhuTrach: 3, soLopDamNhiem: 3 },
+        { maNV: 'GV003', maGV: 'GV003', hoTen: 'PGS. TS. Lê Văn Cường', hocVi: 'Tiến sĩ', khoa: 'Công nghệ thông tin', email: 'cuong.le@example.com', soDienThoai: '0903345678', sdt: '0903345678', soLopPhuTrach: 5, soLopDamNhiem: 5 },
+        { maNV: 'GV004', maGV: 'GV004', hoTen: 'TS. Phạm Minh Đức', hocVi: 'Tiến sĩ', khoa: 'Kinh tế', email: 'duc.pham@example.com', soDienThoai: '0903456789', sdt: '0903456789', soLopPhuTrach: 2, soLopDamNhiem: 2 },
+        { maNV: 'GV005', maGV: 'GV005', hoTen: 'ThS. Hoàng Thu Thủy', hocVi: 'Thạc sĩ', khoa: 'Kinh tế', email: 'thuy.hoang@example.com', soDienThoai: '0903567890', sdt: '0903567890', soLopPhuTrach: 3, soLopDamNhiem: 3 },
+        { maNV: 'GV006', maGV: 'GV006', hoTen: 'TS. Vũ Đình Nam', hocVi: 'Tiến sĩ', khoa: 'Điện - Điện tử', email: 'nam.vu@example.com', soDienThoai: '0903678901', sdt: '0903678901', soLopPhuTrach: 4, soLopDamNhiem: 4 },
+        { maNV: 'GV007', maGV: 'GV007', hoTen: 'ThS. Đỗ Quang Huy', hocVi: 'Thạc sĩ', khoa: 'Cơ khí Ô tô', email: 'huy.do@example.com', soDienThoai: '0903789012', sdt: '0903789012', soLopPhuTrach: 3, soLopDamNhiem: 3 }
+      ];
+
+      let filtered = mockLecturers;
+      if (reqKhoa && reqKhoa !== 'all') {
+        const rkLower = reqKhoa.toLowerCase();
+        filtered = filtered.filter(item => {
+          const itemKhoa = (item.khoa || '').toLowerCase();
+          if (rkLower === 'cntt' || rkLower.includes('công nghệ thông tin')) return itemKhoa.includes('công nghệ thông tin') || itemKhoa === 'cntt';
+          if (rkLower === 'kt' || rkLower.includes('kinh tế')) return itemKhoa.includes('kinh tế') || itemKhoa === 'kt';
+          if (rkLower === 'ddt' || rkLower.includes('điện')) return itemKhoa.includes('điện') || itemKhoa === 'ddt';
+          if (rkLower === 'ckot' || rkLower.includes('cơ khí') || rkLower.includes('ô tô')) return itemKhoa.includes('cơ khí') || itemKhoa === 'ckot';
+          return itemKhoa.includes(rkLower);
+        });
+      }
+
+      if (kw) {
+        filtered = filtered.filter(item =>
+          (item.maNV && item.maNV.toLowerCase().includes(kw)) ||
+          (item.maGV && item.maGV.toLowerCase().includes(kw)) ||
+          (item.hoTen && item.hoTen.toLowerCase().includes(kw)) ||
+          (item.email && item.email.toLowerCase().includes(kw)) ||
+          (item.soDienThoai && item.soDienThoai.toLowerCase().includes(kw)) ||
+          (item.hocVi && item.hocVi.toLowerCase().includes(kw))
+        );
+      }
+
+      const totalItems = filtered.length;
+      const totalPages = Math.ceil(totalItems / limit) || 1;
+      const start = (page - 1) * limit;
+      const pagedData = filtered.slice(start, start + limit);
+
+      return {
+        status: 200,
+        success: true,
+        data: pagedData,
+        meta: { page, limit, totalItems, totalPages }
+      };
+    }
+
     // 4. Đăng ký học phần sinh viên: Lớp mở đăng ký
     if (ep.includes('/student/registration/open-classes')) {
       const urlQuery = endpoint.includes('?') ? endpoint.split('?')[1] : '';
@@ -1129,8 +1185,8 @@ const HeadOfficeApi = {
 
   async getLecturers(khoa = 'all', keyword = '', page = 1, limit = 20) {
     let query = `?page=${page}&limit=${limit}`;
-    if (khoa && khoa !== 'all') query += `&khoa=${encodeURIComponent(khoa)}`;
-    if (keyword) query += `&keyword=${encodeURIComponent(keyword)}`;
+    if (khoa && khoa !== 'all') query += `&khoa=${encodeURIComponent(khoa.trim())}`;
+    if (keyword && keyword.trim()) query += `&keyword=${encodeURIComponent(keyword.trim())}`;
     const res = await ApiClient.get(`/head-office/lecturers${query}`);
     if (res && res.success && Array.isArray(res.data)) {
       res.data = res.data.map(l => ({
